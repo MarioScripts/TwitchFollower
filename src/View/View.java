@@ -165,6 +165,15 @@ public class View extends JFrame{
         Border paddingBorder = BorderFactory.createEmptyBorder(7, 7, 7, 0);
         Border border = BorderFactory.createLineBorder(BORDER_COLOR, 1);
 
+//        try{
+//            Image img = ImageIO.read(getClass().getClassLoader().getResource("resources/Twitch.png")).getScaledInstance(30, 30, Image.SCALE_DEFAULT);
+//            ImageIcon icon = new ImageIcon(img);
+//
+//            tempLabel.setIcon(icon);
+//        }catch (IOException e){
+//
+//        }
+
         tempLabel.setOpaque(true);
         tempLabel.setBorder(BorderFactory.createCompoundBorder(border, paddingBorder));
         tempLabel.addMouseListener(new SelectListener());

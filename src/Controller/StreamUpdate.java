@@ -56,7 +56,6 @@ public class StreamUpdate implements Runnable{
                                         "Status Change",
                                         temp.getName() + " is now online\nPlaying " + tempInfo.getGame(),
                                         TrayIcon.MessageType.INFO);
-                                Toolkit.getDefaultToolkit().beep();
                             }
                         }
 
@@ -68,7 +67,6 @@ public class StreamUpdate implements Runnable{
                                         "Game Change",
                                         temp.getName() + " has started playing " + tempInfo.getGame(),
                                         TrayIcon.MessageType.INFO);
-                                Toolkit.getDefaultToolkit().beep();
                             }
                         }
 

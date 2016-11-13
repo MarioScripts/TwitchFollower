@@ -2,6 +2,9 @@ import Controller.Controller;
 import Model.Model;
 import View.View;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class TwitchFollower {
     public static void main(String[] args) {
         /*
@@ -24,7 +27,7 @@ public class TwitchFollower {
                     - Allow the user to choose their livestreamer.exe directory
                     - Allow user to choose their cfg/names directory
          */
-
+        System.out.println("Started on: " + new SimpleDateFormat("MM/dd/YYYY hh:mm a").format(Calendar.getInstance().getTime()));
         View view = new View();
         Model model = new Model();
         Controller controller = new Controller(model, view);
