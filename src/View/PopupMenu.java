@@ -9,8 +9,14 @@ import java.nio.file.InvalidPathException;
 //TODO: Add moreinfo tab that gives info on stream title, viewer #s, etc, uptime, etc
 public class PopupMenu extends JPopupMenu {
     JMenuItem openTwitch, openLivestreamer, moreInfo, popoutChat;
+    JLabel selected;
+    View view;
 
-    public PopupMenu(String name){
+    public PopupMenu(View view){
+        this.view = view;
+        selected = view.getSelected();
+
+        String name = selected.getName();
         openTwitch = new JMenuItem("Open on Twitch");
         openLivestreamer = new JMenuItem("Open on Livestreamer");
         popoutChat = new JMenuItem("Open popout chat");
@@ -32,6 +38,8 @@ public class PopupMenu extends JPopupMenu {
         @Override
         public void actionPerformed(ActionEvent e) {
             Model.Model.openToTwitch(name);
+            view.setDeselectProperties(selected);
+            view.setSelected(null);
         }
     }
 
@@ -48,7 +56,8 @@ public class PopupMenu extends JPopupMenu {
             } catch(InvalidPathException e1){
                 JOptionPane.showMessageDialog(new Frame(), "Livestreamer could not be found");
             }
-
+            view.setDeselectProperties(selected);
+            view.setSelected(null);
         }
     }
 
@@ -62,6 +71,8 @@ public class PopupMenu extends JPopupMenu {
         @Override
         public void actionPerformed(ActionEvent e){
             Model.Model.openPopoutChat(name);
+            view.setDeselectProperties(selected);
+            view.setSelected(null);
         }
     }
 }

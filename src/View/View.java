@@ -63,7 +63,10 @@ public class View extends JFrame{
         scrDisplay.setBackground(BACKGROUND_COLOR);
 
         btnAdd = new JButton("+");
+        btnAdd.setFocusable(false);
+
         btnRemove = new JButton("-");
+        btnRemove.setFocusable(false);
 
         try{
             BufferedImage img = ImageIO.read(getClass().getClassLoader().getResource("resources/Header3.png"));
@@ -100,7 +103,11 @@ public class View extends JFrame{
         add(sepSettings, "w 250, wrap");
         add(pnlSettings, "grow, pushx");
 
+        MouseListener deselectListener = new DeselectListener();
         addComponentListener(new ResizeListener());
+        addMouseListener(deselectListener);
+        pnlDisplay.addMouseListener(deselectListener);
+
     }
 
     private void setLookAndFeel(){
@@ -231,7 +238,7 @@ public class View extends JFrame{
         @Override
         public void mouseEntered(MouseEvent e) {
             setCursor(new Cursor(Cursor.HAND_CURSOR));
-    }
+        }
 
         @Override
         public void mouseExited(MouseEvent e) {
@@ -239,29 +246,29 @@ public class View extends JFrame{
         }
     }
 
-    //TODO add mouseover highlight
     private class SelectListener implements MouseListener{
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if(SwingUtilities.isRightMouseButton(e)){
-                PopupMenu popup = new PopupMenu(e.getComponent().getName());
-                popup.show(e.getComponent(), e.getX(), e.getY());
-            }else{
-                if(selected != null){
-                    setDeselectProperties(selected);
-                }
-
-                if(e.getComponent() != selected){
-                    setSelectProperties((JLabel) e.getComponent());
-                    selected = (JLabel)e.getComponent();
-                }else{
-                    selected = null;
-                }
-
-                validate();
-                repaint();
+            if(selected != null){
+                setDeselectProperties(selected);
             }
+
+            if(e.getComponent() != selected){
+                setSelectProperties((JLabel) e.getComponent());
+                selected = (JLabel)e.getComponent();
+            }else{
+                selected = null;
+            }
+
+            if(SwingUtilities.isRightMouseButton(e)){
+                PopupMenu popup = new PopupMenu(View.this);
+                popup.show(e.getComponent(), e.getX(), e.getY());
+            }
+
+            validate();
+            repaint();
+
         }
 
         @Override
@@ -271,10 +278,47 @@ public class View extends JFrame{
         public void mouseReleased(MouseEvent e) {}
 
         @Override
-        public void mouseEntered(MouseEvent e) {}
+        public void mouseEntered(MouseEvent e) {
+            setSelectProperties((JLabel)e.getComponent());
+        }
 
         @Override
-        public void mouseExited(MouseEvent e) {}
+        public void mouseExited(MouseEvent e) {
+            if(e.getComponent() != selected){
+                setDeselectProperties((JLabel)e.getComponent());
+            }
+
+        }
+    }
+
+    private class DeselectListener implements MouseListener{
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if(selected != null){
+                setDeselectProperties(selected);
+                selected = null;
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
     }
 
 }

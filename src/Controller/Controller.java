@@ -33,7 +33,13 @@ public class Controller {
         StreamIterator iter = model.getStreams().iterator();
 
         while(iter.hasNext()){
-            StreamNode tempInfo = model.getStreamInfo(iter.next());
+            StreamNode temp = iter.next();
+            StreamNode tempInfo = model.getStreamInfo(temp);
+
+            temp.setGame(tempInfo.getGame());
+            temp.setStatus(tempInfo.getStatus());
+            temp.setName(tempInfo.getName());
+
             view.addStreamLabel(tempInfo);
         }
 
@@ -64,6 +70,7 @@ public class Controller {
                     view.getDisplayPanel().repaint();
                 }catch (DuplicateStreamException e1){
                     System.out.println(e1.getMessage());
+                    JOptionPane.showMessageDialog(new JFrame(), e1.getMessage(), "Dupliacte Streams", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }

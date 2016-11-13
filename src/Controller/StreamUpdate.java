@@ -50,7 +50,7 @@ public class StreamUpdate implements Runnable{
 
                         //Check if status changes
                         if(!temp.getStatus().equals(tempInfo.getStatus())){
-                            // Only alerts if game goes online
+                            // Only alerts if stream goes online
                             if(tempInfo.getStatus().equals("Online") && temp.getStatus().equals("Offline")) {
                                 icon.displayMessage(
                                         "Status Change",
