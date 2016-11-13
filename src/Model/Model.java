@@ -1,5 +1,6 @@
 package Model;
 
+import Exceptions.DuplicateStreamException;
 import StreamList.*;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,9 +22,9 @@ public class Model {
         readStreams();
     }
 
-    public void addStream(StreamNode node){
-        addStreamFile(node.getName());
+    public void addStream(StreamNode node) throws DuplicateStreamException{
         streams.add(node);
+        addStreamFile(node.getName());
     }
 
     public void removeStream(String name){
@@ -150,7 +151,11 @@ public class Model {
 
                 String line;
                 while((line = reader.readLine()) != null){
-                    streams.add(new StreamNode(line));
+                    try{
+                        streams.add(new StreamNode(line));
+                    }catch (DuplicateStreamException e){
+                        System.out.println(e.getMessage());
+                    }
                 }
 
             }else{

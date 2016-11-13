@@ -1,5 +1,6 @@
 package Controller;
 
+import Exceptions.DuplicateStreamException;
 import Model.Model;
 import StreamList.*;
 import View.*;
@@ -56,10 +57,14 @@ public class Controller {
 
             if(name != null && name.length() >= 1){
                 StreamNode tempInfo = model.getStreamInfo(new StreamNode(name));
-                model.addStream(tempInfo);
-                view.addStreamLabel(tempInfo);
-                view.getDisplayPanel().validate();
-                view.getDisplayPanel().repaint();
+                try{
+                    model.addStream(tempInfo);
+                    view.addStreamLabel(tempInfo);
+                    view.getDisplayPanel().validate();
+                    view.getDisplayPanel().repaint();
+                }catch (DuplicateStreamException e1){
+                    System.out.println(e1.getMessage());
+                }
             }
         }
     }

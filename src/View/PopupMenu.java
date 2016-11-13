@@ -1,8 +1,10 @@
 package View;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.InvalidPathException;
 
 //TODO: Add moreinfo tab that gives info on stream title, viewer #s, etc, uptime, etc
 public class PopupMenu extends JPopupMenu {
@@ -38,9 +40,15 @@ public class PopupMenu extends JPopupMenu {
         public OpenLivestreamerListener(String name){
             this.name = name;
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            Model.Model.openToLivestreamer(name);
+            try{
+                Model.Model.openToLivestreamer(name);
+            } catch(InvalidPathException e1){
+                JOptionPane.showMessageDialog(new Frame(), "Livestreamer could not be found");
+            }
+
         }
     }
 

@@ -1,5 +1,7 @@
 package StreamList;
 
+import Exceptions.DuplicateStreamException;
+
 import java.util.NoSuchElementException;
 
 
@@ -12,16 +14,19 @@ public class StreamList {
         count = 0;
     }
 
-    public void add(StreamNode node){
-
-        if(size() == 0){
-            front = rear = node;
+    public void add(StreamNode node) throws DuplicateStreamException {
+        if(contains(node.getName())){
+            throw new DuplicateStreamException("This stream already exists");
         }else{
-            rear.setNext(node);
-            rear = rear.getNext();
-        }
+            if(size() == 0){
+                front = rear = node;
+            }else{
+                rear.setNext(node);
+                rear = rear.getNext();
+            }
 
-        count++;
+            count++;
+        }
     }
 
     public void remove(String name){
@@ -57,6 +62,19 @@ public class StreamList {
                 prev.setNext(prev.getNext().getNext());
             }
         }
+    }
+
+    public boolean contains(String name){
+        StreamIterator iter = iterator();
+        StreamNode temp;
+        while(iter.hasNext()){
+            temp = iter.next();
+            if(temp.getName().toLowerCase().equals(name.toLowerCase())){
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public boolean isEmpty(){
