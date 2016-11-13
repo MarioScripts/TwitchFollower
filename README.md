@@ -2,7 +2,6 @@
 
 ###### TODO Immediately:
 
-- Look into stream initialization, try using a dowhile loop in StreamUpdate so you don't need a redundant startup method
 - Add channel image fetch (just change getting streamInfo method and add corresponding StreamNode attributes)
 - ~~Maybe control duplicate entires? Just create basic contains() algorithm in StreamList that sees if current name is already in list~~
 - ~~Add highilght color / fix inconsistent looking selection/deselection of labels~~
