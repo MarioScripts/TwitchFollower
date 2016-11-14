@@ -2,7 +2,7 @@
 
 ###### TODO Immediately:
 
-- Add channel image fetch (just change getting streamInfo method and add corresponding StreamNode attributes)
+- ~~Add channel image fetch (just change getting streamInfo method and add corresponding StreamNode attributes)~~
 - ~~Maybe control duplicate entires? Just create basic contains() algorithm in StreamList that sees if current name is already in list~~
 - ~~Add highilght color / fix inconsistent looking selection/deselection of labels~~
 

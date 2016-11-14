@@ -4,8 +4,9 @@ import Exceptions.DuplicateStreamException;
 import StreamList.*;
 import org.json.JSONException;
 import org.json.JSONObject;
-import sun.security.krb5.internal.crypto.Des;
+import sun.awt.datatransfer.DataTransferer;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
 import java.net.*;
@@ -14,7 +15,8 @@ import java.nio.file.InvalidPathException;
 public class Model {
     private StreamList streams;
     private static final String SAVE_DIR = "C:\\Users\\" + System.getProperty("user.name") + "\\names.txt";
-    private static final String API_URL = "https://api.twitch.tv/kraken/streams/";
+    private static final String STREAM_URL = "https://api.twitch.tv/kraken/streams/";
+    private static final String CHANNEL_URL = "https://api.twitch.tv/kraken/channels/";
     private static final String CLIENT_ID = "iv92gs01m24niftpift7l6jsmvrfvpo";
 
     public Model(){
@@ -41,25 +43,18 @@ public class Model {
         StreamNode streamInfo = new StreamNode(name);
 
         try{
-            URL url = new URL(API_URL + name);
-            URLConnection connection = url.openConnection();
-            connection.setRequestProperty("Client-ID", CLIENT_ID);
-            connection.connect();
-            InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
-            BufferedReader buff = new BufferedReader(in);
-            String line = "";
-            String info = "";
-            while(line != null){
-                line = buff.readLine();
-                info += line;
+            if(node.getLogo() == null){
+                String info = getJSONString(CHANNEL_URL, node.getName());
+                JSONObject channel = new JSONObject(info);
+                URL logoURL = new URL(channel.getString("logo"));
+                streamInfo.setLogo(ImageIO.read(logoURL).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
             }
 
+            String info = getJSONString(STREAM_URL, node.getName());
             JSONObject stream = new JSONObject(info).getJSONObject("stream");
             streamInfo.setStatus("Online");
             streamInfo.setGame(stream.getString("game"));
 
-            in.close();
-            buff.close();
         }catch(IOException | JSONException e){
             streamInfo.setStatus("Offline");
             streamInfo.setGame("N/A");
@@ -166,6 +161,25 @@ public class Model {
             System.out.println(e.getMessage());
         }
 
+    }
+
+    private static String getJSONString(String apiURL, String name) throws IOException{
+        URL url = new URL(apiURL + name);
+        URLConnection connection = url.openConnection();
+        connection.setRequestProperty("Client-ID", CLIENT_ID);
+        connection.connect();
+        InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
+        BufferedReader buff = new BufferedReader(in);
+        String line = "";
+        String info = "";
+        while(line != null){
+            line = buff.readLine();
+            info += line;
+        }
+
+        in.close();
+        buff.close();
+        return info;
     }
 
 }

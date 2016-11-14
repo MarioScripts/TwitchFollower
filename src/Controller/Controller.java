@@ -39,6 +39,7 @@ public class Controller {
             temp.setGame(tempInfo.getGame());
             temp.setStatus(tempInfo.getStatus());
             temp.setName(tempInfo.getName());
+            temp.setLogo(tempInfo.getLogo());
 
             view.addStreamLabel(tempInfo);
         }
