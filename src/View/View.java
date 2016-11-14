@@ -251,14 +251,15 @@ public class View extends JFrame{
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if(selected != null){
+
+            if(selected != null && e.getComponent() != selected){
                 setDeselectProperties(selected);
             }
 
             if(e.getComponent() != selected){
                 setSelectProperties((JLabel) e.getComponent());
                 selected = (JLabel)e.getComponent();
-            }else{
+            }else if (e.getComponent() == selected && !SwingUtilities.isRightMouseButton(e)){
                 selected = null;
             }
 
