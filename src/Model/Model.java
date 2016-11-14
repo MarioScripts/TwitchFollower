@@ -2,6 +2,7 @@ package Model;
 
 import Exceptions.DuplicateStreamException;
 import StreamList.*;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import sun.awt.datatransfer.DataTransferer;
@@ -18,6 +19,7 @@ public class Model {
     private static final String STREAM_URL = "https://api.twitch.tv/kraken/streams/";
     private static final String CHANNEL_URL = "https://api.twitch.tv/kraken/channels/";
     private static final String CLIENT_ID = "iv92gs01m24niftpift7l6jsmvrfvpo";
+    private static final String DEFAULT_LOGO_URL = "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png";
 
     public Model(){
         streams = new StreamList();
@@ -38,26 +40,43 @@ public class Model {
         return streams;
     }
 
-    public static StreamNode getStreamInfo(StreamNode node){
+    public static StreamNode getStreamInfo(StreamNode node) throws InvalidObjectException{
         String name = node.getName();
         StreamNode streamInfo = new StreamNode(name);
+        String info = "";
+        URL logoURL = null;
 
         try{
             if(node.getLogo() == null){
-                String info = getJSONString(CHANNEL_URL, node.getName());
+                info = getJSONString(CHANNEL_URL, name);
                 JSONObject channel = new JSONObject(info);
-                URL logoURL = new URL(channel.getString("logo"));
+                logoURL = new URL(channel.getString("logo"));
                 streamInfo.setLogo(ImageIO.read(logoURL).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
             }
 
-            String info = getJSONString(STREAM_URL, node.getName());
+            info = getJSONString(STREAM_URL, name);
             JSONObject stream = new JSONObject(info).getJSONObject("stream");
             streamInfo.setStatus("Online");
             streamInfo.setGame(stream.getString("game"));
 
         }catch(IOException | JSONException e){
-            streamInfo.setStatus("Offline");
-            streamInfo.setGame("N/A");
+            //Handle if stream does not exist
+            if(info == ""){
+                throw new InvalidObjectException("Invalid stream");
+            }else{
+                streamInfo.setStatus("Offline");
+                streamInfo.setGame("N/A");
+            }
+
+            // If channel doesn't have logo, use default twitch logo
+            if(logoURL == null){
+                try{
+                    logoURL = new URL(DEFAULT_LOGO_URL);
+                    streamInfo.setLogo(ImageIO.read(logoURL).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+                }catch (IOException e1){
+                    System.out.println(e1.getMessage());
+                }
+            }
         }
 
         return streamInfo;

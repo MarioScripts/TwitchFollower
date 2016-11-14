@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.io.InvalidObjectException;
 import java.nio.file.InvalidPathException;
 
 public class Controller {
@@ -34,14 +35,19 @@ public class Controller {
 
         while(iter.hasNext()){
             StreamNode temp = iter.next();
-            StreamNode tempInfo = model.getStreamInfo(temp);
 
-            temp.setGame(tempInfo.getGame());
-            temp.setStatus(tempInfo.getStatus());
-            temp.setName(tempInfo.getName());
-            temp.setLogo(tempInfo.getLogo());
+            try{
+                StreamNode tempInfo = model.getStreamInfo(temp);
 
-            view.addStreamLabel(tempInfo);
+                temp.setGame(tempInfo.getGame());
+                temp.setStatus(tempInfo.getStatus());
+                temp.setName(tempInfo.getName());
+                temp.setLogo(tempInfo.getLogo());
+
+                view.addStreamLabel(tempInfo);
+            }catch (InvalidObjectException e){
+                System.out.println(e.getMessage());
+            }
         }
 
         view.validate();
@@ -63,8 +69,8 @@ public class Controller {
             String name = JOptionPane.showInputDialog(null, "Name", "Twitch Follower", JOptionPane.NO_OPTION);
 
             if(name != null && name.length() >= 1){
-                StreamNode tempInfo = model.getStreamInfo(new StreamNode(name));
                 try{
+                    StreamNode tempInfo = model.getStreamInfo(new StreamNode(name));
                     model.addStream(tempInfo);
                     view.addStreamLabel(tempInfo);
                     view.getDisplayPanel().validate();
@@ -72,6 +78,8 @@ public class Controller {
                 }catch (DuplicateStreamException e1){
                     System.out.println(e1.getMessage());
                     JOptionPane.showMessageDialog(new JFrame(), e1.getMessage(), "Dupliacte Streams", JOptionPane.ERROR_MESSAGE);
+                }catch (InvalidObjectException e2){
+                    System.out.println(e2.getMessage());
                 }
             }
         }
