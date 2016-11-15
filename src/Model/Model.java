@@ -2,11 +2,8 @@ package Model;
 
 import Exceptions.DuplicateStreamException;
 import StreamList.*;
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import org.json.JSONException;
 import org.json.JSONObject;
-import sun.awt.datatransfer.DataTransferer;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
@@ -21,25 +18,47 @@ public class Model {
     private static final String CLIENT_ID = "iv92gs01m24niftpift7l6jsmvrfvpo";
     private static final String DEFAULT_LOGO_URL = "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png";
 
+    /**
+     * Constructor
+     */
     public Model(){
         streams = new StreamList();
         readStreams();
     }
 
+    /**
+     * Adds stream to StreamList object and to stream list saved locally
+     * @param node Stream that you wish to add
+     * @throws DuplicateStreamException if duplicate stream is found
+     */
     public void addStream(StreamNode node) throws DuplicateStreamException{
         streams.add(node);
         addStreamFile(node.getName());
     }
 
+    /**
+     * Removes stream from StreamList object and from stream list saved locally
+     * @param name Stream name that you wish to delete
+     */
     public void removeStream(String name){
         removeStreamFile(name);
         streams.remove(name);
     }
 
+    /**
+     * Gets StreamList object
+     * @return StreamList object
+     */
     public StreamList getStreams(){
         return streams;
     }
 
+    /**
+     * Uses Twitch API to get stream info
+     * @param node Stream to get stream info for
+     * @return Stream info as StreamNode object
+     * @throws InvalidObjectException thrown when stream does not exist in Twitch database
+     */
     public static StreamNode getStreamInfo(StreamNode node) throws InvalidObjectException{
         String name = node.getName();
         StreamNode streamInfo = new StreamNode(name);
@@ -83,6 +102,11 @@ public class Model {
 
     }
 
+    /**
+     * Opens stream in Livestreamer
+     * @param name Name of stream to open
+     * @throws InvalidPathException thrown if Livestreamer is not installed
+     */
     public static void openToLivestreamer(String name) throws InvalidPathException{
         String livestreamDir = "C:\\Program Files (x86)\\Livestreamer\\livestreamer.exe";
         if(new File(livestreamDir).exists()){
@@ -96,6 +120,10 @@ public class Model {
         }
     }
 
+    /**
+     * Opens stream on Twitch
+     * @param name Name of stream to open
+     */
     public static void openToTwitch(String name){
         if(Desktop.isDesktopSupported()){
             try{
@@ -106,6 +134,10 @@ public class Model {
         }
     }
 
+    /**
+     * Opens the stream's popout chat
+     * @param name Name of stream to open
+     */
     public static void openPopoutChat(String name){
         if(Desktop.isDesktopSupported()){
             try{
@@ -116,6 +148,10 @@ public class Model {
         }
     }
 
+    /**
+     * Removes stream from locally saved stream list
+     * @param name Name of stream to remove
+     */
     private void removeStreamFile(String name){
         File streamFile = new File(SAVE_DIR);
 
@@ -141,6 +177,10 @@ public class Model {
         }
     }
 
+    /**
+     * Adds stream to locally saved stream list
+     * @param name Name of stream to add
+     */
     private void addStreamFile(String name){
         File streamFile = new File(SAVE_DIR);
 
@@ -155,6 +195,9 @@ public class Model {
         }
     }
 
+    /**
+     * Reads all streams from locally saved stream list
+     */
     private void readStreams(){
         File streamFile = new File(SAVE_DIR);
 
@@ -182,6 +225,13 @@ public class Model {
 
     }
 
+    /**
+     * Gets JSON information from Twitch's API
+     * @param apiURL Type of twitch API to use
+     * @param name Name of stream to get info for
+     * @return Returns JSON information as String
+     * @throws IOException thrown when unable to get information
+     */
     private static String getJSONString(String apiURL, String name) throws IOException{
         URL url = new URL(apiURL + name);
         URLConnection connection = url.openConnection();

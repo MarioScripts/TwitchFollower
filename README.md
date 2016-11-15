@@ -8,9 +8,9 @@
 
 ###### TODO Later:
 
-- Java doc comment all methods
+- ~~Java doc comment all methods~~
 - Look into manipulating GUI components without freezing GUI (maybe keep track of all labels and only update text instead of redrawing all labels)
-- Tidy up code, fix indenting, spacing, naming, etc
+- ~~Tidy up code, fix indenting, spacing, naming, etc~~
 - Incorporate a settings gui and cfg file to store the settings. Settings could include:
 	- Enable/disable noitification
 	- Show only online channels

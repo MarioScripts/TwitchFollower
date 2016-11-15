@@ -1,8 +1,6 @@
 package View;
 import StreamList.*;
 import net.miginfocom.swing.MigLayout;
-import org.gpl.JSplitButton.JSplitButton;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -13,6 +11,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+/**
+ * Handles all GUI interactions and elements
+ */
 public class View extends JFrame{
 
     private JButton btnAdd, btnRemove;
@@ -20,8 +21,8 @@ public class View extends JFrame{
     private JScrollPane scrDisplay;
     private JLabel selected, header, lblSettings, lblDisplay;
     private JSeparator sepSettings, sepDisplay;
-    private JSplitButton sbtnOpen;
 
+    //Constants
     private static final Color TWITCH_PURPLE = new Color(100, 65, 164);
     private static final Color BORDER_COLOR = Color.white;
     private static final Color TEXT_COLOR = TWITCH_PURPLE;
@@ -31,6 +32,9 @@ public class View extends JFrame{
     private static final Color BACKGROUND_LABEL_COLOR = TWITCH_PURPLE;
     private static final Color FOREGROUND_LABEL_COLOR = Color.white;
 
+    /**
+     * Constructor, sets general GUI properties
+     */
     public View(){
         setLookAndFeel();
         setName("Twitch Follower");
@@ -44,6 +48,9 @@ public class View extends JFrame{
         initComponents();
     }
 
+    /**
+     * Initializes all GUI elements and sets their properties
+     */
     private void initComponents(){
         pnlDisplay = new JPanel();
         pnlDisplay.setLayout(new MigLayout("wrap 2, flowx"));
@@ -110,6 +117,9 @@ public class View extends JFrame{
 
     }
 
+    /**
+     * Sets look and feel of GUI
+     */
     private void setLookAndFeel(){
         try{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -120,36 +130,60 @@ public class View extends JFrame{
 
     // Listeners
 
+    /**
+     * Adds Actionlistener to the add button on GUI
+     * Used by Controller object
+     * @param listener Actionlistener to add
+     */
     public void btnAddListener(ActionListener listener){
         btnAdd.addActionListener(listener);
     }
 
+    /**
+     * Adds actionlistener to the remove button on GUI
+     * Used by Controller object
+     * @param listener Actionlistener to add
+     */
     public void btnRemoveListener(ActionListener listener){
         btnRemove.addActionListener(listener);
     }
 
 
     // Getters
+
+    /**
+     * Gets the currently selected JLabel on the GUI
+     * @return currently selected element as JLabel
+     */
     public JLabel getSelected(){
         return selected;
     }
 
+    /**
+     * Gets display panel
+     * @return display panel as JPanel
+     */
     public JPanel getDisplayPanel(){
         return pnlDisplay;
     }
 
-    public String getSbtnOpenText(){
-        return sbtnOpen.getText();
-    }
-
-
     // Setters
+
+    /**
+     * Sets the currently selected JLabel to given JLabel
+     * @param selected JLabel that is selected
+     */
     public void setSelected(JLabel selected){
         this.selected = selected;
     }
 
 
     //  Other
+
+    /**
+     * Adds info / properties / actionlisteners to stream Labels on GUI
+     * @param temp StreamNode to add to GUI
+     */
     public void addStreamLabel(StreamNode temp){
         String status = "<font color=#e62e00> Offline";
 
@@ -186,17 +220,29 @@ public class View extends JFrame{
 
     }
 
+    /**
+     * Sets the selected attributes for the given JLabel
+     * @param label JLabel to set attributes to
+     */
     public void setSelectProperties(JLabel label){
         label.setBackground(SELECT_BACKGROUND_COLOR);
         label.setForeground(SELECT_FOREGROUND_COLOR);
     }
 
+    /**
+     * Sets the deselected attributes for the given JLabel
+     * @param label JLabel to set attributes to
+     */
     public void setDeselectProperties(JLabel label){
         label.setBackground(BACKGROUND_LABEL_COLOR);
         label.setForeground(FOREGROUND_LABEL_COLOR);
     }
 
     // Listeners
+
+    /**
+     * Changes display panel size when resizing the GUI to match with overall GUI layout
+     */
     private class ResizeListener implements ComponentListener {
         @Override
         public void componentResized(ComponentEvent e) {
@@ -218,6 +264,9 @@ public class View extends JFrame{
         public void componentHidden(ComponentEvent e) {}
     }
 
+    /**
+     * Redirects to Twitch directory when header is clicked on
+     */
     private class HeaderListener implements MouseListener{
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -247,6 +296,10 @@ public class View extends JFrame{
         }
     }
 
+    /**
+     * Waits for clicks/hovers on JLabel to set select properties
+     * Also handles context menu clicks
+     */
     private class SelectListener implements MouseListener{
 
         @Override
@@ -293,6 +346,9 @@ public class View extends JFrame{
         }
     }
 
+    /**
+     * Waits for hovers on JLabel to set deselect properties
+     */
     private class DeselectListener implements MouseListener{
         @Override
         public void mouseClicked(MouseEvent e) {

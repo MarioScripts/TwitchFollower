@@ -6,12 +6,30 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.nio.file.InvalidPathException;
 
-//TODO: Add moreinfo tab that gives info on stream title, viewer #s, etc, uptime, etc
+/**
+ * Handles context menu of GUI elements
+ */
 public class PopupMenu extends JPopupMenu {
+    /**
+     * JMenu items
+     */
     JMenuItem openTwitch, openLivestreamer, moreInfo, popoutChat;
+
+    /**
+     * Selected GUI element
+     */
     JLabel selected;
+
+    /**
+     * View object
+     */
     View view;
 
+    /**
+     * Constructor
+     * Adds actionlisteners to PopupMenu
+     * @param view View object
+     */
     public PopupMenu(View view){
         this.view = view;
         selected = view.getSelected();
@@ -30,6 +48,9 @@ public class PopupMenu extends JPopupMenu {
         add(popoutChat);
     }
 
+    /**
+     * Opens Twitch with the currently selected stream
+     */
     private class OpenTwitchListener implements ActionListener {
         String name;
         public OpenTwitchListener(String name){
@@ -43,6 +64,9 @@ public class PopupMenu extends JPopupMenu {
         }
     }
 
+    /**
+     * Opens Livestreamer with the currently selected stream
+     */
     private class OpenLivestreamerListener implements ActionListener {
         String name;
         public OpenLivestreamerListener(String name){
@@ -61,6 +85,9 @@ public class PopupMenu extends JPopupMenu {
         }
     }
 
+    /**
+     * Opens popout chat with the currently selected stream
+     */
     private class OpenPopoutChatListener implements ActionListener {
         String name;
 

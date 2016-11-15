@@ -3,19 +3,47 @@ package Controller;
 import StreamList.*;
 import Model.*;
 import View.View;
-
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
 
+/**
+ * Update thread for all streams
+ */
 public class StreamUpdate implements Runnable{
 
+    /**
+     * Update thread
+     */
     public Thread update;
+
+    /**
+     * List of streams
+     */
     public StreamList streams;
+
+    /**
+     * Thread sleep time
+     */
     private int sleepTime;
+
+    /**
+     * View object
+     */
     private View view;
+
+    /**
+     * Model object
+     */
     private Model model;
 
+    /**
+     * Constructor, starts update thread
+     * @param sleepTime Thread sleep time
+     * @param streams List of streams
+     * @param view View object
+     * @param model Model object
+     */
     public StreamUpdate(int sleepTime, StreamList streams, View view, Model model){
         this.view = view;
         this.model = model;
@@ -25,6 +53,11 @@ public class StreamUpdate implements Runnable{
         update.start();
     }
 
+    /**
+     * Loops through all streams infinitely using sleepTime as a pause between updates.
+     * Handles updating stream info and updating GUI info.
+     * Also handles Desktop notifications
+     */
     @Override
     public void run() {
         // Loops Through and updates info
@@ -90,6 +123,9 @@ public class StreamUpdate implements Runnable{
         }
     }
 
+    /**
+     * Prints stream info. Used for debugging
+     */
     public void printInfo(){
         StreamIterator iter = streams.iterator();
         while(iter.hasNext()){
@@ -102,6 +138,9 @@ public class StreamUpdate implements Runnable{
 
     }
 
+    /**
+     * Sleeps for sleepTime duration
+     */
     private void sleep(){
         try {
             Thread.sleep(sleepTime);
@@ -110,6 +149,10 @@ public class StreamUpdate implements Runnable{
         }
     }
 
+    /**
+     * Sets the sleep time of the thread
+     * @param sleepTime sleep delay
+     */
     synchronized public void setSleepTime(int sleepTime){
         this.sleepTime = sleepTime;
     }

@@ -4,22 +4,30 @@ import Exceptions.DuplicateStreamException;
 import Model.Model;
 import StreamList.*;
 import View.*;
-import View.PopupMenu;
-import org.gpl.JSplitButton.action.SplitButtonActionListener;
-
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.io.InvalidObjectException;
-import java.nio.file.InvalidPathException;
 
+/**
+ * Control interaction between View and Model objects
+ */
 public class Controller {
+    /**
+     * Model object
+     */
     private Model model;
+
+    /**
+     * View object
+     */
     private View view;
 
+    /**
+     * Constructor
+     * @param m Model object
+     * @param v View object
+     */
     public Controller(Model m, View v){
         model = m;
         view = v;
@@ -30,6 +38,9 @@ public class Controller {
         new StreamUpdate(30000, model.getStreams(), view, model);
     }
 
+    /**
+     * Initializes all streams once on load
+     */
     private void initGUIStreams(){
         StreamIterator iter = model.getStreams().iterator();
 
@@ -56,6 +67,9 @@ public class Controller {
     }
 
 
+    /**
+     * Adds actionlisteners from View object
+     */
     private void addActionListeners(){
         view.btnAddListener(new AddListener());
         view.btnRemoveListener(new RemoveListener());
@@ -63,6 +77,9 @@ public class Controller {
 
     // Listeners
 
+    /**
+     * Gets name of stream to add from user and adds it to the list/GUI
+     */
     private class AddListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -85,6 +102,9 @@ public class Controller {
         }
     }
 
+    /**
+     * Removes selected stream from list/GUI
+     */
     private class RemoveListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
