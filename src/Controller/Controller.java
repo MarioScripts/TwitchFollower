@@ -55,7 +55,7 @@ public class Controller {
                 temp.setName(tempInfo.getName());
                 temp.setLogo(tempInfo.getLogo());
 
-                view.addStreamLabel(tempInfo);
+                view.addStreamLabel(temp);
             }catch (InvalidObjectException e){
                 System.out.println(e.getMessage());
             }

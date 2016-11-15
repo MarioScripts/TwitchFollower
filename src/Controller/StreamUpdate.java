@@ -74,7 +74,6 @@ public class StreamUpdate implements Runnable{
                     sleep();
                     System.out.print("Updating...");
 
-                    view.getDisplayPanel().removeAll();
 
                     StreamIterator iter = streams.iterator();
                     while(iter.hasNext()){

@@ -194,30 +194,44 @@ public class View extends JFrame{
         String labelText = "<html><body style='width: 100%'><b>" + temp.getName() +
                 "</b><i>" + status + "</i><br>" + temp.getGame() +"</html>";
 
-        JLabel tempLabel = new JLabel(labelText);
+        JLabel tempLabel;
 
-        Border paddingBorder = BorderFactory.createEmptyBorder(7, 7, 7, 0);
-        Border border = BorderFactory.createLineBorder(BORDER_COLOR, 1);
+        if(temp.getLabel() == null){
+            tempLabel = new JLabel(labelText);
 
-        tempLabel.setIcon(new ImageIcon(temp.getLogo()));
-        tempLabel.setOpaque(true);
-        tempLabel.setBorder(BorderFactory.createCompoundBorder(border, paddingBorder));
-        tempLabel.addMouseListener(new SelectListener());
-        tempLabel.setName(temp.getName());
+            Border paddingBorder = BorderFactory.createEmptyBorder(7, 7, 7, 0);
+            Border border = BorderFactory.createLineBorder(BORDER_COLOR, 1);
 
-        setDeselectProperties(tempLabel);
+            tempLabel.setIcon(new ImageIcon(temp.getLogo()));
+            tempLabel.setOpaque(true);
+            tempLabel.setBorder(BorderFactory.createCompoundBorder(border, paddingBorder));
+            tempLabel.addMouseListener(new SelectListener());
+            tempLabel.setName(temp.getName());
+            setDeselectProperties(tempLabel);
+        }else{
+            tempLabel = temp.getLabel();
+        }
+
 
         if(selected != null && tempLabel.getName().equals(selected.getName())){
             setSelectProperties(tempLabel);
             selected = tempLabel;
         }
 
-        if(temp.getStatus().equals("Online")){
-            pnlDisplay.add(tempLabel, "pushx, grow", 0);
+        if(temp.getLabel() == null){
+            if(temp.getStatus().equals("Online")){
+                pnlDisplay.add(tempLabel, "pushx, grow", 0);
+            }else{
+                pnlDisplay.add(tempLabel, "pushx, grow");
+            }
         }else{
-            pnlDisplay.add(tempLabel, "pushx, grow");
+            if(temp.getLabel().getText().contains("Offline") && temp.getStatus().equals("Online")){
+                tempLabel.setText(labelText);
+                pnlDisplay.add(tempLabel, "pushx, grow", 0);
+            }
         }
 
+        temp.setLabel(tempLabel);
     }
 
     /**
