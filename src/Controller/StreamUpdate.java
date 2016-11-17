@@ -1,8 +1,11 @@
 package Controller;
 
-import StreamList.*;
-import Model.*;
+import Model.Model;
+import StreamList.StreamIterator;
+import StreamList.StreamList;
+import StreamList.StreamNode;
 import View.View;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
@@ -74,7 +77,6 @@ public class StreamUpdate implements Runnable{
                     sleep();
                     System.out.print("Updating...");
 
-
                     StreamIterator iter = streams.iterator();
                     while(iter.hasNext()){
                         StreamNode temp = iter.next();
@@ -103,13 +105,14 @@ public class StreamUpdate implements Runnable{
                         }
 
 
-                        // Update list info
-                        temp.setName(tempInfo.getName());
-                        temp.setGame(tempInfo.getGame());
-                        temp.setStatus(tempInfo.getStatus());
+                        //Update list and GUI info if game or statuses differ from previous update
+                        if(!temp.getStatus().equals(tempInfo.getStatus()) || !temp.getGame().equals(tempInfo.getGame())){
+                            temp.setGame(tempInfo.getGame());
+                            temp.setStatus(tempInfo.getStatus());
+                            view.removeStreamLabel(temp.getName());
+                            view.addStreamLabel(temp);
+                        }
 
-                        // Update GUI info
-                        view.addStreamLabel(temp);
                     }
 
                     view.validate();

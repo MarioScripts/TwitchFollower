@@ -1,6 +1,7 @@
 package StreamList;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public class StreamIterator implements Iterator{
 

@@ -1,6 +1,8 @@
 package View;
-import StreamList.*;
+
+import StreamList.StreamNode;
 import net.miginfocom.swing.MigLayout;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -194,44 +196,38 @@ public class View extends JFrame{
         String labelText = "<html><body style='width: 100%'><b>" + temp.getName() +
                 "</b><i>" + status + "</i><br>" + temp.getGame() +"</html>";
 
-        JLabel tempLabel;
+        JLabel tempLabel = new JLabel(labelText);
 
-        if(temp.getLabel() == null){
-            tempLabel = new JLabel(labelText);
+        Border paddingBorder = BorderFactory.createEmptyBorder(7, 7, 7, 0);
+        Border border = BorderFactory.createLineBorder(BORDER_COLOR, 1);
 
-            Border paddingBorder = BorderFactory.createEmptyBorder(7, 7, 7, 0);
-            Border border = BorderFactory.createLineBorder(BORDER_COLOR, 1);
-
-            tempLabel.setIcon(new ImageIcon(temp.getLogo()));
-            tempLabel.setOpaque(true);
-            tempLabel.setBorder(BorderFactory.createCompoundBorder(border, paddingBorder));
-            tempLabel.addMouseListener(new SelectListener());
-            tempLabel.setName(temp.getName());
-            setDeselectProperties(tempLabel);
-        }else{
-            tempLabel = temp.getLabel();
-        }
-
+        tempLabel.setIcon(new ImageIcon(temp.getLogo()));
+        tempLabel.setOpaque(true);
+        tempLabel.setBorder(BorderFactory.createCompoundBorder(border, paddingBorder));
+        tempLabel.addMouseListener(new SelectListener());
+        tempLabel.setName(temp.getName());
+        setDeselectProperties(tempLabel);
 
         if(selected != null && tempLabel.getName().equals(selected.getName())){
             setSelectProperties(tempLabel);
             selected = tempLabel;
         }
 
-        if(temp.getLabel() == null){
-            if(temp.getStatus().equals("Online")){
-                pnlDisplay.add(tempLabel, "pushx, grow", 0);
-            }else{
-                pnlDisplay.add(tempLabel, "pushx, grow");
-            }
+        if(temp.getStatus().equals("Online")){
+            pnlDisplay.add(tempLabel, "pushx, grow", 0);
         }else{
-            if(temp.getLabel().getText().contains("Offline") && temp.getStatus().equals("Online")){
-                tempLabel.setText(labelText);
-                pnlDisplay.add(tempLabel, "pushx, grow", 0);
+            pnlDisplay.add(tempLabel, "pushx, grow");
+        }
+    }
+
+
+    public void removeStreamLabel(String name){
+        Component[] components = pnlDisplay.getComponents();
+        for(Component c : components){
+            if(c.getName() != null && c.getName().equals(name)){
+                pnlDisplay.remove(c);
             }
         }
-
-        temp.setLabel(tempLabel);
     }
 
     /**

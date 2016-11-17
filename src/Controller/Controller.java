@@ -2,8 +2,10 @@ package Controller;
 
 import Exceptions.DuplicateStreamException;
 import Model.Model;
-import StreamList.*;
-import View.*;
+import StreamList.StreamIterator;
+import StreamList.StreamNode;
+import View.View;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

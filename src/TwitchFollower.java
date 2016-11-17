@@ -1,6 +1,7 @@
 import Controller.Controller;
 import Model.Model;
 import View.View;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -15,6 +16,8 @@ public class TwitchFollower {
 
         View view = new View();
         Model model = new Model();
+
+
         Controller controller = new Controller(model, view);
     }
 }

@@ -1,7 +1,6 @@
 package StreamList;
 
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -13,7 +12,6 @@ public class StreamNode {
     private String game;
     private String status;
     private Image logo;
-    private JLabel label;
     private StreamNode next;
 
     /**
@@ -26,7 +24,6 @@ public class StreamNode {
         status = "Offline";
         logo = null;
         next = null;
-        label = null;
     }
 
     // Getters
@@ -60,14 +57,6 @@ public class StreamNode {
      * @return stream logo as Image
      */
     public Image getLogo() { return logo; }
-
-    /**
-     * Give the stream's GUI label
-     * @return stream label as JLabel
-     */
-    public JLabel getLabel(){
-        return label;
-    }
 
     /**
      * Gives the next node following current node
@@ -110,14 +99,6 @@ public class StreamNode {
      * @param logo Logo of stream
      */
     public void setLogo(Image logo) { this.logo = logo; }
-
-    /**
-     * Sets current node's label
-     * @param label Label of stream
-     */
-    public void setLabel(JLabel label){
-        this.label = label;
-    }
 
     /**
      * Sets the next node following the current node

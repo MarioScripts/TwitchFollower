@@ -1,13 +1,19 @@
 package Model;
 
 import Exceptions.DuplicateStreamException;
-import StreamList.*;
+import StreamList.StreamIterator;
+import StreamList.StreamList;
+import StreamList.StreamNode;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
-import java.net.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.InvalidPathException;
 
 public class Model {
@@ -65,6 +71,7 @@ public class Model {
         String info = "";
         URL logoURL = null;
 
+        //Get logo
         try{
             if(node.getLogo() == null){
                 info = getJSONString(CHANNEL_URL, name);
@@ -73,28 +80,37 @@ public class Model {
                 streamInfo.setLogo(ImageIO.read(logoURL).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
             }
 
+        }catch  (IOException e){
+            System.out.println(e.getMessage());
+        }catch (JSONException ex){
+
+            //If logo is null then set logo to default logo
+            if(logoURL == null){
+                try{
+                    logoURL = new URL(DEFAULT_LOGO_URL);
+                    streamInfo.setLogo(ImageIO.read(logoURL).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+                }catch (IOException e){
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+
+        //Get status/game
+        try{
             info = getJSONString(STREAM_URL, name);
             JSONObject stream = new JSONObject(info).getJSONObject("stream");
             streamInfo.setStatus("Online");
             streamInfo.setGame(stream.getString("game"));
+        }catch (IOException e){
+            System.out.println(e.getMessage());
+        }catch (JSONException ex){
 
-        }catch(IOException | JSONException e){
-            //Handle if stream does not exist
+            //Throw exception if stream doesn't exist, else set stream to offline
             if(info == ""){
                 throw new InvalidObjectException("Invalid stream");
             }else{
                 streamInfo.setStatus("Offline");
                 streamInfo.setGame("N/A");
-            }
-
-            // If channel doesn't have logo, use default twitch logo
-            if(logoURL == null){
-                try{
-                    logoURL = new URL(DEFAULT_LOGO_URL);
-                    streamInfo.setLogo(ImageIO.read(logoURL).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-                }catch (IOException e1){
-                    System.out.println(e1.getMessage());
-                }
             }
         }
 

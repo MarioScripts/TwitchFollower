@@ -1,6 +1,7 @@
 package StreamList;
 
 import Exceptions.DuplicateStreamException;
+
 import java.util.NoSuchElementException;
 
 
