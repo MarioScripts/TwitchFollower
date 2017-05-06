@@ -2,18 +2,19 @@
 
 ###### TODO Immediately:
 
-- ~~Add channel image fetch (just change getting streamInfo method and add corresponding StreamNode attributes)~~
-- ~~Maybe control duplicate entires? Just create basic contains() algorithm in StreamList that sees if current name is already in list~~
+- ~~Add channel image fetch~~
+- ~~Add duplicate entry control~~
 - ~~Add highilght color / fix inconsistent looking selection/deselection of labels~~
 
 ###### TODO Later:
 
 - ~~Java doc comment all methods~~
-- ~~Look into manipulating GUI components without freezing GUI (maybe keep track of all labels and only update text instead of redrawing all labels)~~
+- ~~Look into manipulating GUI components without freezing GUI~~
 - ~~Tidy up code, fix indenting, spacing, naming, etc~~
 - ~~Incorporate a settings gui and cfg file to store the settings. Other.Settings could include:~~
 	- ~~Enable/disable noitification~~
 	- ~~Show only online channels~~
+	- ~~Import followers from specified twitch user~~ **Only supports last 25 followers**
 	- Show channels playing any game  except a specific game
 	- Show channels playing a specific game
 	- Allow the user to choose their livestream.exe dir
