@@ -14,6 +14,5 @@
 	- ~~Import followers from specified twitch user~~ **Only supports last 25 followers**
 	- Show channels playing any game  except a specific game
 	- Show channels playing a specific game
-	- Allow the user to choose their livestream.exe dir
-	- Allow user to choose their cfg/names dir
+- Fix game name spacing for stream tiles in list
 
