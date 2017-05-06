@@ -11,9 +11,9 @@
 - ~~Java doc comment all methods~~
 - ~~Look into manipulating GUI components without freezing GUI (maybe keep track of all labels and only update text instead of redrawing all labels)~~
 - ~~Tidy up code, fix indenting, spacing, naming, etc~~
-- ~~Incorporate a settings gui and cfg file to store the settings. Other.Settings could include:
-	- ~~Enable/disable noitification
-	- ~~Show only online channels
+- ~~Incorporate a settings gui and cfg file to store the settings. Other.Settings could include:~~
+	- ~~Enable/disable noitification~~
+	- ~~Show only online channels~~
 	- Show channels playing any game  except a specific game
 	- Show channels playing a specific game
 	- Allow the user to choose their livestream.exe dir
