@@ -1,13 +1,10 @@
 # TwitchFollower
 
-###### TODO Immediately:
+###### TODO:
 
 - ~~Add channel image fetch~~
 - ~~Add duplicate entry control~~
 - ~~Add highilght color / fix inconsistent looking selection/deselection of labels~~
-
-###### TODO Later:
-
 - ~~Java doc comment all methods~~
 - ~~Look into manipulating GUI components without freezing GUI~~
 - ~~Tidy up code, fix indenting, spacing, naming, etc~~
