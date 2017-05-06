@@ -4,7 +4,7 @@ package Other;
  * Created by Matt on 2017-05-05.
  */
 public class Settings {
-    private static boolean gameNotify, statusNotify, showOffline;
+    private static boolean gameNotify = true, statusNotify = true, showOffline = true;
 
     //Getters
     public static boolean getGameNotify(){

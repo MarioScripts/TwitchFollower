@@ -159,9 +159,9 @@ public class Model {
             if(streamDir.exists() && settingsFile.exists()){
                 BufferedWriter writer = new BufferedWriter(new FileWriter(settingsFile));
                 String settings = "";
-                settings += "gameNotify=\r\n" + gameNotify;
-                settings += "statusNotify=\r\n" + statusNotify;
-                settings += "showOffline=\r\n" + showOffline;
+                settings += "gameNotify=" + gameNotify + "\r\n";
+                settings += "statusNotify=" + statusNotify + "\r\n";
+                settings += "showOffline=" + showOffline + "\r\n";
 
                 writer.write(settings);
                 writer.close();
@@ -183,25 +183,37 @@ public class Model {
 
     public static void readSettings(){
         File settingsFile = new File(SAVE_DIR + "\\settings.cfg");
+        File streamDir = new File(SAVE_DIR);
 
         try{
-            BufferedReader reader = new BufferedReader(new FileReader(settingsFile));
-            String line;
-            while((line = reader.readLine()) != null){
-                if(line.length() > 1){
-                    String setting;
-                    boolean state;
-                    setting = line.substring(line.indexOf('=')+1);
-                    state = Boolean.parseBoolean(setting);
-                    if(line.contains("gameNotify")){
-                        Settings.setGameNotify(state);
-                    }else if(line.contains("statusNotify")){
-                        Settings.setStatusNotify(state);
-                    }else if(line.contains("showOffline")){
-                        Settings.setShowOffline(state);
+            if(streamDir.exists() && settingsFile.exists()){
+                BufferedReader reader = new BufferedReader(new FileReader(settingsFile));
+                String line;
+                while((line = reader.readLine()) != null){
+                    if(line.length() > 1){
+                        String setting;
+                        boolean state;
+                        setting = line.substring(line.indexOf('=')+1);
+                        state = Boolean.parseBoolean(setting);
+                        if(line.contains("gameNotify")){
+                            Settings.setGameNotify(state);
+                        }else if(line.contains("statusNotify")){
+                            Settings.setStatusNotify(state);
+                        }else if(line.contains("showOffline")){
+                            Settings.setShowOffline(state);
+                        }
                     }
                 }
+            }else{
+                if(!streamDir.exists()){
+                    streamDir.mkdir();
+                }
+
+                if(!settingsFile.exists()){
+                    settingsFile.createNewFile();
+                }
             }
+
         }catch(FileNotFoundException e){
             e.printStackTrace();
         }catch(IOException ex){
