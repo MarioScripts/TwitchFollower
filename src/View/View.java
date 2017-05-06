@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
  */
 public class View extends JFrame{
 
-    private JButton btnAdd, btnRemove;
+    private JButton btnAdd, btnRemove, btnSettings;
     private JPanel pnlDisplay, pnlSettings;
     private JScrollPane scrDisplay;
     private JLabel selected, header, lblSettings, lblDisplay;
@@ -73,14 +73,21 @@ public class View extends JFrame{
 
         btnAdd = new JButton("+");
         btnAdd.setFocusable(false);
+        btnAdd.setToolTipText("Add a stream to your list");
 
         btnRemove = new JButton("-");
         btnRemove.setFocusable(false);
+        btnRemove.setToolTipText("Remove a stream from your list");
+
+        btnSettings = new JButton("...");
+        btnSettings.setFocusable(false);
+        btnSettings.setToolTipText("Go to settings");
 
         try{
             BufferedImage img = ImageIO.read(getClass().getClassLoader().getResource("resources/Header3.png"));
             ImageIcon icon = new ImageIcon(img);
             header = new JLabel("", icon, JLabel.LEFT);
+            header.setToolTipText("Go to Twitch");
 
             img = ImageIO.read(getClass().getClassLoader().getResource("resources/Twitch.png"));
             setIconImage(img);
@@ -103,6 +110,7 @@ public class View extends JFrame{
 
         pnlSettings.add(btnAdd, "west, gapy 5");
         pnlSettings.add(btnRemove, "west, gapx 5, gapy 5, pushx");
+        pnlSettings.add(btnSettings, "west, gapy 5, gapx 5, pushx");
 
         add(header, "wrap, align center");
         add(lblDisplay, "al left, wrap, gapx 10, gapy 10");
@@ -150,6 +158,7 @@ public class View extends JFrame{
         btnRemove.addActionListener(listener);
     }
 
+    public void btnSettingsListener(ActionListener listener){ btnSettings.addActionListener(listener); }
 
     // Getters
 
@@ -193,7 +202,7 @@ public class View extends JFrame{
             status = "<font color=#66ff66> Online";
         }
 
-        String labelText = "<html><body style='width: 100%'><b>" + temp.getName() +
+        String labelText = "<html><body style='width: 100%'><b>" + temp.getDisplayName() +
                 "</b><i>" + status + "</i><br>" + temp.getGame() +"</html>";
 
         JLabel tempLabel = new JLabel(labelText);

@@ -2,9 +2,10 @@ package Controller;
 
 import Exceptions.DuplicateStreamException;
 import Model.Model;
+import Other.Settings;
 import StreamList.StreamIterator;
 import StreamList.StreamNode;
-import View.View;
+import View.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -25,6 +26,8 @@ public class Controller {
      */
     private View view;
 
+    private Updater streamUpdateThread;
+
     /**
      * Constructor
      * @param m Model object
@@ -33,39 +36,13 @@ public class Controller {
     public Controller(Model m, View v){
         model = m;
         view = v;
+        model.readSettings();
         initGUIStreams();
-        addActionListeners();
-
         //Start stream info update thread
-        new StreamUpdate(30000, model.getStreams(), view, model);
-    }
+        //streamUpdateThread = new StreamUpdate(3000, model.getStreams(), view, model);
+        streamUpdateThread = new Updater(model, view, model.getStreams(), 30000);
 
-    /**
-     * Initializes all streams once on load
-     */
-    private void initGUIStreams(){
-        StreamIterator iter = model.getStreams().iterator();
-
-        while(iter.hasNext()){
-            StreamNode temp = iter.next();
-
-            try{
-                StreamNode tempInfo = model.getStreamInfo(temp);
-
-                temp.setGame(tempInfo.getGame());
-                temp.setStatus(tempInfo.getStatus());
-                temp.setName(tempInfo.getName());
-                temp.setLogo(tempInfo.getLogo());
-
-                view.addStreamLabel(temp);
-            }catch (InvalidObjectException e){
-                System.out.println(e.getMessage());
-            }
-        }
-
-        view.validate();
-        view.repaint();
-        view.setVisible(true);
+        addActionListeners();
     }
 
 
@@ -75,6 +52,55 @@ public class Controller {
     private void addActionListeners(){
         view.btnAddListener(new AddListener());
         view.btnRemoveListener(new RemoveListener());
+        view.btnSettingsListener(new SettingsListener(this));
+    }
+
+    public void refreshGUIStreams(){
+        StreamIterator iter = model.getStreams().iterator();
+        view.getDisplayPanel().removeAll();
+
+        while(iter.hasNext()){
+            StreamNode temp = iter.next();
+
+            if((Settings.getShowOffline() && temp.getStatus().equals("Offline")) || temp.getStatus().equals("Online")){
+                view.addStreamLabel(temp);
+            }
+        }
+
+        view.validate();
+        view.repaint();
+    }
+
+    /**
+     * Initializes all streams once on load
+     */
+    public void initGUIStreams(){
+        StreamIterator iter = model.getStreams().iterator();
+        view.getDisplayPanel().removeAll();
+
+        while(iter.hasNext()){
+            StreamNode temp = iter.next();
+
+            try{
+                StreamNode tempInfo = model.getStreamInfo(temp);
+                temp.setGame(tempInfo.getGame());
+                temp.setStatus(tempInfo.getStatus());
+                temp.setName(tempInfo.getName());
+                temp.setDisplayName(tempInfo.getDisplayName());
+                temp.setLogo(tempInfo.getLogo());
+
+                if((Settings.getShowOffline() && tempInfo.getStatus().equals("Offline")) || tempInfo.getStatus().equals("Online")){
+                    view.addStreamLabel(temp);
+                }
+
+            }catch (InvalidObjectException e){
+                System.out.println(e.getMessage());
+            }
+        }
+
+        view.validate();
+        view.repaint();
+        view.setVisible(true);
     }
 
     // Listeners
@@ -122,6 +148,19 @@ public class Controller {
                 pnlDisplay.validate();
                 pnlDisplay.repaint();
             }
+        }
+    }
+
+    private class SettingsListener implements ActionListener{
+
+        private Controller controller;
+        public SettingsListener(Controller controller){
+            this.controller = controller;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            new SettingsView(streamUpdateThread, model, controller);
         }
     }
 

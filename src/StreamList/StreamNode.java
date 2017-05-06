@@ -11,6 +11,7 @@ public class StreamNode {
     private String name;
     private String game;
     private String status;
+    private String displayName;
     private Image logo;
     private StreamNode next;
 
@@ -24,9 +25,14 @@ public class StreamNode {
         status = "Offline";
         logo = null;
         next = null;
+        displayName = name;
     }
 
     // Getters
+
+    public String getDisplayName(){
+        return displayName;
+    }
 
     /**
      * Gives the stream name
@@ -69,6 +75,10 @@ public class StreamNode {
 
 
     // Setters
+
+    public void setDisplayName(String displayName){
+        this.displayName = displayName;
+    }
 
     /**
      * Sets the current node's stream name

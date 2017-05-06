@@ -1,11 +1,14 @@
 package Model;
 
 import Exceptions.DuplicateStreamException;
+import Other.Settings;
 import StreamList.StreamIterator;
 import StreamList.StreamList;
 import StreamList.StreamNode;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.json.JSONString;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -18,9 +21,10 @@ import java.nio.file.InvalidPathException;
 
 public class Model {
     private StreamList streams;
-    private static final String SAVE_DIR = "C:\\Users\\" + System.getProperty("user.name") + "\\names.txt";
+    private static final String SAVE_DIR = "C:\\Users\\" + System.getProperty("user.name") + "\\Twitchfollower";
     private static final String STREAM_URL = "https://api.twitch.tv/kraken/streams/";
     private static final String CHANNEL_URL = "https://api.twitch.tv/kraken/channels/";
+    private static final String USER_URL = "https://api.twitch.tv/kraken/users/";
     private static final String CLIENT_ID = "iv92gs01m24niftpift7l6jsmvrfvpo";
     private static final String DEFAULT_LOGO_URL = "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png";
 
@@ -66,18 +70,23 @@ public class Model {
      * @throws InvalidObjectException thrown when stream does not exist in Twitch database
      */
     public static StreamNode getStreamInfo(StreamNode node) throws InvalidObjectException{
+        //TODO: Clean this up
         String name = node.getName();
         StreamNode streamInfo = new StreamNode(name);
-        String info = "";
+        String info = "", displayName = name;
+        JSONObject channel = null, stream = null;
         URL logoURL = null;
 
         //Get logo
         try{
             if(node.getLogo() == null){
                 info = getJSONString(CHANNEL_URL, name);
-                JSONObject channel = new JSONObject(info);
+                channel = new JSONObject(info);
                 logoURL = new URL(channel.getString("logo"));
+                displayName = channel.getString("display_name");
                 streamInfo.setLogo(ImageIO.read(logoURL).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+            }else{
+                streamInfo.setLogo(node.getLogo());
             }
 
         }catch  (IOException e){
@@ -98,9 +107,10 @@ public class Model {
         //Get status/game
         try{
             info = getJSONString(STREAM_URL, name);
-            JSONObject stream = new JSONObject(info).getJSONObject("stream");
+            stream = new JSONObject(info).getJSONObject("stream");
             streamInfo.setStatus("Online");
             streamInfo.setGame(stream.getString("game"));
+            streamInfo.setDisplayName(displayName);
         }catch (IOException e){
             System.out.println(e.getMessage());
         }catch (JSONException ex){
@@ -111,11 +121,92 @@ public class Model {
             }else{
                 streamInfo.setStatus("Offline");
                 streamInfo.setGame("N/A");
+                streamInfo.setDisplayName(displayName);
             }
         }
 
         return streamInfo;
 
+    }
+
+    public void importUserFollowers(String user) {
+        try{
+            JSONArray follows = new JSONObject(getJSONString(USER_URL,user + "/follows/channels")).getJSONArray("follows");
+            for(Object follow : follows){
+
+                JSONObject ok = (JSONObject) follow;
+                ok = ok.getJSONObject("channel");
+                String name = ok.getString("name");
+                StreamNode node = new StreamNode(name);
+                try{
+                    addStream(node);
+                }catch (DuplicateStreamException ex){
+                    System.out.println("Stream already in list, skipping..");
+                }
+
+            }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void editSettings(boolean gameNotify, boolean statusNotify, boolean showOffline){
+        File settingsFile = new File(SAVE_DIR + "\\settings.cfg");
+        File streamDir = new File(SAVE_DIR);
+
+        try{
+            if(streamDir.exists() && settingsFile.exists()){
+                BufferedWriter writer = new BufferedWriter(new FileWriter(settingsFile));
+                String settings = "";
+                settings += "gameNotify=\r\n" + gameNotify;
+                settings += "statusNotify=\r\n" + statusNotify;
+                settings += "showOffline=\r\n" + showOffline;
+
+                writer.write(settings);
+                writer.close();
+            }else{
+                if(!streamDir.exists()){
+                    streamDir.mkdir();
+                }
+
+                if(!settingsFile.exists()){
+                    settingsFile.createNewFile();
+                }
+            }
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }catch(IOException ex){
+            ex.printStackTrace();
+        }
+    }
+
+    public static void readSettings(){
+        File settingsFile = new File(SAVE_DIR + "\\settings.cfg");
+
+        try{
+            BufferedReader reader = new BufferedReader(new FileReader(settingsFile));
+            String line;
+            while((line = reader.readLine()) != null){
+                if(line.length() > 1){
+                    String setting;
+                    boolean state;
+                    setting = line.substring(line.indexOf('=')+1);
+                    state = Boolean.parseBoolean(setting);
+                    if(line.contains("gameNotify")){
+                        Settings.setGameNotify(state);
+                    }else if(line.contains("statusNotify")){
+                        Settings.setStatusNotify(state);
+                    }else if(line.contains("showOffline")){
+                        Settings.setShowOffline(state);
+                    }
+                }
+            }
+        }catch(FileNotFoundException e){
+            e.printStackTrace();
+        }catch(IOException ex){
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -169,7 +260,7 @@ public class Model {
      * @param name Name of stream to remove
      */
     private void removeStreamFile(String name){
-        File streamFile = new File(SAVE_DIR);
+        File streamFile = new File(SAVE_DIR + "\\names.txt");
 
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(streamFile));
@@ -198,7 +289,7 @@ public class Model {
      * @param name Name of stream to add
      */
     private void addStreamFile(String name){
-        File streamFile = new File(SAVE_DIR);
+        File streamFile = new File(SAVE_DIR + "\\names.txt");
 
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(streamFile, true));
@@ -215,24 +306,34 @@ public class Model {
      * Reads all streams from locally saved stream list
      */
     private void readStreams(){
-        File streamFile = new File(SAVE_DIR);
+        File streamDir = new File(SAVE_DIR);
+        File streamFile = new File(SAVE_DIR + "\\names.txt");
 
         try{
 
-            if(streamFile.exists()){
+            if(streamDir.exists() && streamFile.exists()){
                 BufferedReader reader = new BufferedReader(new FileReader(streamFile));
 
                 String line;
                 while((line = reader.readLine()) != null){
-                    try{
-                        streams.add(new StreamNode(line));
-                    }catch (DuplicateStreamException e){
-                        System.out.println(e.getMessage());
+                    if(line.length() > 1){
+                        try{
+                            streams.add(new StreamNode(line));
+                        }catch (DuplicateStreamException e){
+                            System.out.println(e.getMessage());
+                        }
                     }
+
+                }
+            }else{
+                if(!streamDir.exists()){
+                    streamDir.mkdir();
                 }
 
-            }else{
-                streamFile.createNewFile();
+                if(!streamFile.exists()){
+                    streamFile.createNewFile();
+                }
+
             }
 
         }catch(IOException e){
