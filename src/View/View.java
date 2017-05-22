@@ -121,7 +121,6 @@ public class View extends JFrame{
         add(pnlSettings, "grow, pushx");
 
         MouseListener deselectListener = new DeselectListener();
-        addComponentListener(new ResizeListener());
         addMouseListener(deselectListener);
         pnlDisplay.addMouseListener(deselectListener);
 
@@ -160,6 +159,8 @@ public class View extends JFrame{
 
     public void btnSettingsListener(ActionListener listener){ btnSettings.addActionListener(listener); }
 
+    public void pnlResizeListener(ComponentListener listener){ addComponentListener(listener); }
+
     // Getters
 
     /**
@@ -197,13 +198,24 @@ public class View extends JFrame{
      */
     public void addStreamLabel(StreamNode temp){
         String status = "<font color=#e62e00> Offline";
+        String game = temp.getGame();
+        double factor = ((getWidth()/2)/6.5) - 3;
+
+        if(temp.getGame().length() > factor){
+            game = "";
+            for(int i = 0; i < (int)factor - 1; i++){
+                game += temp.getGame().charAt(i);
+            }
+            game = game.trim();
+            game += "...";
+        }
 
         if(temp.getStatus().equals("Online")){
             status = "<font color=#66ff66> Online";
         }
 
-        String labelText = "<html><body style='width: 100%'><b>" + temp.getDisplayName() +
-                "</b><i>" + status + "</i><br>" + temp.getGame() +"</html>";
+        String labelText = "<html><body style='width:100%;'><b>" + temp.getDisplayName() +
+                "</b><i>" + status + "</i><br>" + game +"</body></html>";
 
         JLabel tempLabel = new JLabel(labelText);
 
@@ -223,9 +235,9 @@ public class View extends JFrame{
         }
 
         if(temp.getStatus().equals("Online")){
-            pnlDisplay.add(tempLabel, "pushx, grow", 0);
+            pnlDisplay.add(tempLabel, "growx, sg, pushx", 0);
         }else{
-            pnlDisplay.add(tempLabel, "pushx, grow");
+            pnlDisplay.add(tempLabel, "growx, sg, pushx");
         }
     }
 
@@ -258,30 +270,6 @@ public class View extends JFrame{
     }
 
     // Listeners
-
-    /**
-     * Changes display panel size when resizing the GUI to match with overall GUI layout
-     */
-    private class ResizeListener implements ComponentListener {
-        @Override
-        public void componentResized(ComponentEvent e) {
-            JPanel pnlDisplay = getDisplayPanel();
-            pnlDisplay.setSize(new Dimension(getWidth(), getHeight()-250));
-            pnlDisplay.setMaximumSize(new Dimension(getWidth(), getHeight()-250));
-
-            validate();
-            repaint();
-        }
-
-        @Override
-        public void componentMoved(ComponentEvent e) {}
-
-        @Override
-        public void componentShown(ComponentEvent e) {}
-
-        @Override
-        public void componentHidden(ComponentEvent e) {}
-    }
 
     /**
      * Redirects to Twitch directory when header is clicked on

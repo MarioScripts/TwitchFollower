@@ -8,8 +8,11 @@ import StreamList.StreamNode;
 import View.*;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.InvalidObjectException;
 
 /**
@@ -53,6 +56,7 @@ public class Controller {
         view.btnAddListener(new AddListener());
         view.btnRemoveListener(new RemoveListener());
         view.btnSettingsListener(new SettingsListener(this));
+        view.pnlResizeListener(new ResizeListener());
     }
 
     public void refreshGUIStreams(){
@@ -149,6 +153,31 @@ public class Controller {
                 pnlDisplay.repaint();
             }
         }
+    }
+
+    /**
+     * Changes display panel size when resizing the GUI to match with overall GUI layout
+     */
+    private class ResizeListener implements ComponentListener {
+        @Override
+        public void componentResized(ComponentEvent e) {
+            JPanel pnlDisplay = view.getDisplayPanel();
+            pnlDisplay.setSize(new Dimension(view.getWidth(), view.getHeight()-250));
+            pnlDisplay.setMaximumSize(new Dimension(view.getWidth(), view.getHeight()-250));
+            refreshGUIStreams();
+
+            view.validate();
+            view.repaint();
+        }
+
+        @Override
+        public void componentMoved(ComponentEvent e) {}
+
+        @Override
+        public void componentShown(ComponentEvent e) {}
+
+        @Override
+        public void componentHidden(ComponentEvent e) {}
     }
 
     private class SettingsListener implements ActionListener{

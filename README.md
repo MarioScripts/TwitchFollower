@@ -14,5 +14,5 @@
 	- ~~Import followers from specified twitch user~~ **Only supports last 25 followers**
 	- Show channels playing any game  except a specific game
 	- Show channels playing a specific game
-- Fix game name spacing for stream tiles in list
-
+- ~~Fix game name spacing for stream tiles in list~~
+- Look into redrawing entire GUI on resize to enable dynamic column wrapping
