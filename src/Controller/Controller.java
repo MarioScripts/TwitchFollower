@@ -6,6 +6,7 @@ import Other.Settings;
 import StreamList.StreamIterator;
 import StreamList.StreamNode;
 import View.*;
+import jdk.nashorn.internal.scripts.JO;
 
 import javax.swing.*;
 import java.awt.*;
@@ -99,6 +100,8 @@ public class Controller {
 
             }catch (InvalidObjectException e){
                 System.out.println(e.getMessage());
+            }catch (NullPointerException e){
+                System.out.println("Image issue");
             }
         }
 
@@ -128,7 +131,7 @@ public class Controller {
                     System.out.println(e1.getMessage());
                     JOptionPane.showMessageDialog(new JFrame(), e1.getMessage(), "Dupliacte Streams", JOptionPane.ERROR_MESSAGE);
                 }catch (InvalidObjectException e2){
-                    System.out.println(e2.getMessage());
+                    JOptionPane.showMessageDialog(null, "The stream \"" + name + "\" does not exist.", "Invalid Stream", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -168,6 +171,7 @@ public class Controller {
 
             view.validate();
             view.repaint();
+
         }
 
         @Override

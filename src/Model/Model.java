@@ -90,14 +90,13 @@ public class Model {
             }
 
         }catch  (IOException e){
-            System.out.println(e.getMessage());
+            throw new InvalidObjectException("Invalid stream");
         }catch (JSONException ex){
 
             //If logo is null then set logo to default logo
             if(logoURL == null){
                 try{
-                    logoURL = new URL(DEFAULT_LOGO_URL);
-                    streamInfo.setLogo(ImageIO.read(logoURL).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+                    streamInfo.setLogo(ImageIO.read(Model.class.getClass().getResourceAsStream("/resources/default.png")).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
                 }catch (IOException e){
                     System.out.println(e.getMessage());
                 }
@@ -111,7 +110,9 @@ public class Model {
             streamInfo.setStatus("Online");
             streamInfo.setGame(stream.getString("game"));
             streamInfo.setDisplayName(displayName);
+            System.out.println(info);
         }catch (IOException e){
+            System.out.println("HELLo");
             System.out.println(e.getMessage());
         }catch (JSONException ex){
 
