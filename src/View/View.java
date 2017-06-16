@@ -6,12 +6,15 @@ import net.miginfocom.swing.MigLayout;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.DocumentListener;
+import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 
 /**
  * Handles all GUI interactions and elements
@@ -19,10 +22,15 @@ import java.net.URISyntaxException;
 public class View extends JFrame{
 
     private JButton btnAdd, btnRemove, btnSettings;
-    private JPanel pnlDisplay, pnlSettings;
+    private JLabel lblAdd, lblRemove, lblSetting, lblSearch;
+    public JTextField txtSearch;
+    public JPanel pnlDisplay, pnlSettings, selected, pnlSearch;
     private JScrollPane scrDisplay;
-    private JLabel selected, header, lblSettings, lblDisplay;
+    private JLabel header, lblSettings, lblDisplay;
     private JSeparator sepSettings, sepDisplay;
+    private List topGames;
+    private JList lstGames;
+    private JScrollPane scrlGames;
 
     //Constants
     private static final Color TWITCH_PURPLE = new Color(100, 65, 164);
@@ -33,6 +41,7 @@ public class View extends JFrame{
     private static final Color BACKGROUND_COLOR = Color.white;
     private static final Color BACKGROUND_LABEL_COLOR = TWITCH_PURPLE;
     private static final Color FOREGROUND_LABEL_COLOR = Color.white;
+    private static final Color HOVER_COLOR = new Color(0xC3A9FF);
 
     /**
      * Constructor, sets general GUI properties
@@ -42,12 +51,13 @@ public class View extends JFrame{
         setName("Twitch Follower");
         setTitle("Twitch Follower");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(600, 300));
-        setSize(new Dimension(600, 600));
+        setMinimumSize(new Dimension(400, 300));
+        setSize(new Dimension(400, 500));
         getContentPane().setBackground(BACKGROUND_COLOR);
-        setLayout(new MigLayout());
+        setLayout(new MigLayout("insets 0, gap 0 0"));
 
         initComponents();
+        // setVisible(true);
     }
 
     /**
@@ -55,14 +65,18 @@ public class View extends JFrame{
      */
     private void initComponents(){
         pnlDisplay = new JPanel();
-        pnlDisplay.setLayout(new MigLayout("wrap 2, flowx"));
-        pnlDisplay.setMaximumSize(new Dimension(getWidth(), getHeight()-250));
+        pnlDisplay.setLayout(new MigLayout("wrap 1, flowx, insets 10 10"));
+        // pnlDisplay.setMaximumSize(new Dimension(getWidth(), getHeight()-100));
         pnlDisplay.setAutoscrolls(true);
         pnlDisplay.setBackground(BACKGROUND_COLOR);
 
         pnlSettings = new JPanel();
-        pnlSettings.setLayout(new MigLayout());
+        pnlSettings.setLayout(new MigLayout("insets 0 0 0 10, fill"));
         pnlSettings.setBackground(BACKGROUND_COLOR);
+
+        pnlSearch = new JPanel();
+        pnlSearch.setLayout(new MigLayout("insets 0 0 0 0, wrap 2, fill", "[][grow]"));
+        pnlSearch.setBackground(BACKGROUND_COLOR);
 
         scrDisplay = new JScrollPane(pnlDisplay);
         scrDisplay.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -83,6 +97,48 @@ public class View extends JFrame{
         btnSettings.setFocusable(false);
         btnSettings.setToolTipText("Go to settings");
 
+        lblAdd = new JLabel("<html><b>+</font></html>");
+        lblAdd.setFont (lblAdd.getFont ().deriveFont (17f));
+        lblAdd.setBackground(BACKGROUND_COLOR);
+        lblAdd.setForeground(BACKGROUND_COLOR);
+        lblAdd.setToolTipText("Add a stream to your list");
+        lblAdd.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        lblRemove = new JLabel("<html><b>-</font></html>");
+        lblRemove.setFont (lblRemove.getFont ().deriveFont (17f));
+        lblRemove.setBackground(BACKGROUND_COLOR);
+        lblRemove.setForeground(BACKGROUND_COLOR);
+        lblRemove.setToolTipText("Remove a stream from your list");
+        lblRemove.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        lblSetting = new JLabel("<html><b>...</font></html>");
+        lblSetting.setFont(lblSetting.getFont ().deriveFont (17f));
+        lblSetting.setBackground(BACKGROUND_COLOR);
+        lblSetting.setForeground(BACKGROUND_COLOR);
+        lblSetting.setToolTipText("Go to settings");
+        lblSetting.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        lblDisplay = new JLabel("");
+        lblDisplay.setForeground(BACKGROUND_LABEL_COLOR);
+
+        lblSearch = new JLabel("");
+        lblSearch.setBackground(BACKGROUND_COLOR);
+        lblSearch.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        txtSearch = new JTextField();
+        txtSearch.setBackground(BACKGROUND_COLOR);
+        txtSearch.setBorder(BorderFactory.createMatteBorder(0, 3, 1, 0, TWITCH_PURPLE));
+        txtSearch.setMargin(new Insets(0, 100, 0, 0));
+
+        lstGames = new JList();
+        lstGames.setSelectionBackground(TWITCH_PURPLE);
+        lstGames.setSelectionForeground(BACKGROUND_COLOR);
+        lstGames.setFocusable(false);
+
+        scrlGames = new JScrollPane();
+        scrlGames.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, TWITCH_PURPLE));
+        scrlGames.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+
         try{
             BufferedImage img = ImageIO.read(getClass().getClassLoader().getResource("resources/Header3.png"));
             ImageIcon icon = new ImageIcon(img);
@@ -92,38 +148,48 @@ public class View extends JFrame{
             img = ImageIO.read(getClass().getClassLoader().getResource("resources/Twitch.png"));
             setIconImage(img);
             header.addMouseListener(new HeaderListener());
+
+            ImageIcon imgicon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/loading.gif"));
+            lblDisplay.setIcon(imgicon);
+            imgicon.setImageObserver(lblDisplay);
+
+            imgicon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/search.png"));
+            lblSearch.setIcon(imgicon);
         }catch (IOException e){
             System.out.println("Error reading GUI graphics");
         }
-
+//
         sepSettings = new JSeparator(SwingConstants.HORIZONTAL);
-        sepSettings.setBackground(TWITCH_PURPLE);
+        sepSettings.setForeground(BACKGROUND_COLOR);
 
         sepDisplay = new JSeparator(SwingConstants.HORIZONTAL);
-        sepDisplay.setBackground(TWITCH_PURPLE);
+        //sepDisplay.setBackground(TWITCH_PURPLE);
+        sepDisplay.setForeground(TWITCH_PURPLE);
 
-        lblSettings = new JLabel("<html><b>Settings");
-        lblSettings.setForeground(BACKGROUND_LABEL_COLOR);
+//        lblSettings = new JLabel("<html><b>Settings");
+//        lblSettings.setForeground(BACKGROUND_LABEL_COLOR);
 
-        lblDisplay = new JLabel("<html><b>Streams");
-        lblDisplay.setForeground(BACKGROUND_LABEL_COLOR);
+        pnlSettings.add(lblAdd, "gapx 15");
+        pnlSettings.add(lblRemove, "gapx 15, gapy 5");
+        pnlSettings.add(lblDisplay, "gapx 30, pushx, alignx 40%");
+        pnlSettings.add(lblSetting, "gapright 15, gapbottom 5");
+        pnlSettings.setBackground(TWITCH_PURPLE);
 
-        pnlSettings.add(btnAdd, "west, gapy 5");
-        pnlSettings.add(btnRemove, "west, gapx 5, gapy 5, pushx");
-        pnlSettings.add(btnSettings, "west, gapy 5, gapx 5, pushx");
+        pnlSearch.add(lblSearch, "aligny 100%, pushy");
 
         add(header, "wrap, align center");
-        add(lblDisplay, "al left, wrap, gapx 10, gapy 10");
-        add(sepDisplay, "w 250, wrap");
+//        add(lblSearch, "");
+//        add(lblDisplay, "al left, wrap");
+        add(pnlSearch, "wrap, gapbottom 2, gapleft 10, gapright 10, gaptop 5, growx, pushx");
+        add(sepDisplay, "gapy 0, pushx, growx, wrap, gapright 10, gapleft 10");
         add(scrDisplay, "pushx, pushy, grow, wrap");
-        add(lblSettings, "al left, wrap, gapx 10");
-        add(sepSettings, "w 250, wrap");
-        add(pnlSettings, "grow, pushx");
+//        add(lblSettings, "al left, wrap, gapx 10");
+        add(sepSettings, "h 1, growx, pushx, wrap");
+        add(pnlSettings, "growx, pushx, h 3");
 
         MouseListener deselectListener = new DeselectListener();
         addMouseListener(deselectListener);
         pnlDisplay.addMouseListener(deselectListener);
-
     }
 
     /**
@@ -132,7 +198,7 @@ public class View extends JFrame{
     private void setLookAndFeel(){
         try{
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }catch(ClassNotFoundException|InstantiationException|IllegalAccessException|UnsupportedLookAndFeelException e){
+        }catch(Exception e){
             System.out.println(e.getMessage());
         }
     }
@@ -144,8 +210,8 @@ public class View extends JFrame{
      * Used by Controller object
      * @param listener Actionlistener to add
      */
-    public void btnAddListener(ActionListener listener){
-        btnAdd.addActionListener(listener);
+    public void lblAddListener(MouseListener listener){
+        lblAdd.addMouseListener(listener);
     }
 
     /**
@@ -153,13 +219,25 @@ public class View extends JFrame{
      * Used by Controller object
      * @param listener Actionlistener to add
      */
-    public void btnRemoveListener(ActionListener listener){
-        btnRemove.addActionListener(listener);
+    public void lblRemoveListener(MouseListener listener){
+        lblRemove.addMouseListener(listener);
     }
 
-    public void btnSettingsListener(ActionListener listener){ btnSettings.addActionListener(listener); }
+    public void lblSettingsListener(MouseListener listener){ lblSetting.addMouseListener(listener); }
 
     public void pnlResizeListener(ComponentListener listener){ addComponentListener(listener); }
+
+    public void lblSearchListener(MouseListener listener){
+        lblSearch.addMouseListener(listener);
+    }
+
+    public void lstSearchGamesListener(MouseListener listener){
+        lstGames.addMouseListener(listener);
+    }
+
+    public void txtSearchListener(DocumentListener listener){
+        txtSearch.getDocument().addDocumentListener(listener);
+    }
 
     // Getters
 
@@ -167,7 +245,7 @@ public class View extends JFrame{
      * Gets the currently selected JLabel on the GUI
      * @return currently selected element as JLabel
      */
-    public JLabel getSelected(){
+    public JPanel getSelected(){
         return selected;
     }
 
@@ -179,14 +257,26 @@ public class View extends JFrame{
         return pnlDisplay;
     }
 
+    public JScrollPane getScrDisplay(){
+        return scrDisplay;
+    }
+
+    public String getGameSelected(){
+        return lstGames.getSelectedValue().toString();
+    }
+
     // Setters
 
     /**
      * Sets the currently selected JLabel to given JLabel
      * @param selected JLabel that is selected
      */
-    public void setSelected(JLabel selected){
+    public void setSelected(JPanel selected){
         this.selected = selected;
+    }
+
+    public void setSearchText(String text){
+        txtSearch.setText(text);
     }
 
 
@@ -197,47 +287,53 @@ public class View extends JFrame{
      * @param temp StreamNode to add to GUI
      */
     public void addStreamLabel(StreamNode temp){
-        String status = "<font color=#e62e00> Offline";
+
         String game = temp.getGame();
-        double factor = ((getWidth()/2)/6.5) - 3;
+        String name = temp.getDisplayName();
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setLayout(new MigLayout("flowy, wrap 2, insets 0, gap 0 0"));
 
-        if(temp.getGame().length() > factor){
-            game = "";
-            for(int i = 0; i < (int)factor - 1; i++){
-                game += temp.getGame().charAt(i);
+        setDeselectProperties(panel);
+        panel.setName(temp.getName());
+        panel.addMouseListener(new SelectListener());
+        panel.setToolTipText(temp.getTitle());
+
+        //Status indicator
+        JLabel statusIndicator = new JLabel();
+        statusIndicator.setOpaque(true);
+        statusIndicator.setBackground(new Color(230, 46, 0));
+        statusIndicator.setToolTipText("Offline");
+
+        if(temp.getStatus().equals("Online")){
+            if(temp.getVodcast()){
+                statusIndicator.setBackground(new Color(0x72C6FF));
+                statusIndicator.setToolTipText("Vodcast");
+            }else{
+                statusIndicator.setBackground(new Color(102, 255, 102));
+                statusIndicator.setToolTipText("Online");
             }
-            game = game.trim();
-            game += "...";
+
+        }
+        panel.add(statusIndicator, "growy, pushy, w 5, spany 2");
+
+        //Panel image
+        JLabel channelPic = new JLabel(new ImageIcon(temp.getLogo().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+        panel.add(channelPic, "gapx 7, spany 2");
+
+        //Panel channel name
+        JLabel lblName = new JLabel("<html><b>" + name + "</b><br><i>" + game + "</i></html>");
+        lblName.setForeground(SELECT_FOREGROUND_COLOR);
+        panel.add(lblName, "gapx 4, push, growx, gapy 0");
+
+        if(selected != null && panel.getName().equals(selected.getName())){
+            setSelectProperties(panel);
+            selected = panel;
         }
 
         if(temp.getStatus().equals("Online")){
-            status = "<font color=#66ff66> Online";
-        }
-
-        String labelText = "<html><body style='width:100%;'><b>" + temp.getDisplayName() +
-                "</b><i>" + status + "</i><br>" + game +"</body></html>";
-
-        JLabel tempLabel = new JLabel(labelText);
-
-        Border paddingBorder = BorderFactory.createEmptyBorder(7, 7, 7, 0);
-        Border border = BorderFactory.createLineBorder(BORDER_COLOR, 1);
-
-        tempLabel.setIcon(new ImageIcon(temp.getLogo()));
-        tempLabel.setOpaque(true);
-        tempLabel.setBorder(BorderFactory.createCompoundBorder(border, paddingBorder));
-        tempLabel.addMouseListener(new SelectListener());
-        tempLabel.setName(temp.getName());
-        setDeselectProperties(tempLabel);
-
-        if(selected != null && tempLabel.getName().equals(selected.getName())){
-            setSelectProperties(tempLabel);
-            selected = tempLabel;
-        }
-
-        if(temp.getStatus().equals("Online")){
-            pnlDisplay.add(tempLabel, "growx, sg, pushx", 0);
+            pnlDisplay.add(panel, "growx, sg, pushx, height 44", 0);
         }else{
-            pnlDisplay.add(tempLabel, "growx, sg, pushx");
+            pnlDisplay.add(panel, "growx, sg, pushx, height 44");
         }
     }
 
@@ -253,21 +349,86 @@ public class View extends JFrame{
 
     /**
      * Sets the selected attributes for the given JLabel
-     * @param label JLabel to set attributes to
+     * @param panel JPanel to set attributes to
      */
-    public void setSelectProperties(JLabel label){
-        label.setBackground(SELECT_BACKGROUND_COLOR);
-        label.setForeground(SELECT_FOREGROUND_COLOR);
+    public void setSelectProperties(JPanel panel){
+        panel.setBackground(SELECT_BACKGROUND_COLOR);
     }
 
     /**
      * Sets the deselected attributes for the given JLabel
-     * @param label JLabel to set attributes to
+     * @param panel JLabel to set attributes to
      */
-    public void setDeselectProperties(JLabel label){
-        label.setBackground(BACKGROUND_LABEL_COLOR);
-        label.setForeground(FOREGROUND_LABEL_COLOR);
+    public void setDeselectProperties(JPanel panel){
+        panel.setBackground(BACKGROUND_LABEL_COLOR);
     }
+
+    public void setHoverProperties(JLabel label){
+        label.setForeground(HOVER_COLOR);
+    }
+
+    public void setUnhoverProperties(JLabel label){
+        label.setForeground(BACKGROUND_COLOR);
+    }
+
+    public void hideLoading(){
+        lblDisplay.setVisible(false);
+    }
+
+    public void showLoading(){
+        lblDisplay.setVisible(true);
+    }
+
+    public void showSettings(){
+        add(pnlSettings, "growx, pushx, h 3, gap 0 0");
+    }
+
+    public void hideSettings(){
+        remove(pnlSettings);
+    }
+
+    public void showSearch(){
+        pnlSearch.add(txtSearch, "pushx 100, growx, gaptop 10");
+      //  pnlSearch.setBackground(TWITCH_PURPLE);
+        txtSearch.requestFocus();
+        repaint();
+        revalidate();
+    }
+
+    public void hideSearch(){
+        pnlSearch.remove(txtSearch);
+      //  pnlSearch.setBackground(BACKGROUND_COLOR);
+        hideGames();
+        repaint();
+        revalidate();
+    }
+
+    public boolean searchIsVisible(){
+        return pnlSearch.getComponentCount() > 1 ? true : false;
+    }
+
+    public void showGames(String[] games){
+        lstGames.setListData(games);
+        scrlGames.setViewportView(lstGames);
+        pnlSearch.add(scrlGames, "gapleft 17, pushx, growx, span 2, hmin " + (games.length > 2 ? 100 : games.length*18) + ", hmax " + games.length * 18);
+        pnlSearch.repaint();
+        pnlSearch.revalidate();
+        repaint();
+        revalidate();
+    }
+
+    public void hideGames(){
+        scrlGames.setViewportView(null);
+        pnlSearch.remove(scrlGames);
+        pnlSearch.repaint();
+        pnlSearch.revalidate();
+        repaint();
+        revalidate();
+    }
+
+
+
+
 
     // Listeners
 
@@ -317,8 +478,8 @@ public class View extends JFrame{
             }
 
             if(e.getComponent() != selected){
-                setSelectProperties((JLabel) e.getComponent());
-                selected = (JLabel)e.getComponent();
+                setSelectProperties((JPanel) e.getComponent());
+                selected = (JPanel)e.getComponent();
             }else if (e.getComponent() == selected && !SwingUtilities.isRightMouseButton(e)){
                 selected = null;
             }
@@ -341,13 +502,13 @@ public class View extends JFrame{
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            setSelectProperties((JLabel)e.getComponent());
+            setSelectProperties((JPanel)e.getComponent());
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
             if(e.getComponent() != selected){
-                setDeselectProperties((JLabel)e.getComponent());
+                setDeselectProperties((JPanel)e.getComponent());
             }
 
         }

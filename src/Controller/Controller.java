@@ -6,20 +6,25 @@ import Other.Settings;
 import StreamList.StreamIterator;
 import StreamList.StreamNode;
 import View.*;
-import jdk.nashorn.internal.scripts.JO;
+import net.miginfocom.swing.MigLayout;
+import org.jdesktop.swingx.autocomplete.AutoCompleteDecorator;
+import org.jdesktop.swingx.autocomplete.ObjectToStringConverter;
 
 import javax.swing.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.Document;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import java.awt.event.*;
 import java.io.InvalidObjectException;
+import java.util.ListIterator;
 
 /**
  * Control interaction between View and Model objects
  */
 public class Controller {
+
+    private int cols = 2;
     /**
      * Model object
      */
@@ -32,6 +37,8 @@ public class Controller {
 
     private Updater streamUpdateThread;
 
+    private String gameFilter;
+
     /**
      * Constructor
      * @param m Model object
@@ -40,11 +47,15 @@ public class Controller {
     public Controller(Model m, View v){
         model = m;
         view = v;
+        gameFilter = "None";
         model.readSettings();
+        model.getTopGames();
         initGUIStreams();
+
         //Start stream info update thread
         //streamUpdateThread = new StreamUpdate(3000, model.getStreams(), view, model);
-        streamUpdateThread = new Updater(model, view, model.getStreams(), 30000);
+        streamUpdateThread = new Updater(model, view, model.getStreams(), Settings.getSleepTime(), gameFilter);
+        view.setVisible(true);
 
         addActionListeners();
     }
@@ -54,10 +65,13 @@ public class Controller {
      * Adds actionlisteners from View object
      */
     private void addActionListeners(){
-        view.btnAddListener(new AddListener());
-        view.btnRemoveListener(new RemoveListener());
-        view.btnSettingsListener(new SettingsListener(this));
+        view.lblAddListener(new AddListener());
+        view.lblRemoveListener(new RemoveListener());
+        view.lblSettingsListener(new SettingsListener(this));
         view.pnlResizeListener(new ResizeListener());
+        view.lblSearchListener(new SearchListener());
+        view.txtSearchListener(new GameListener());
+        view.lstSearchGamesListener(new GameSelectListener());
     }
 
     public void refreshGUIStreams(){
@@ -68,7 +82,12 @@ public class Controller {
             StreamNode temp = iter.next();
 
             if((Settings.getShowOffline() && temp.getStatus().equals("Offline")) || temp.getStatus().equals("Online")){
-                view.addStreamLabel(temp);
+                if(gameFilter.equals("None") || gameFilter.equals(temp.getGame())){
+                    if((Settings.getShowVodcast() && temp.getVodcast()) || !temp.getVodcast()){
+                        view.addStreamLabel(temp);
+                    }
+                }
+
             }
         }
 
@@ -80,6 +99,7 @@ public class Controller {
      * Initializes all streams once on load
      */
     public void initGUIStreams(){
+        view.showLoading();
         StreamIterator iter = model.getStreams().iterator();
         view.getDisplayPanel().removeAll();
 
@@ -88,6 +108,8 @@ public class Controller {
 
             try{
                 StreamNode tempInfo = model.getStreamInfo(temp);
+                temp.setTitle(tempInfo.getTitle());
+                temp.setVodcast(tempInfo.getVodcast());
                 temp.setGame(tempInfo.getGame());
                 temp.setStatus(tempInfo.getStatus());
                 temp.setName(tempInfo.getName());
@@ -95,7 +117,11 @@ public class Controller {
                 temp.setLogo(tempInfo.getLogo());
 
                 if((Settings.getShowOffline() && tempInfo.getStatus().equals("Offline")) || tempInfo.getStatus().equals("Online")){
-                    view.addStreamLabel(temp);
+                    if(gameFilter.equals("None") || gameFilter.equals(temp.getGame())){
+                        if((Settings.getShowVodcast() && temp.getVodcast()) || !temp.getVodcast()){
+                            view.addStreamLabel(temp);
+                        }
+                    }
                 }
 
             }catch (InvalidObjectException e){
@@ -105,9 +131,9 @@ public class Controller {
             }
         }
 
+        view.hideLoading();
         view.validate();
         view.repaint();
-        view.setVisible(true);
     }
 
     // Listeners
@@ -115,18 +141,21 @@ public class Controller {
     /**
      * Gets name of stream to add from user and adds it to the list/GUI
      */
-    private class AddListener implements ActionListener{
+    private class AddListener implements MouseListener{
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void mouseClicked(MouseEvent e) {
             String name = JOptionPane.showInputDialog(null, "Name", "Twitch Follower", JOptionPane.NO_OPTION);
 
             if(name != null && name.length() >= 1){
                 try{
                     StreamNode tempInfo = model.getStreamInfo(new StreamNode(name));
                     model.addStream(tempInfo);
-                    view.addStreamLabel(tempInfo);
-                    view.getDisplayPanel().validate();
-                    view.getDisplayPanel().repaint();
+                    if(tempInfo.getStatus().equals("Online")){
+                        view.addStreamLabel(tempInfo);
+                        view.getDisplayPanel().validate();
+                        view.getDisplayPanel().repaint();
+                    }
+
                 }catch (DuplicateStreamException e1){
                     System.out.println(e1.getMessage());
                     JOptionPane.showMessageDialog(new JFrame(), e1.getMessage(), "Dupliacte Streams", JOptionPane.ERROR_MESSAGE);
@@ -135,16 +164,36 @@ public class Controller {
                 }
             }
         }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            view.setHoverProperties((JLabel) e.getComponent());
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            view.setUnhoverProperties((JLabel) e.getComponent());
+        }
     }
 
     /**
      * Removes selected stream from list/GUI
      */
-    private class RemoveListener implements ActionListener{
+    private class RemoveListener implements MouseListener {
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void mouseClicked(MouseEvent e) {
             JPanel pnlDisplay = view.getDisplayPanel();
-            JLabel selected = view.getSelected();
+            JPanel selected = view.getSelected();
 
             if(selected != null){
                 pnlDisplay.remove(selected);
@@ -156,6 +205,26 @@ public class Controller {
                 pnlDisplay.repaint();
             }
         }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            view.setHoverProperties((JLabel) e.getComponent());
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            view.setUnhoverProperties((JLabel) e.getComponent());
+        }
     }
 
     /**
@@ -164,10 +233,26 @@ public class Controller {
     private class ResizeListener implements ComponentListener {
         @Override
         public void componentResized(ComponentEvent e) {
+//            System.out.println(view.getHeight());
+//            System.out.println(view.getDisplayPanel().getComponentCount());
+//            int test = view.getHeight() / view.getDisplayPanel().getComponents().length;
+//            System.out.println(test);
+//            if(test > 66){
+//                view.showSettings();
+//            }else{
+//                view.hideSettings();
+//            }
             JPanel pnlDisplay = view.getDisplayPanel();
-            pnlDisplay.setSize(new Dimension(view.getWidth(), view.getHeight()-250));
-            pnlDisplay.setMaximumSize(new Dimension(view.getWidth(), view.getHeight()-250));
-            refreshGUIStreams();
+            int currCol = (int)Math.ceil((view.getWidth()/2)/150);
+
+            pnlDisplay.setSize(new Dimension(view.getWidth(), view.getHeight()));
+            pnlDisplay.setMaximumSize(new Dimension(view.getWidth(), view.getHeight()));
+            if(currCol != cols){
+                cols = currCol;
+                pnlDisplay.setLayout(null);
+                pnlDisplay.setLayout(new MigLayout("wrap " + currCol + ", flowx, insets 10 10"));
+                refreshGUIStreams();
+            }
 
             view.validate();
             view.repaint();
@@ -184,16 +269,157 @@ public class Controller {
         public void componentHidden(ComponentEvent e) {}
     }
 
-    private class SettingsListener implements ActionListener{
-
+    private class SettingsListener implements MouseListener{
         private Controller controller;
+
         public SettingsListener(Controller controller){
             this.controller = controller;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void mouseClicked(MouseEvent e) {
             new SettingsView(streamUpdateThread, model, controller);
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            view.setHoverProperties((JLabel) e.getComponent());
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            view.setUnhoverProperties((JLabel) e.getComponent());
+        }
+    }
+
+    private class SearchListener implements MouseListener{
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if(view.searchIsVisible()){
+                view.hideSearch();
+            }else{
+//                String[] hey = model.getTopGames().getItems();
+//                JList ok = new JList(hey);
+//                view.pnlSearch.add(ok);
+//                AutoCompleteDecorator.decorate(ok, view.txtSearch, ObjectToStringConverter.DEFAULT_IMPLEMENTATION);
+                view.showSearch();
+
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
+    }
+
+    private class GameListener implements DocumentListener{
+        private List topGames;
+
+
+        public GameListener(){
+            topGames = model.getTopGames();
+
+        }
+
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            update(e.getDocument());
+        }
+
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            update(e.getDocument());
+        }
+
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            update(e.getDocument());
+        }
+
+        private void update(Document doc){
+            try{
+                String input = doc.getText(0, doc.getLength()).toLowerCase();
+                List matchedGames = new List();
+                if(input.length() > 0){
+                    for(String game : topGames.getItems()){
+                        if(game.toLowerCase().contains(input)){
+                            matchedGames.add(game);
+
+                        }
+                    }
+                }
+
+                view.hideGames();
+
+                if(input.length() > 0){
+                    view.showGames(matchedGames.getItems());
+                }
+
+                view.revalidate();
+                view.repaint();
+
+            }catch(Exception e1){
+                System.out.println(e1.getMessage());
+
+            }
+        }
+
+    }
+
+    private class GameSelectListener implements MouseListener{
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            String game = view.getGameSelected();
+            gameFilter = game;
+            view.setSearchText(game);
+            view.hideGames();
+            refreshGUIStreams();
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
         }
     }
 

@@ -18,7 +18,7 @@ public class PopupMenu extends JPopupMenu {
     /**
      * Selected GUI element
      */
-    JLabel selected;
+    JPanel selected;
 
     /**
      * View object

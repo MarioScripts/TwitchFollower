@@ -8,10 +8,8 @@ import java.awt.*;
  */
 public class StreamNode {
 
-    private String name;
-    private String game;
-    private String status;
-    private String displayName;
+    private String name, game, status, displayName, title;
+    private boolean vodcast;
     private Image logo;
     private StreamNode next;
 
@@ -26,6 +24,8 @@ public class StreamNode {
         logo = null;
         next = null;
         displayName = name;
+        vodcast = false;
+        title = "N/A";
     }
 
     // Getters
@@ -72,6 +72,14 @@ public class StreamNode {
         return next;
     }
 
+    public boolean getVodcast(){
+        return this.vodcast;
+    }
+
+    public String getTitle(){
+        return title;
+    }
+
 
 
     // Setters
@@ -116,6 +124,14 @@ public class StreamNode {
      */
     public void setNext(StreamNode next){
         this.next = next;
+    }
+
+    public void setVodcast(boolean vodcast){
+        this.vodcast = vodcast;
+    }
+
+    public void setTitle(String title){
+        this.title = title;
     }
 
 }

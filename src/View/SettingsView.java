@@ -6,6 +6,8 @@ import Other.Settings;
 import View.*;
 import Controller.*;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -19,7 +21,8 @@ public class SettingsView extends JFrame {
     private Updater updateThread;
     private Model model;
     private Controller controller;
-    private JCheckBox chkGameNotify, chkStatusNotify, chkShowOffline;
+    private JCheckBox chkGameNotify, chkStatusNotify, chkShowOffline, chkShowVodcast;
+    private JSlider slrSleep;
     private JTextField txtUser;
     private JButton btnOk, btnCancel, btnImport;
     private JPanel pnlNotify, pnlFollows;
@@ -33,7 +36,7 @@ public class SettingsView extends JFrame {
         setName("SettingsView");
         setTitle("SettingsView");
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setSize(new Dimension(417, 200));
+        setSize(new Dimension(417, 250));
         setResizable(false);
         setVisible(true);
         setLayout(null);
@@ -54,14 +57,18 @@ public class SettingsView extends JFrame {
         chkShowOffline.setSelected(Settings.getShowOffline());
         chkShowOffline.setBounds(10, 70, 150, 20);
 
+        chkShowVodcast = new JCheckBox("Show Vodcasting Channels");
+        chkShowVodcast.setSelected(Settings.getShowVodcast());
+        chkShowVodcast.setBounds(10, 90, 150, 20);
+
         btnOk = new JButton("Ok");
         btnOk.setFocusable(false);
-        btnOk.setBounds(100, 130, 100, 30);
+        btnOk.setBounds(100, 190, 100, 25);
         btnOk.addActionListener(new SaveSettingsListener());
 
         btnCancel = new JButton("Cancel");
         btnCancel.setFocusable(false);
-        btnCancel.setBounds(210, 130, 100, 30);
+        btnCancel.setBounds(210, 190, 100, 25);
         btnCancel.addActionListener(new CancelSettingsListener());
 
         btnImport = new JButton("Import");
@@ -73,13 +80,26 @@ public class SettingsView extends JFrame {
         txtUser.setBounds(10, 30,180, 20);
         txtUser.addKeyListener(new FollowersTextListener());
 
+        slrSleep = new JSlider();
+        slrSleep.setMaximum(180);
+        slrSleep.setMinimum(30);
+        slrSleep.setMajorTickSpacing(30);
+        slrSleep.setMinorTickSpacing(15);
+        slrSleep.setPaintLabels(true);
+        slrSleep.setPaintTicks(true);
+        slrSleep.setPaintTrack(true);
+        slrSleep.setSnapToTicks(true);
+        slrSleep.setValue(Settings.getSleepTime()/1000);
+        slrSleep.setBounds(210, 115, 200, 40);
+
         pnlNotify = new JPanel();
         pnlNotify.setBorder(BorderFactory.createTitledBorder("Notifications"));
         pnlNotify.add(chkGameNotify);
         pnlNotify.add(chkStatusNotify);
         pnlNotify.add(chkShowOffline);
+        pnlNotify.add(chkShowVodcast);
         pnlNotify.setLayout(null);
-        pnlNotify.setBounds(0, 5, 200, 100);
+        pnlNotify.setBounds(0, 5, 200, 120);
 
         pnlFollows = new JPanel();
         pnlFollows.setBorder(BorderFactory.createTitledBorder("Import Followers"));
@@ -90,6 +110,7 @@ public class SettingsView extends JFrame {
 
         add(pnlNotify);
         add(pnlFollows);
+        add(slrSleep);
         add(btnOk);
         add(btnCancel);
     }
@@ -97,10 +118,12 @@ public class SettingsView extends JFrame {
     private class SaveSettingsListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            model.editSettings(chkGameNotify.isSelected(), chkStatusNotify.isSelected(), chkShowOffline.isSelected());
+            model.editSettings(chkGameNotify.isSelected(), chkStatusNotify.isSelected(), chkShowOffline.isSelected(), chkShowVodcast.isSelected(), slrSleep.getValue()*1000);
             Settings.setGameNotify(chkGameNotify.isSelected());
             Settings.setStatusNotify(chkStatusNotify.isSelected());
             Settings.setShowOffline(chkShowOffline.isSelected());
+            Settings.setShowVodast(chkShowVodcast.isSelected());
+            Settings.setSleepTime(slrSleep.getValue()*1000);
             controller.refreshGUIStreams();
             SettingsView.super.dispose();
         }
@@ -179,6 +202,7 @@ public class SettingsView extends JFrame {
             }
         }
     }
+
 
     private void setLookAndFeel(){
         try{

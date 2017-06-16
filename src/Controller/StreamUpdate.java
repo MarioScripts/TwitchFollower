@@ -18,6 +18,7 @@ import java.io.IOException;
 public class StreamUpdate extends SwingWorker<Boolean, Integer> {
 
     private TrayIcon icon;
+    private String gameFilter;
     /**
      * Update thread
      */
@@ -47,16 +48,18 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
 
     private StreamNode temp, tempInfo;
 
-    public StreamUpdate(Model model, View view, StreamList streams, TrayIcon icon){
+    public StreamUpdate(Model model, View view, StreamList streams, TrayIcon icon, String gameFilter){
         this.icon = icon;
         this.model = model;
         this.view = view;
         this.streams = streams;
+        this.gameFilter = gameFilter;
     }
 
     @Override
     protected Boolean doInBackground() throws Exception {
         System.out.print("Updating...");
+        view.showLoading();
 
         StreamIterator iter = streams.iterator();
         while(iter.hasNext()){
@@ -66,12 +69,14 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
             if(Settings.getStatusNotify()){
                 if(!temp.getStatus().equals(tempInfo.getStatus())){
                     // Only alerts if stream goes online
-                    if(tempInfo.getStatus().equals("Online") && temp.getStatus().equals("Offline")) {
+                    if(tempInfo.getStatus().equals("Online") && temp.getStatus().equals("Offline") && (tempInfo.getGame().equals(gameFilter) || gameFilter.equals("None"))) {
                         icon.displayMessage(
                                 "Status Change",
-                                temp.getName() + " is now online\nPlaying " + tempInfo.getGame(),
+                                temp.getDisplayName() + " is now online\nPlaying " + tempInfo.getGame(),
                                 TrayIcon.MessageType.INFO);
                     }
+//                    view.validate();
+//                    view.repaint();
                 }
             }
 
@@ -80,22 +85,31 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
                 //Check if game changes
                 if(!temp.getGame().equals(tempInfo.getGame())){
                     // Only alerts if the user is already online
-                    if(tempInfo.getStatus().equals("Online") && temp.getStatus().equals("Online")){
+                    if(tempInfo.getStatus().equals("Online") && temp.getStatus().equals("Online") && (tempInfo.getGame().equals(gameFilter) || gameFilter.equals("None"))){
                         icon.displayMessage(
                                 "Game Change",
-                                temp.getName() + " has started playing " + tempInfo.getGame(),
+                                temp.getDisplayName() + " has started playing " + tempInfo.getGame(),
                                 TrayIcon.MessageType.INFO);
                     }
+//                    view.validate();
+//                    view.repaint();
                 }
             }
 
             if(!temp.getStatus().equals(tempInfo.getStatus()) || !temp.getGame().equals(tempInfo.getGame())){
-                System.out.println("Henloo");
+                temp.setVodcast(tempInfo.getVodcast());
+                temp.setTitle(tempInfo.getTitle());
                 temp.setGame(tempInfo.getGame());
                 temp.setStatus(tempInfo.getStatus());
                 view.removeStreamLabel(temp.getName());
-                if((Settings.getShowOffline() && tempInfo.getStatus().equals("Offline")) || tempInfo.getStatus().equals("Online"))
-                    view.addStreamLabel(temp);
+                if((Settings.getShowOffline() && tempInfo.getStatus().equals("Offline")) || tempInfo.getStatus().equals("Online")){
+                    if(tempInfo.getGame().equals(gameFilter) || gameFilter.equals("None")){
+                        if((Settings.getShowVodcast() && temp.getVodcast()) || !temp.getVodcast()){
+                            view.addStreamLabel(temp);
+                        }
+                    }
+                }
+
             }
 
         }
@@ -106,66 +120,9 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
     protected void done(){
         view.validate();
         view.repaint();
+        view.hideLoading();
         System.out.println(" Updated.");
     }
-
-
-
-    /**
-     * Constructor, starts update thread
-     * @param sleepTime Thread sleep time
-     * @param streams List of streams
-     * @param view View object
-     * @param model Model object
-     */
-//    public StreamUpdate(int sleepTime, StreamList streams, View view, Model model){
-//        this.view = view;
-//        this.model = model;
-//        this.sleepTime = sleepTime;
-//        this.streams = streams;
-//        pauseWorking = false;
-//
-//        update = new Thread(this);
-//        update.start();
-//    }
-
-    /**
-     * Loops through all streams infinitely using sleepTime as a pause between updates.
-     * Handles updating stream info and updating GUI info.
-     * Also handles Desktop notifications
-     */
-//    @Override
-//    public void run() {
-//        // Loops Through and updates info
-//        synchronized (this) {
-//            try{
-//                SystemTray tray = SystemTray.getSystemTray();
-//                Image img = ImageIO.read(getClass().getClassLoader().getResource("resources/Twitch.png"));
-//                TrayIcon icon = new TrayIcon(img, "Twitch Follower");
-//                icon.setImageAutoSize(true);
-//                tray.add(icon);
-//
-//                while (true) {
-//
-//                    while(pauseWorking){
-//                        try{
-//                            this.wait();
-//                        }catch (InterruptedException e){
-//
-//                        }
-//
-//                    }
-//
-//
-//                    view.validate();
-//                    view.repaint();
-//                    System.out.println(" Updated.");
-//                }
-//            }catch(IOException|AWTException e){
-//                System.out.println(e.getMessage());
-//            }
-//        }
-//    }
 
     /**
      * Prints stream info. Used for debugging
@@ -181,8 +138,6 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
         }
 
     }
-
-
 
     public void hibernate(){
         pauseWorking = true;

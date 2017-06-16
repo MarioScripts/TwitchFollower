@@ -1,5 +1,6 @@
 package Controller;
 
+import Other.Settings;
 import StreamList.StreamList;
 import Model.*;
 import View.*;
@@ -17,13 +18,15 @@ public class Updater implements Runnable {
     private StreamList streams;
     private int sleepTime;
     private Thread update;
+    private String gameFilter;
     private boolean pauseWorking;
 
-    public Updater(Model model, View view, StreamList streams, int sleepTime){
+    public Updater(Model model, View view, StreamList streams, int sleepTime, String gameFilter){
         this.model = model;
         this.view = view;
         this.streams = streams;
         this.sleepTime = sleepTime;
+        this.gameFilter = gameFilter;
         pauseWorking = false;
         update = new Thread(this);
         update.start();
@@ -48,16 +51,16 @@ public class Updater implements Runnable {
 
                         }
                     }
-
+                    sleepTime = Settings.getSleepTime();
                     try {
 
-                        StreamUpdate streamUpdate = new StreamUpdate(model, view, streams, icon);
+                        StreamUpdate streamUpdate = new StreamUpdate(model, view, streams, icon, gameFilter);
                         streamUpdate.execute();
 
                         while(!streamUpdate.isDone()){
                             wait(1000);
                         }
-                        wait(sleepTime);
+                        sleep();
 
                     }catch(Exception e){
 
@@ -89,6 +92,7 @@ public class Updater implements Runnable {
      */
     private synchronized void sleep(){
         try {
+            System.out.println("Sleeping for: " + sleepTime);
             wait(sleepTime);
         } catch (InterruptedException e) {
             System.out.println("Error sleeping thread");

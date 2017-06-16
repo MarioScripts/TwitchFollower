@@ -4,7 +4,8 @@ package Other;
  * Created by Matt on 2017-05-05.
  */
 public class Settings {
-    private static boolean gameNotify = true, statusNotify = true, showOffline = true;
+    private static boolean gameNotify = true, statusNotify = true, showOffline = true, showVodast = true;
+    private static int sleepTime = 30000;
 
     //Getters
     public static boolean getGameNotify(){
@@ -19,6 +20,14 @@ public class Settings {
         return showOffline;
     }
 
+    public static int getSleepTime(){
+        return sleepTime;
+    }
+
+    public static boolean getShowVodcast(){
+        return showVodast;
+    }
+
     //Setters
     public static void setGameNotify(boolean notify){
         gameNotify = notify;
@@ -31,4 +40,13 @@ public class Settings {
     public static void setShowOffline(boolean show){
         showOffline = show;
     }
+
+    public static void setShowVodast(boolean show){
+        showVodast = show;
+    }
+
+    public static void setSleepTime(int sleep){
+        sleepTime = sleep;
+    }
+
 }

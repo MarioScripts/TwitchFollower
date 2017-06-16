@@ -5,6 +5,9 @@ import Other.Settings;
 import StreamList.StreamIterator;
 import StreamList.StreamList;
 import StreamList.StreamNode;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
+import javafx.beans.binding.When;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,18 +24,20 @@ import java.nio.file.InvalidPathException;
 
 public class Model {
     private StreamList streams;
+    private List games;
     private static final String SAVE_DIR = "C:\\Users\\" + System.getProperty("user.name") + "\\Twitchfollower";
     private static final String STREAM_URL = "https://api.twitch.tv/kraken/streams/";
+    private static final String GAME_URL = "https://api.twitch.tv/kraken/games/top?limit=100";
     private static final String CHANNEL_URL = "https://api.twitch.tv/kraken/channels/";
     private static final String USER_URL = "https://api.twitch.tv/kraken/users/";
     private static final String CLIENT_ID = "iv92gs01m24niftpift7l6jsmvrfvpo";
-    private static final String DEFAULT_LOGO_URL = "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png";
 
     /**
      * Constructor
      */
     public Model(){
         streams = new StreamList();
+        games = new List();
         readStreams();
     }
 
@@ -90,7 +95,7 @@ public class Model {
             }
 
         }catch  (IOException e){
-            throw new InvalidObjectException("Invalid stream");
+            throw new InvalidObjectException("Invalid stream: " + name);
         }catch (JSONException ex){
 
             //If logo is null then set logo to default logo
@@ -108,17 +113,21 @@ public class Model {
             info = getJSONString(STREAM_URL, name);
             stream = new JSONObject(info).getJSONObject("stream");
             streamInfo.setStatus("Online");
+            streamInfo.setTitle(stream.getJSONObject("channel").getString("status"));
+
+            if(stream.getString("stream_type").equals("watch_party")){
+                streamInfo.setVodcast(true);
+            }
+
             streamInfo.setGame(stream.getString("game"));
             streamInfo.setDisplayName(displayName);
-            System.out.println(info);
         }catch (IOException e){
-            System.out.println("HELLo");
             System.out.println(e.getMessage());
         }catch (JSONException ex){
 
             //Throw exception if stream doesn't exist, else set stream to offline
             if(info == ""){
-                throw new InvalidObjectException("Invalid stream");
+                throw new InvalidObjectException("Invalid stream: " + name);
             }else{
                 streamInfo.setStatus("Offline");
                 streamInfo.setGame("N/A");
@@ -127,6 +136,26 @@ public class Model {
         }
 
         return streamInfo;
+
+    }
+
+    //TODO: Tidy null shit
+    public List getTopGames(){
+        List games = new List();
+        try{
+            String info = getJSONString(GAME_URL);
+            JSONArray top = new JSONObject(info).getJSONArray("top");
+            games.add("None");
+            for(Object game : top){
+                games.add(new JSONObject(game.toString()).getJSONObject("game").getString("name").toString());
+            }
+
+            return games;
+        }catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+
+        return null;
 
     }
 
@@ -152,7 +181,7 @@ public class Model {
 
     }
 
-    public static void editSettings(boolean gameNotify, boolean statusNotify, boolean showOffline){
+    public static void editSettings(boolean gameNotify, boolean statusNotify, boolean showOffline, boolean showVodcast, int sleepTime){
         File settingsFile = new File(SAVE_DIR + "\\settings.cfg");
         File streamDir = new File(SAVE_DIR);
 
@@ -163,6 +192,8 @@ public class Model {
                 settings += "gameNotify=" + gameNotify + "\r\n";
                 settings += "statusNotify=" + statusNotify + "\r\n";
                 settings += "showOffline=" + showOffline + "\r\n";
+                settings += "showVodcast=" + showVodcast + "\r\n";
+                settings += "sleepTime=" + sleepTime + "\r\n";
 
                 writer.write(settings);
                 writer.close();
@@ -195,6 +226,7 @@ public class Model {
                         String setting;
                         boolean state;
                         setting = line.substring(line.indexOf('=')+1);
+
                         state = Boolean.parseBoolean(setting);
                         if(line.contains("gameNotify")){
                             Settings.setGameNotify(state);
@@ -202,7 +234,12 @@ public class Model {
                             Settings.setStatusNotify(state);
                         }else if(line.contains("showOffline")){
                             Settings.setShowOffline(state);
+                        }else if(line.contains("showVodcast")){
+                            Settings.setShowVodast(state);
+                        }else if(line.contains("sleepTime")){
+                            Settings.setSleepTime(Integer.parseInt(setting));
                         }
+
                     }
                 }
             }else{
@@ -355,15 +392,8 @@ public class Model {
 
     }
 
-    /**
-     * Gets JSON information from Twitch's API
-     * @param apiURL Type of twitch API to use
-     * @param name Name of stream to get info for
-     * @return Returns JSON information as String
-     * @throws IOException thrown when unable to get information
-     */
-    private static String getJSONString(String apiURL, String name) throws IOException{
-        URL url = new URL(apiURL + name);
+    private static String getJSONString(String apiURL) throws IOException{
+        URL url = new URL(apiURL);
         URLConnection connection = url.openConnection();
         connection.setRequestProperty("Client-ID", CLIENT_ID);
         connection.connect();
@@ -379,6 +409,17 @@ public class Model {
         in.close();
         buff.close();
         return info;
+    }
+
+    /**
+     * Gets JSON information from Twitch's API
+     * @param apiURL Type of twitch API to use
+     * @param name Name of stream to get info for
+     * @return Returns JSON information as String
+     * @throws IOException thrown when unable to get information
+     */
+    private static String getJSONString(String apiURL, String name) throws IOException{
+        return getJSONString(apiURL + name);
     }
 
 }
