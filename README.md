@@ -21,12 +21,12 @@
 - [x] Java doc comment all methods
 - [x] Look into manipulating GUI components without freezing GUI
 - [x] Tidy up code, fix indenting, spacing, naming, etc
-- [x] Incorporate a settings gui and cfg file to store the settings. Other.Settings could include:
+- [x] Incorporate a settings gui and cfg file to store the settings. Settings could include:
 	- [x] Enable/disable noitification
 	- [x] Show only online channels
-	- [x] Import followers from specified twitch user **Only supports last 100 followers**
-	- [ ] Show channels playing any game  except a specific game
-	- [ ] Show channels playing a specific game
+	- [x] Import followers from specified twitch user **(Only supports last 100 followers)**
+	- [x] Show channels playing specific game(s)
+	- [ ] Show channels playing any game except a specific game
 - [x] Fix game name spacing for stream tiles in list
 - [x] Look into redrawing entire GUI on resize to enable dynamic column wrapping
 
