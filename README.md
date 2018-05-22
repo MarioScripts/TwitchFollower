@@ -1,5 +1,7 @@
 # TwitchFollower
 
+[Latest EXE release](https://github.com/MarioScripts/TwitchFollower/releases/download/v2.0/TwitchFollower.exe)
+
 ###### V2.0 Changelog:
 - Updated UI elements to make overall look better:
 	- Settings pane now updated, buttons are removed for better looking labels
