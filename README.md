@@ -1,6 +1,15 @@
 # TwitchFollower
 
-[Latest EXE release](https://github.com/MarioScripts/TwitchFollower/releases/download/v2.0/TwitchFollower.exe)
+[Latest EXE release](https://github.com/MarioScripts/TwitchFollower/releases/download/v2.5/TwitchFollower.exe)
+
+###### V2.5 Changelog:
+- Added "Dark Mode" setting that changes colorscheme to a more eye-friendly dark shade
+- Added right-click remove stream functionality. Removed remove stream button
+- Updated splashscreen so that it runs at a much better framerate, and looks simpler/cleaner
+- Added viewer tracking to streams. Streams will now show the number of viewers the stream has in the bottom right
+- Fixed follower import so that it works correctly
+- Fixed game search so that it works more intuitively (still WIP)
+- Planned: Remove titlebar and create custom titlebar to match with colorscheme (WIP, not implemented yet)
 
 ###### V2.0 Changelog:
 - Updated UI elements to make overall look better:
