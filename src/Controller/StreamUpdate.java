@@ -46,13 +46,16 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
      */
     private Model model;
 
+    private Controller controller;
+
     private StreamNode temp, tempInfo;
 
-    public StreamUpdate(Model model, View view, StreamList streams, TrayIcon icon, String gameFilter){
+    public StreamUpdate(Controller controller, Model model, View view, StreamList streams, TrayIcon icon, String gameFilter){
         this.icon = icon;
         this.model = model;
         this.view = view;
         this.streams = streams;
+        this.controller = controller;
         this.gameFilter = gameFilter;
     }
 
@@ -65,6 +68,21 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
         while(iter.hasNext()){
             temp = iter.next();
             tempInfo = model.getStreamInfo(temp);
+
+            // Update view count
+            Component[] components = view.getDisplayPanel().getComponents();
+            for(Component component : components){
+                if(component.getName().equals(tempInfo.getName())){
+                    JPanel tempPanel = (JPanel) component;
+                    Component[] comps = tempPanel.getComponents();
+                    for(Component comp : comps){
+                        if(comp.getName() != null && comp.getName().equals("views")){
+                            ((JLabel) comp).setText(Integer.toString(tempInfo.getViews()));
+                        }
+                    }
+
+                }
+            }
 
             if(Settings.getStatusNotify()){
                 if(!temp.getStatus().equals(tempInfo.getStatus())){
@@ -101,11 +119,12 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
                 temp.setTitle(tempInfo.getTitle());
                 temp.setGame(tempInfo.getGame());
                 temp.setStatus(tempInfo.getStatus());
+                temp.setViews(tempInfo.getViews());
                 view.removeStreamLabel(temp.getName());
                 if((Settings.getShowOffline() && tempInfo.getStatus().equals("Offline")) || tempInfo.getStatus().equals("Online")){
                     if(tempInfo.getGame().equals(gameFilter) || gameFilter.equals("None")){
                         if((Settings.getShowVodcast() && temp.getVodcast()) || !temp.getVodcast()){
-                            view.addStreamLabel(temp);
+                            view.addStreamLabel(temp).addMouseListener(controller.new ContextMenuListener());
                         }
                     }
                 }

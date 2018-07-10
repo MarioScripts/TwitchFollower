@@ -47,18 +47,15 @@ public class Controller {
         model = m;
         view = v;
         gameFilter = "None";
-        // TODO: Showstuff
-        System.out.println("START SPLASH");
         Splash splash = new Splash();
         model.readSettings();
         model.getTopGames();
         initGUIStreams();
-        System.out.println("END SPLASH");
         splash.dispose();
 
         //Start stream info update thread
         //streamUpdateThread = new StreamUpdate(3000, model.getStreams(), view, model);
-        streamUpdateThread = new Updater(model, view, model.getStreams(), Settings.getSleepTime(), gameFilter);
+        streamUpdateThread = new Updater(this, model, view, model.getStreams(), Settings.getSleepTime(), gameFilter);
         view.setVisible(true);
 
         addActionListeners();
@@ -85,7 +82,7 @@ public class Controller {
             StreamNode temp = iter.next();
 
             if((Settings.getShowOffline() && temp.getStatus().equals("Offline")) || temp.getStatus().equals("Online")){
-                if(gameFilter.equals("None") || temp.getGame().toLowerCase().contains(gameFilter.toLowerCase())){
+                if(gameFilter.equals("None") || temp.getGame().toLowerCase().startsWith(gameFilter.toLowerCase())){
                     if((Settings.getShowVodcast() && temp.getVodcast()) || !temp.getVodcast()){
                         view.addStreamLabel(temp).addMouseListener(new ContextMenuListener());
                     }
@@ -347,11 +344,12 @@ public class Controller {
         }
     }
 
-    private class ContextMenuListener implements MouseListener{
+    public class ContextMenuListener implements MouseListener{
         @Override
         public void mouseClicked(MouseEvent e) {
-
+            System.out.println("HEY");
             if(SwingUtilities.isRightMouseButton(e)){
+
                 PopupMenu popup = new PopupMenu(view);
                 popup.removeStreamListener(new RemoveStreamListener());
                 popup.show(e.getComponent(), e.getX(), e.getY());

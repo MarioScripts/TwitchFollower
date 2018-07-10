@@ -2,8 +2,11 @@ package View;
 
 import net.miginfocom.swing.MigLayout;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 public class Splash extends JFrame{
     public Splash(){
@@ -11,6 +14,15 @@ public class Splash extends JFrame{
         this.setBackground(Color.black);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setUndecorated(true);
+
+        try{
+            BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource("resources/Twitch.png"));
+            setIconImage(img);
+        }catch(IOException e){
+            System.out.println(e.getMessage());
+        }
+
+
         ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/okk.gif"));
         JLabel label = new JLabel();
         label.setIcon(icon);

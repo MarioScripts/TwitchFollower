@@ -83,6 +83,7 @@ public class SettingsView extends JFrame {
         txtUser = new JTextField("Twitch name");
         txtUser.setBounds(10, 30,180, 20);
         txtUser.addKeyListener(new FollowersTextListener());
+        txtUser.addMouseListener(new FollowersMouseListener());
 
         slrSleep = new JSlider();
         slrSleep.setMaximum(180);
@@ -186,6 +187,34 @@ public class SettingsView extends JFrame {
             controller.initGUIStreams();
             txtUser.setText("");
             btnImport.setEnabled(false);
+        }
+    }
+
+    private class FollowersMouseListener implements MouseListener{
+        @Override
+        public void mouseClicked(MouseEvent e) {
+//            txtUser.setText("");
+            txtUser.selectAll();
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
         }
     }
 

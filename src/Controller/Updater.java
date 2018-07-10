@@ -15,18 +15,20 @@ import java.rmi.server.ExportException;
 public class Updater implements Runnable {
     private Model model;
     private View view;
+    private Controller controller;
     private StreamList streams;
     private int sleepTime;
     private Thread update;
     private String gameFilter;
     private boolean pauseWorking;
 
-    public Updater(Model model, View view, StreamList streams, int sleepTime, String gameFilter){
+    public Updater(Controller controller, Model model, View view, StreamList streams, int sleepTime, String gameFilter){
         this.model = model;
         this.view = view;
         this.streams = streams;
         this.sleepTime = sleepTime;
         this.gameFilter = gameFilter;
+        this.controller = controller;
         pauseWorking = false;
         update = new Thread(this);
         update.start();
@@ -54,7 +56,7 @@ public class Updater implements Runnable {
                     sleepTime = Settings.getSleepTime();
                     try {
 
-                        StreamUpdate streamUpdate = new StreamUpdate(model, view, streams, icon, gameFilter);
+                        StreamUpdate streamUpdate = new StreamUpdate(controller, model, view, streams, icon, gameFilter);
                         streamUpdate.execute();
 
                         while(!streamUpdate.isDone()){
@@ -63,7 +65,7 @@ public class Updater implements Runnable {
                         sleep();
 
                     }catch(Exception e){
-
+                        System.out.println(e.getMessage());
                     }
                 }
             }

@@ -27,7 +27,7 @@ public class StreamNode {
         displayName = name;
         vodcast = false;
         title = "N/A";
-        views = -1;
+        views = 0;
     }
 
     // Getters

@@ -311,21 +311,19 @@ public class View extends JFrame{
         lblName.setForeground(SELECT_FOREGROUND_COLOR);
         panel.add(lblName, "gapx 4, push, gapy 0, spany 2");
 
-        if(temp.getViews() >= 0){
-            ImageIcon imgIcon = new ImageIcon(new ImageIcon(this.getClass().getClassLoader().getResource("resources/views.png")).getImage().getScaledInstance(8, 11,  java.awt.Image.SCALE_SMOOTH));
-            JLabel lblViews = new JLabel(Integer.toString(temp.getViews()));
-            lblViews.setIcon(imgIcon);
-            lblViews.setForeground(SELECT_FOREGROUND_COLOR);
-            panel.add(lblViews, "gapright 5, gaptop 20, width 45");
-        }
-
-
         if(selected != null && panel.getName().equals(selected.getName())){
             setSelectProperties(panel);
             selected = panel;
         }
 
         if(temp.getStatus().equals("Online")){
+            ImageIcon imgIcon = new ImageIcon(new ImageIcon(this.getClass().getClassLoader().getResource("resources/views.png")).getImage().getScaledInstance(8, 11,  java.awt.Image.SCALE_SMOOTH));
+            JLabel lblViews = new JLabel(Integer.toString(temp.getViews()));
+            lblViews.setName("views");
+            lblViews.setIcon(imgIcon);
+            lblViews.setForeground(SELECT_FOREGROUND_COLOR);
+
+            panel.add(lblViews, "gapright 5, gaptop 20, width 45");
             pnlDisplay.add(panel, "growx, sg, pushx, height 44", 0);
         }else{
             pnlDisplay.add(panel, "growx, sg, pushx, height 44");
@@ -417,7 +415,6 @@ public class View extends JFrame{
 
     public void changeColorScheme(){
         BACKGROUND_COLOR = ColorFactory.getBackground();
-        System.out.println(BACKGROUND_COLOR);
         getContentPane().setBackground(BACKGROUND_COLOR);
         pnlDisplay.setBackground(BACKGROUND_COLOR);
         pnlSearch.setBackground(BACKGROUND_COLOR);
