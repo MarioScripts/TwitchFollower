@@ -1,12 +1,13 @@
 package View;
 
+import Controller.Controller;
+import Controller.Updater;
+import Model.Model;
 import Other.Settings;
-import Controller.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-
-import Model.*;
 
 /**
  * Created by Matt on 2017-05-04.
@@ -22,7 +23,7 @@ public class SettingsView extends JFrame {
     private JButton btnOk, btnCancel, btnImport;
     private JPanel pnlNotify, pnlFollows;
 
-    public SettingsView(Updater updateThread, Model model, Controller controller){
+    public SettingsView(Updater updateThread, Model model, Controller controller) {
         this.updateThread = updateThread;
         this.model = model;
         this.controller = controller;
@@ -39,7 +40,7 @@ public class SettingsView extends JFrame {
         initComponents();
     }
 
-    private void initComponents(){
+    private void initComponents() {
         chkGameNotify = new JCheckBox("Game Updates");
         chkGameNotify.setSelected(Settings.getGameNotify());
         chkGameNotify.setBounds(10, 30, 100, 20);
@@ -76,7 +77,7 @@ public class SettingsView extends JFrame {
         btnImport.addActionListener(new ImportFollowersListener());
 
         txtUser = new JTextField("Twitch name");
-        txtUser.setBounds(10, 30,180, 20);
+        txtUser.setBounds(10, 30, 180, 20);
         txtUser.addKeyListener(new FollowersTextListener());
         txtUser.addMouseListener(new FollowersMouseListener());
 
@@ -89,7 +90,7 @@ public class SettingsView extends JFrame {
         slrSleep.setPaintTicks(true);
         slrSleep.setPaintTrack(true);
         slrSleep.setSnapToTicks(true);
-        slrSleep.setValue(Settings.getSleepTime()/1000);
+        slrSleep.setValue(Settings.getSleepTime() / 1000);
         slrSleep.setBounds(210, 115, 200, 40);
 
         pnlNotify = new JPanel();
@@ -116,7 +117,15 @@ public class SettingsView extends JFrame {
         add(btnCancel);
     }
 
-    private class SaveSettingsListener implements ActionListener{
+    private void setLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private class SaveSettingsListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
 //            model.updateSettings(chkGameNotify.isSelected(), chkStatusNotify.isSelected(), chkShowOffline.isSelected(), chkShowVodcast.isSelected(), chkDarkMode.isSelected(), slrSleep.getValue()*1000);
@@ -124,7 +133,7 @@ public class SettingsView extends JFrame {
             Settings.setStatusNotify(chkStatusNotify.isSelected());
             Settings.setShowOffline(chkShowOffline.isSelected());
             Settings.setShowVodast(chkShowVodcast.isSelected());
-            Settings.setSleepTime(slrSleep.getValue()*1000);
+            Settings.setSleepTime(slrSleep.getValue() * 1000);
             Settings.setDarkMode(chkDarkMode.isSelected());
             model.updateSettings();
             controller.refreshGUIStreams();
@@ -132,14 +141,14 @@ public class SettingsView extends JFrame {
         }
     }
 
-    private class CancelSettingsListener implements ActionListener{
+    private class CancelSettingsListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             SettingsView.super.dispose();
         }
     }
 
-    private class OnCloseListener implements WindowListener{
+    private class OnCloseListener implements WindowListener {
         @Override
         public void windowOpened(WindowEvent e) {
             updateThread.hibernate();
@@ -175,7 +184,7 @@ public class SettingsView extends JFrame {
         }
     }
 
-    private class ImportFollowersListener implements ActionListener{
+    private class ImportFollowersListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             String name = txtUser.getText().trim();
@@ -186,7 +195,7 @@ public class SettingsView extends JFrame {
         }
     }
 
-    private class FollowersMouseListener implements MouseListener{
+    private class FollowersMouseListener implements MouseListener {
         @Override
         public void mouseClicked(MouseEvent e) {
 //            txtUser.setText("");
@@ -214,7 +223,7 @@ public class SettingsView extends JFrame {
         }
     }
 
-    private class FollowersTextListener implements KeyListener{
+    private class FollowersTextListener implements KeyListener {
         @Override
         public void keyTyped(KeyEvent e) {
         }
@@ -226,20 +235,11 @@ public class SettingsView extends JFrame {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            if(txtUser.getText().length() > 0){
+            if (txtUser.getText().length() > 0) {
                 btnImport.setEnabled(true);
-            }else{
+            } else {
                 btnImport.setEnabled(false);
             }
-        }
-    }
-
-
-    private void setLookAndFeel(){
-        try{
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }catch(ClassNotFoundException|InstantiationException|IllegalAccessException|UnsupportedLookAndFeelException e){
-            System.out.println(e.getMessage());
         }
     }
 }

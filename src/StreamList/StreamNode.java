@@ -16,9 +16,10 @@ public class StreamNode {
 
     /**
      * Constructor for stream object using given name and default status as Offline
+     *
      * @param name Name of stream
      */
-    public StreamNode(String name){
+    public StreamNode(String name) {
         this.name = name;
         game = "N/A";
         status = "Offline";
@@ -30,124 +31,138 @@ public class StreamNode {
         views = 0;
     }
 
-    public StreamNode(StreamNode node){
+    public StreamNode(StreamNode node) {
         setNode(node);
     }
 
     // Getters
 
-    public String getDisplayName(){
+    public String getDisplayName() {
         return displayName;
     }
 
-    /**
-     * Gives the stream name
-     * @return stream name as String
-     */
-    public String getName(){
-        return name;
-    }
-
-    /**
-     * Gives the stream game
-     * @return stream game as String
-     */
-    public String getGame(){
-        return game;
-    }
-
-    /**
-     * Gives the stream status
-     * @return stream status as String
-     */
-    public String getStatus(){
-        return status;
-    }
-
-    public int getViews(){ return views; }
-
-    /**
-     * Gives the stream logo
-     * @return stream logo as Image
-     */
-    public Image getLogo() { return logo; }
-
-
-    /**
-     * Gives the next node following current node
-     * @return next stream as StreamNode
-     */
-    public StreamNode getNext(){
-        return next;
-    }
-
-    public boolean getVodcast(){
-        return this.vodcast;
-    }
-
-    public String getTitle(){
-        return title;
-    }
-
-
-
-    // Setters
-
-    public void setDisplayName(String displayName){
+    public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
     /**
+     * Gives the stream name
+     *
+     * @return stream name as String
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
      * Sets the current node's stream name
+     *
      * @param name Name of stream
      */
-    public void setName(String name){
+    public void setName(String name) {
         this.name = name;
     }
 
     /**
+     * Gives the stream game
+     *
+     * @return stream game as String
+     */
+    public String getGame() {
+        return game;
+    }
+
+    /**
      * Sets current node's stream game
+     *
      * @param game Name of game
      */
-    public void setGame(String game){
+    public void setGame(String game) {
         this.game = game;
     }
 
     /**
+     * Gives the stream status
+     *
+     * @return stream status as String
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
      * Sets current node's stream status
+     *
      * @param status Status of stream
      */
-    public void setStatus(String status){
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public void setViews(int views){
+    public int getViews() {
+        return views;
+    }
+
+
+    // Setters
+
+    public void setViews(int views) {
         this.views = views;
     }
 
     /**
+     * Gives the stream logo
+     *
+     * @return stream logo as Image
+     */
+    public Image getLogo() {
+        return logo;
+    }
+
+    /**
      * Sets current node's stream logo
+     *
      * @param logo Logo of stream
      */
-    public void setLogo(Image logo) { this.logo = logo; }
+    public void setLogo(Image logo) {
+        this.logo = logo;
+    }
+
+    /**
+     * Gives the next node following current node
+     *
+     * @return next stream as StreamNode
+     */
+    public StreamNode getNext() {
+        return next;
+    }
 
     /**
      * Sets the next node following the current node
+     *
      * @param next Node to be next
      */
-    public void setNext(StreamNode next){
+    public void setNext(StreamNode next) {
         this.next = next;
     }
 
-    public void setVodcast(boolean vodcast){
+    public boolean getVodcast() {
+        return this.vodcast;
+    }
+
+    public void setVodcast(boolean vodcast) {
         this.vodcast = vodcast;
     }
 
-    public void setTitle(String title){
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
         this.title = title;
     }
 
-    public void setNode(StreamNode node){
+    public void setNode(StreamNode node) {
         this.setViews(node.getViews());
         this.setTitle(node.getTitle());
         this.setGame(node.getGame());

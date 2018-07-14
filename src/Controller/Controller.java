@@ -1,11 +1,13 @@
 package Controller;
 
+import Listeners.*;
 import Model.Model;
 import Other.Settings;
-import Other.Sorter;
-import StreamList.*;
-import View.*;
-import Listeners.*;
+import StreamList.StreamIterator;
+import StreamList.StreamList;
+import StreamList.StreamNode;
+import View.Splash;
+import View.View;
 import java.io.InvalidObjectException;
 
 /**
@@ -26,10 +28,11 @@ public class Controller {
 
     /**
      * Constructor
+     *
      * @param m Model object
      * @param v View object
      */
-    public Controller(Model m, View v){
+    public Controller(Model m, View v) {
         model = m;
         view = v;
         Splash splash = new Splash();
@@ -53,7 +56,7 @@ public class Controller {
     /**
      * Adds actionlisteners from View object
      */
-    private void addActionListeners(){
+    private void addActionListeners() {
         view.lblAddListener(new AddListener(model, view, this));
         view.lblSettingsListener(new SettingsListener(model, view, streamUpdateThread, this));
         view.pnlResizeListener(new ResizeListener(view, this));
@@ -64,20 +67,17 @@ public class Controller {
         view.lblMinListener(new MinListener(view));
     }
 
-    public void refreshGUIStreams(){
+    public void refreshGUIStreams() {
         StreamList streams = model.getStreams();
-        Sorter.viewSort(streams);
         StreamIterator iter = streams.iterator();
         view.getDisplayPanel().removeAll();
 
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             StreamNode temp = iter.next();
-
             addStream(temp);
         }
 
         view.changeColorScheme();
-
         view.validate();
         view.repaint();
     }
@@ -85,26 +85,25 @@ public class Controller {
     /**
      * Initializes all streams once on load
      */
-    public void initGUIStreams(){
+    public void initGUIStreams() {
         view.showLoading();
         StreamList streams = model.getStreams();
-        Sorter.viewSort(streams);
         StreamIterator iter = streams.iterator();
         view.getDisplayPanel().removeAll();
 
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             StreamNode temp = iter.next();
 
-            try{
+            try {
                 StreamNode tempInfo = model.getStreamInfo(temp);
                 temp.setNode(tempInfo);
 
                 addStream(temp);
 
-            }catch (InvalidObjectException e){
+            } catch (InvalidObjectException e) {
                 System.out.println("Invalid stream: " + e.getMessage() + " removing stream from list.");
                 model.removeStream(e.getMessage());
-            }catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 System.out.println("Image issue");
             }
         }
@@ -114,10 +113,10 @@ public class Controller {
         view.repaint();
     }
 
-    private void addStream(StreamNode node){
-        if((Settings.getShowOffline() && node.getStatus().equals("Offline")) || node.getStatus().equals("Online")){
-            if(Settings.getGameFilter().equals("None") || Settings.getGameFilter().equals(node.getGame())){
-                if((Settings.getShowVodcast() && node.getVodcast()) || !node.getVodcast()){
+    private void addStream(StreamNode node) {
+        if ((Settings.getShowOffline() && node.getStatus().equals("Offline")) || node.getStatus().equals("Online")) {
+            if (Settings.getGameFilter().equals("") || node.getGame().toLowerCase().startsWith(Settings.getGameFilter().toLowerCase())) {
+                if ((Settings.getShowVodcast() && node.getVodcast()) || !node.getVodcast()) {
                     view.addStreamLabel(node).addMouseListener(new ContextMenuListener(view, model));
                 }
             }

@@ -1,15 +1,15 @@
 package Listeners;
 
-import Controller.*;
+import Controller.Controller;
+import Model.Model;
 import Other.Settings;
+import View.View;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.Document;
 import java.awt.*;
 import java.util.ArrayList;
-import Model.*;
-import View.*;
 
 public class GameListener implements DocumentListener {
     private ArrayList<String> topGames;
@@ -17,7 +17,7 @@ public class GameListener implements DocumentListener {
     private View view;
     private Controller controller;
 
-    public GameListener(Model model, View view, Controller controller){
+    public GameListener(Model model, View view, Controller controller) {
         this.model = model;
         this.view = view;
         this.controller = controller;
@@ -39,13 +39,13 @@ public class GameListener implements DocumentListener {
         update(e.getDocument());
     }
 
-    private void update(Document doc){
-        try{
+    private void update(Document doc) {
+        try {
             String input = doc.getText(0, doc.getLength()).toLowerCase();
             List matchedGames = new List();
-            if(input.length() > 0){
-                for(String game : topGames){
-                    if(game.toLowerCase().contains(input)){
+            if (input.length() > 0) {
+                for (String game : topGames) {
+                    if (game.toLowerCase().contains(input)) {
                         matchedGames.add(game);
 
                     }
@@ -54,14 +54,14 @@ public class GameListener implements DocumentListener {
 
             view.hideGames();
 
-            if(input.length() > 0){
+            if (input.length() > 0) {
                 view.showGames(matchedGames.getItems());
             }
 
             view.revalidate();
             view.repaint();
 
-        }catch(Exception e1){
+        } catch (Exception e1) {
             System.out.println(e1.getMessage());
 
         }

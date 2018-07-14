@@ -1,15 +1,18 @@
 package Listeners;
 
+import View.View;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import View.*;
+
+import static Other.Colors.TWITCH_PURPLE;
 
 public class MinListener implements MouseListener {
     private View view;
 
-    public MinListener(View view){
+    public MinListener(View view) {
         this.view = view;
     }
 
@@ -35,6 +38,7 @@ public class MinListener implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
-        e.getComponent().setForeground(view.TWITCH_PURPLE);
+        e.getComponent().setForeground(TWITCH_PURPLE);
     }
 }
+

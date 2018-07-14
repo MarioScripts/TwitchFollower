@@ -8,17 +8,17 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class Splash extends JFrame{
-    public Splash(){
+public class Splash extends JFrame {
+    public Splash() {
         this.setLayout(new MigLayout("insets 0 0, gap 0, w 200, h 200, flowy"));
         this.setBackground(Color.black);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setUndecorated(true);
 
-        try{
+        try {
             BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource("resources/Twitch.png"));
             setIconImage(img);
-        }catch(IOException e){
+        } catch (IOException e) {
             System.out.println(e.getMessage());
         }
 

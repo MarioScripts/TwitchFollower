@@ -2,31 +2,30 @@ package ColorFactory;
 
 import Other.Settings;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 
 public class ColorFactory {
-    public static Color getBackground(){
-        if(Settings.getDarkMode()){
+    public static Color getBackground() {
+        if (Settings.getDarkMode()) {
             return new Color(39, 39, 39);
-        }else{
+        } else {
             return Color.white;
         }
     }
 
-    public static ImageIcon getLoadingImage(){
-        if(Settings.getDarkMode()){
+    public static ImageIcon getLoadingImage() {
+        if (Settings.getDarkMode()) {
             return new ImageIcon(ColorFactory.class.getClassLoader().getResource("resources/loading_dark.gif"));
-        }else{
+        } else {
             return new ImageIcon(ColorFactory.class.getClassLoader().getResource("resources/loading.gif"));
         }
     }
 
-    public static ImageIcon getHeaderImage(){
-        if(Settings.getDarkMode()){
+    public static ImageIcon getHeaderImage() {
+        if (Settings.getDarkMode()) {
             return new ImageIcon(ColorFactory.class.getClassLoader().getResource("resources/Header_dark.png"));
-        }else{
+        } else {
             return new ImageIcon(ColorFactory.class.getClassLoader().getResource("resources/Header.png"));
         }
     }

@@ -2,23 +2,26 @@ package Listeners;
 
 import View.View;
 
+import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class SearchListener implements MouseListener {
+/**
+ * Waits for hovers on JLabel to set deselect properties
+ */
+public class DeselectListener implements MouseListener {
     private View view;
 
-    public SearchListener(View view) {
+    public DeselectListener(View view) {
         this.view = view;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (view.searchIsVisible()) {
-            view.hideSearch();
-        } else {
-            view.showSearch();
-
+        JPanel selected = view.getSelected();
+        if (selected != null) {
+            view.setDeselectProperties(selected);
+            view.setSelected(null);
         }
     }
 
@@ -37,7 +40,6 @@ public class SearchListener implements MouseListener {
 
     }
 
-    @Override
     public void mouseExited(MouseEvent e) {
 
     }

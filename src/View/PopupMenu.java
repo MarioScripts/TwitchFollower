@@ -1,10 +1,8 @@
 package View;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.nio.file.InvalidPathException;
 
 /**
  * Handles context menu of GUI elements
@@ -28,9 +26,10 @@ public class PopupMenu extends JPopupMenu {
     /**
      * Constructor
      * Adds actionlisteners to PopupMenu
+     *
      * @param view View object
      */
-    public PopupMenu(View view){
+    public PopupMenu(View view) {
         this.view = view;
         selected = view.getSelected();
 
@@ -47,7 +46,7 @@ public class PopupMenu extends JPopupMenu {
         add(removeStream);
     }
 
-    public void removeStreamListener(ActionListener listener){
+    public void removeStreamListener(ActionListener listener) {
         removeStream.addActionListener(listener);
     }
 
@@ -56,9 +55,11 @@ public class PopupMenu extends JPopupMenu {
      */
     private class OpenTwitchListener implements ActionListener {
         String name;
-        public OpenTwitchListener(String name){
+
+        public OpenTwitchListener(String name) {
             this.name = name;
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
             Model.Model.openToTwitch(name);
@@ -73,12 +74,12 @@ public class PopupMenu extends JPopupMenu {
     private class OpenPopoutChatListener implements ActionListener {
         String name;
 
-        public OpenPopoutChatListener(String name){
+        public OpenPopoutChatListener(String name) {
             this.name = name;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e){
+        public void actionPerformed(ActionEvent e) {
             Model.Model.openPopoutChat(name);
             view.setDeselectProperties(selected);
             view.setSelected(null);

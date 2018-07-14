@@ -3,7 +3,7 @@ package StreamList;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class StreamIterator implements Iterator{
+public class StreamIterator implements Iterator {
 
     private int count;  // the number of elements in the collection
     private StreamNode current;  // the current position
@@ -11,11 +11,10 @@ public class StreamIterator implements Iterator{
     /**
      * Sets up this iterator using the specified items.
      *
-     * @param collection  the collection the iterator will move over
-     * @param size        the integer size of the collection
+     * @param collection the collection the iterator will move over
+     * @param size       the integer size of the collection
      */
-    public StreamIterator (StreamNode collection, int size)
-    {
+    public StreamIterator(StreamNode collection, int size) {
         current = collection;
         count = size;
     }
@@ -24,12 +23,11 @@ public class StreamIterator implements Iterator{
      * Returns true if this iterator has at least one more element
      * to deliver in the iteration.
      *
-     * @return  true if this iterator has a least one more element to deliver
-     *          in the iteration
+     * @return true if this iterator has a least one more element to deliver
+     * in the iteration
      */
-    public boolean hasNext()
-    {
-        return (current!= null);
+    public boolean hasNext() {
+        return (current != null);
     }
 
     /**
@@ -37,12 +35,11 @@ public class StreamIterator implements Iterator{
      * more elements in this iteration, a NoSuchElementException is
      * thrown.
      *
-     * @return                         the next element in the iteration
-     * @throws NoSuchElementException  if a no such element exception occurs
+     * @return the next element in the iteration
+     * @throws NoSuchElementException if a no such element exception occurs
      */
-    public StreamNode next()
-    {
-        if (! hasNext())
+    public StreamNode next() {
+        if (!hasNext())
             throw new NoSuchElementException();
         StreamNode result = current;
         current = current.getNext();
@@ -52,11 +49,10 @@ public class StreamIterator implements Iterator{
     /**
      * The remove operation is not supported.
      *
-     * @throws UnsupportedOperationException  if an unsupported operation
-     *                                        exception occurs
+     * @throws UnsupportedOperationException if an unsupported operation
+     *                                       exception occurs
      */
-    public void remove() throws UnsupportedOperationException
-    {
+    public void remove() throws UnsupportedOperationException {
         throw new UnsupportedOperationException();
     }
 }

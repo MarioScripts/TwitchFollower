@@ -1,8 +1,10 @@
 package Listeners;
 
-import Controller.*;
-import View.*;
-import Model.*;
+import Controller.Controller;
+import Controller.Updater;
+import Model.Model;
+import View.SettingsView;
+import View.View;
 
 import javax.swing.*;
 import java.awt.event.MouseEvent;
@@ -14,7 +16,7 @@ public class SettingsListener implements MouseListener {
     private Model model;
     private View view;
 
-    public SettingsListener(Model model, View view, Updater streamUpdateThread, Controller controller){
+    public SettingsListener(Model model, View view, Updater streamUpdateThread, Controller controller) {
         this.model = model;
         this.view = view;
         this.streamUpdateThread = streamUpdateThread;

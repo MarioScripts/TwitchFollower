@@ -1,13 +1,12 @@
 package Controller;
 
+import Model.Model;
 import Other.Settings;
 import StreamList.StreamList;
-import Model.*;
-import View.*;
+import View.View;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.rmi.server.ExportException;
 
 /**
  * Created by Matt on 2017-05-05.
@@ -22,7 +21,7 @@ public class Updater implements Runnable {
     private String gameFilter;
     private boolean pauseWorking;
 
-    public Updater(Controller controller, Model model, View view, StreamList streams, int sleepTime, String gameFilter){
+    public Updater(Controller controller, Model model, View view, StreamList streams, int sleepTime, String gameFilter) {
         this.model = model;
         this.view = view;
         this.streams = streams;
@@ -33,10 +32,11 @@ public class Updater implements Runnable {
         update = new Thread(this);
         update.start();
     }
+
     @Override
     public void run() {
 
-        try{
+        try {
             SystemTray tray = SystemTray.getSystemTray();
             Image img = ImageIO.read(getClass().getClassLoader().getResource("resources/Twitch.png"));
             TrayIcon icon = new TrayIcon(img, "Twitch Follower");
@@ -44,12 +44,12 @@ public class Updater implements Runnable {
             tray.add(icon);
             sleep();
 
-            while(true){
-                synchronized (this){
-                    while(pauseWorking){
-                        try{
+            while (true) {
+                synchronized (this) {
+                    while (pauseWorking) {
+                        try {
                             this.wait();
-                        }catch (InterruptedException e){
+                        } catch (InterruptedException e) {
 
                         }
                     }
@@ -59,30 +59,30 @@ public class Updater implements Runnable {
                         StreamUpdate streamUpdate = new StreamUpdate(controller, model, view, streams, icon, gameFilter);
                         streamUpdate.execute();
 
-                        while(!streamUpdate.isDone()){
+                        while (!streamUpdate.isDone()) {
                             wait(1000);
                         }
                         sleep();
 
-                    }catch(Exception e){
+                    } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
 
     }
 
-    public void hibernate(){
+    public void hibernate() {
         pauseWorking = true;
     }
 
-    public void wake(){
+    public void wake() {
         pauseWorking = false;
-        synchronized (this){
+        synchronized (this) {
 
             this.notifyAll();
         }
@@ -92,7 +92,7 @@ public class Updater implements Runnable {
     /**
      * Sleeps for sleepTime duration
      */
-    private synchronized void sleep(){
+    private synchronized void sleep() {
         try {
             System.out.println("Sleeping for: " + sleepTime);
             wait(sleepTime);

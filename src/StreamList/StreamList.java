@@ -18,23 +18,24 @@ public class StreamList {
     /**
      * Constructor
      */
-    public StreamList(){
+    public StreamList() {
         front = rear = null;
         count = 0;
     }
 
     /**
      * Adds StreamNode object to list
+     *
      * @param node Node that you wish to add
      * @throws DuplicateStreamException thrown when node with same name is already available
      */
     public void add(StreamNode node) throws DuplicateStreamException {
-        if(contains(node.getName())){
+        if (contains(node.getName())) {
             throw new DuplicateStreamException("This stream already exists");
-        }else{
-            if(size() == 0){
+        } else {
+            if (size() == 0) {
                 front = rear = node;
-            }else{
+            } else {
                 rear.setNext(node);
                 rear = rear.getNext();
             }
@@ -45,12 +46,13 @@ public class StreamList {
 
     /**
      * Removes StreamNode object from list
+     *
      * @param name Name of StreamNode to remove
      */
-    public void remove(String name){
+    public void remove(String name) {
         name = name.toLowerCase();
 
-        if(isEmpty()){
+        if (isEmpty()) {
             throw new NoSuchElementException();
         }
 
@@ -59,22 +61,22 @@ public class StreamList {
         StreamNode curr = front;
         StreamNode prev = null;
 
-        while(curr != null && !found){
-            if(curr.getName().toLowerCase().equals(name)){
+        while (curr != null && !found) {
+            if (curr.getName().toLowerCase().equals(name)) {
                 found = true;
-            }else{
+            } else {
                 prev = curr;
                 curr = curr.getNext();
             }
 
         }
 
-        if(found){
+        if (found) {
             count--;
-            if(prev == null){
+            if (prev == null) {
                 front = front.getNext();
-            }else{
-                if(prev.getNext() != null && prev.getNext() == rear){
+            } else {
+                if (prev.getNext() != null && prev.getNext() == rear) {
                     rear = prev;
                 }
                 prev.setNext(prev.getNext().getNext());
@@ -84,15 +86,16 @@ public class StreamList {
 
     /**
      * Checks to see if there exists a StreamNode in the list with the given name
+     *
      * @param name Name you wish to look for
      * @return Boolean, returns false if no duplicates are found
      */
-    public boolean contains(String name){
+    public boolean contains(String name) {
         StreamIterator iter = iterator();
         StreamNode temp;
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             temp = iter.next();
-            if(temp.getName().toLowerCase().equals(name.toLowerCase())){
+            if (temp.getName().toLowerCase().equals(name.toLowerCase())) {
                 return true;
             }
         }
@@ -102,25 +105,28 @@ public class StreamList {
 
     /**
      * Checks if list is empty
+     *
      * @return Boolean, true if empty
      */
-    public boolean isEmpty(){
+    public boolean isEmpty() {
         return count <= 0;
     }
 
     /**
      * Returns size of list
+     *
      * @return size as int
      */
-    public int size(){
+    public int size() {
         return count;
     }
 
     /**
      * Returns iterator for the list
+     *
      * @return List iterator as StreamIterator
      */
-    public StreamIterator iterator(){
+    public StreamIterator iterator() {
         return new StreamIterator(front, count);
     }
 

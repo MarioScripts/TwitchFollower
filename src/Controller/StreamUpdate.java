@@ -1,36 +1,31 @@
 package Controller;
 
 import Model.Model;
+import Other.Settings;
 import StreamList.StreamIterator;
 import StreamList.StreamList;
 import StreamList.StreamNode;
 import View.View;
-import Other.*;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 
 /**
  * Update thread for all streams
  */
 public class StreamUpdate extends SwingWorker<Boolean, Integer> {
 
-    private TrayIcon icon;
-    private String gameFilter;
     /**
      * Update thread
      */
     public Thread update;
-
     /**
      * List of streams
      */
     public StreamList streams;
-
     public boolean pauseWorking;
-
+    private TrayIcon icon;
+    private String gameFilter;
     /**
      * Thread sleep time
      */
@@ -50,7 +45,7 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
 
     private StreamNode temp, tempInfo;
 
-    public StreamUpdate(Controller controller, Model model, View view, StreamList streams, TrayIcon icon, String gameFilter){
+    public StreamUpdate(Controller controller, Model model, View view, StreamList streams, TrayIcon icon, String gameFilter) {
         this.icon = icon;
         this.model = model;
         this.view = view;
@@ -64,32 +59,15 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
         System.out.print("Updating...");
         view.showLoading();
 
-        Sorter.viewSort(streams);
         StreamIterator iter = streams.iterator();
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             temp = iter.next();
             tempInfo = model.getStreamInfo(temp);
 
-            // Update view count
-//            Component[] components = view.getDisplayPanel().getComponents();
-//            for(Component component : components){
-//                if(component.getName().equals(tempInfo.getName())){
-//                    JPanel tempPanel = (JPanel) component;
-//                    Component[] comps = tempPanel.getComponents();
-//                    for(Component comp : comps){
-//                        if(comp.getName() != null && comp.getName().equals("views")){
-//                            ((JLabel) comp).setText(Integer.toString(tempInfo.getViews()));
-//                        }
-//                    }
-//
-//                }
-//            }
-
-
-            if(Settings.getStatusNotify()){
-                if(!temp.getStatus().equals(tempInfo.getStatus())){
+            if (Settings.getStatusNotify()) {
+                if (!temp.getStatus().equals(tempInfo.getStatus())) {
                     // Only alerts if stream goes online
-                    if(tempInfo.getStatus().equals("Online") && temp.getStatus().equals("Offline") && (tempInfo.getGame().equals(gameFilter) || gameFilter.equals("None"))) {
+                    if (tempInfo.getStatus().equals("Online") && temp.getStatus().equals("Offline") && (tempInfo.getGame().equals(gameFilter) || gameFilter.equals("None"))) {
                         icon.displayMessage(
                                 "Status Change",
                                 temp.getDisplayName() + " is now online\nPlaying " + tempInfo.getGame(),
@@ -101,11 +79,11 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
             }
 
 
-            if(Settings.getGameNotify()){
+            if (Settings.getGameNotify()) {
                 //Check if game changes
-                if(!temp.getGame().equals(tempInfo.getGame())){
+                if (!temp.getGame().equals(tempInfo.getGame())) {
                     // Only alerts if the user is already online
-                    if(tempInfo.getStatus().equals("Online") && temp.getStatus().equals("Online") && (tempInfo.getGame().equals(gameFilter) || gameFilter.equals("None"))){
+                    if (tempInfo.getStatus().equals("Online") && temp.getStatus().equals("Online") && (tempInfo.getGame().equals(gameFilter) || gameFilter.equals("None"))) {
                         icon.displayMessage(
                                 "Game Change",
                                 temp.getDisplayName() + " has started playing " + tempInfo.getGame(),
@@ -116,11 +94,11 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
                 }
             }
 
-            if(!temp.getStatus().equals(tempInfo.getStatus()) || !temp.getGame().equals(tempInfo.getGame())){
+            if (!temp.getStatus().equals(tempInfo.getStatus()) || !temp.getGame().equals(tempInfo.getGame())) {
                 temp.setNode(tempInfo);
                 controller.refreshGUIStreams();
 
-            }else if(temp.getViews() != tempInfo.getViews()){
+            } else if (temp.getViews() != tempInfo.getViews()) {
                 temp.setViews(tempInfo.getViews());
                 controller.refreshGUIStreams();
             }
@@ -130,7 +108,7 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
         return true;
     }
 
-    protected void done(){
+    protected void done() {
         view.validate();
         view.repaint();
         view.hideLoading();
@@ -140,9 +118,9 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
     /**
      * Prints stream info. Used for debugging
      */
-    public void printInfo(){
+    public void printInfo() {
         StreamIterator iter = streams.iterator();
-        while(iter.hasNext()){
+        while (iter.hasNext()) {
             StreamNode info = iter.next();
             System.out.println("Name: " + info.getName());
             System.out.println("Status: " + info.getStatus());
@@ -152,13 +130,13 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
 
     }
 
-    public void hibernate(){
+    public void hibernate() {
         pauseWorking = true;
     }
 
-    public void wake(){
+    public void wake() {
         pauseWorking = false;
-        synchronized (this){
+        synchronized (this) {
 
             this.notifyAll();
         }
@@ -167,7 +145,7 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
     /**
      * Sleeps for sleepTime duration
      */
-    private synchronized void sleep(){
+    private synchronized void sleep() {
         try {
             Thread.sleep(sleepTime);
         } catch (InterruptedException e) {
@@ -177,9 +155,10 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
 
     /**
      * Sets the sleep time of the thread
+     *
      * @param sleepTime sleep delay
      */
-    synchronized public void setSleepTime(int sleepTime){
+    synchronized public void setSleepTime(int sleepTime) {
         this.sleepTime = sleepTime;
     }
 
