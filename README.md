@@ -12,7 +12,7 @@
 - Streams will now be sorted by view count
 - Remove titlebar and create custom titlebar to match with colorscheme
 - Fixed game search so that it works more intuitively (still WIP)
-- Planned: Sorting opotions (WIP, not yet implemented)
+- Planned: Sorting options (WIP, not yet implemented)
 
 ###### V2.0 Changelog:
 - Updated UI elements to make overall look better:
