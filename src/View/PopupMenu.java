@@ -42,9 +42,9 @@ public class PopupMenu extends JPopupMenu {
         openTwitch.addActionListener(new OpenTwitchListener(name));
         popoutChat.addActionListener(new OpenPopoutChatListener(name));
 
-        add(removeStream);
         add(openTwitch);
         add(popoutChat);
+        add(removeStream);
     }
 
     public void removeStreamListener(ActionListener listener){

@@ -64,25 +64,27 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
         System.out.print("Updating...");
         view.showLoading();
 
+        Sorter.viewSort(streams);
         StreamIterator iter = streams.iterator();
         while(iter.hasNext()){
             temp = iter.next();
             tempInfo = model.getStreamInfo(temp);
 
             // Update view count
-            Component[] components = view.getDisplayPanel().getComponents();
-            for(Component component : components){
-                if(component.getName().equals(tempInfo.getName())){
-                    JPanel tempPanel = (JPanel) component;
-                    Component[] comps = tempPanel.getComponents();
-                    for(Component comp : comps){
-                        if(comp.getName() != null && comp.getName().equals("views")){
-                            ((JLabel) comp).setText(Integer.toString(tempInfo.getViews()));
-                        }
-                    }
+//            Component[] components = view.getDisplayPanel().getComponents();
+//            for(Component component : components){
+//                if(component.getName().equals(tempInfo.getName())){
+//                    JPanel tempPanel = (JPanel) component;
+//                    Component[] comps = tempPanel.getComponents();
+//                    for(Component comp : comps){
+//                        if(comp.getName() != null && comp.getName().equals("views")){
+//                            ((JLabel) comp).setText(Integer.toString(tempInfo.getViews()));
+//                        }
+//                    }
+//
+//                }
+//            }
 
-                }
-            }
 
             if(Settings.getStatusNotify()){
                 if(!temp.getStatus().equals(tempInfo.getStatus())){
@@ -115,20 +117,12 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
             }
 
             if(!temp.getStatus().equals(tempInfo.getStatus()) || !temp.getGame().equals(tempInfo.getGame())){
-                temp.setVodcast(tempInfo.getVodcast());
-                temp.setTitle(tempInfo.getTitle());
-                temp.setGame(tempInfo.getGame());
-                temp.setStatus(tempInfo.getStatus());
-                temp.setViews(tempInfo.getViews());
-                view.removeStreamLabel(temp.getName());
-                if((Settings.getShowOffline() && tempInfo.getStatus().equals("Offline")) || tempInfo.getStatus().equals("Online")){
-                    if(tempInfo.getGame().equals(gameFilter) || gameFilter.equals("None")){
-                        if((Settings.getShowVodcast() && temp.getVodcast()) || !temp.getVodcast()){
-                            view.addStreamLabel(temp).addMouseListener(controller.new ContextMenuListener());
-                        }
-                    }
-                }
+                temp.setNode(tempInfo);
+                controller.refreshGUIStreams();
 
+            }else if(temp.getViews() != tempInfo.getViews()){
+                temp.setViews(tempInfo.getViews());
+                controller.refreshGUIStreams();
             }
 
         }

@@ -1,13 +1,8 @@
 package View;
 
-import Controller.StreamUpdate;
-import Exceptions.DuplicateStreamException;
 import Other.Settings;
-import View.*;
 import Controller.*;
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -124,13 +119,14 @@ public class SettingsView extends JFrame {
     private class SaveSettingsListener implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
-            model.editSettings(chkGameNotify.isSelected(), chkStatusNotify.isSelected(), chkShowOffline.isSelected(), chkShowVodcast.isSelected(), chkDarkMode.isSelected(), slrSleep.getValue()*1000);
+//            model.updateSettings(chkGameNotify.isSelected(), chkStatusNotify.isSelected(), chkShowOffline.isSelected(), chkShowVodcast.isSelected(), chkDarkMode.isSelected(), slrSleep.getValue()*1000);
             Settings.setGameNotify(chkGameNotify.isSelected());
             Settings.setStatusNotify(chkStatusNotify.isSelected());
             Settings.setShowOffline(chkShowOffline.isSelected());
             Settings.setShowVodast(chkShowVodcast.isSelected());
             Settings.setSleepTime(slrSleep.getValue()*1000);
             Settings.setDarkMode(chkDarkMode.isSelected());
+            model.updateSettings();
             controller.refreshGUIStreams();
             SettingsView.super.dispose();
         }

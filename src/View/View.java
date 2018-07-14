@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.text.DecimalFormat;
 
 /**
  * Handles all GUI interactions and elements
@@ -23,9 +24,9 @@ import java.net.URL;
 public class View extends JFrame{
 
     private JButton btnAdd, btnRemove, btnSettings;
-    private JLabel lblAdd, lblSetting, lblSearch;
+    private JLabel lblAdd, lblSetting, lblSearch, lblExit, lblMinimize;
     public JTextField txtSearch;
-    public JPanel pnlDisplay, pnlSettings, selected, pnlSearch;
+    public JPanel pnlDisplay, pnlSettings, selected, pnlSearch, pnlTitle;
     private JScrollPane scrDisplay;
     private JLabel header, lblSettings, lblDisplay;
     private JSeparator sepSettings, sepDisplay;
@@ -34,7 +35,7 @@ public class View extends JFrame{
     private JScrollPane scrlGames;
 
     //Constants
-    private static final Color TWITCH_PURPLE = new Color(100, 65, 164);
+    public static final Color TWITCH_PURPLE = new Color(100, 65, 164);
     private static final Color SELECT_FOREGROUND_COLOR = Color.white;
     private static final Color SELECT_BACKGROUND_COLOR = new Color(123, 90, 204);
     private static Color BACKGROUND_COLOR = ColorFactory.getBackground();
@@ -45,7 +46,7 @@ public class View extends JFrame{
      * Constructor, sets general GUI properties
      */
     public View(){
-//        setUndecorated(true);
+
         setLookAndFeel();
         setName("Twitch Follower");
         setTitle("Twitch Follower");
@@ -56,6 +57,8 @@ public class View extends JFrame{
         setLayout(new MigLayout("insets 0, gap 0 0"));
 
         initComponents();
+        setUndecorated(true);
+
         // setVisible(true);
     }
 
@@ -63,6 +66,10 @@ public class View extends JFrame{
      * Initializes all GUI elements and sets their properties
      */
     private void initComponents(){
+        pnlTitle = new JPanel();
+        pnlTitle.setLayout((new MigLayout("wrap 2, flowx, insets 0 0")));
+        pnlTitle.setBackground(BACKGROUND_COLOR);
+
         pnlDisplay = new JPanel();
         pnlDisplay.setLayout(new MigLayout("wrap 1, flowx, insets 10 10"));
         // pnlDisplay.setMaximumSize(new Dimension(getWidth(), getHeight()-100));
@@ -95,6 +102,18 @@ public class View extends JFrame{
         btnSettings = new JButton("...");
         btnSettings.setFocusable(false);
         btnSettings.setToolTipText("Go to settings");
+
+        lblExit = new JLabel("<html><b>x</html>");
+        lblExit.setForeground(TWITCH_PURPLE);
+        lblExit.setBackground(TWITCH_PURPLE);
+        lblExit.setFont(lblExit.getFont ().deriveFont (17f));
+        lblExit.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        lblMinimize = new JLabel("<html><b>-</html>");
+        lblMinimize.setForeground(TWITCH_PURPLE);
+        lblMinimize.setBackground(TWITCH_PURPLE);
+        lblMinimize.setFont(lblMinimize.getFont ().deriveFont (17f));
+        lblMinimize.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         lblAdd = new JLabel("<html><b>+</font></html>");
         lblAdd.setFont (lblAdd.getFont ().deriveFont (17f));
@@ -168,6 +187,10 @@ public class View extends JFrame{
 
         pnlSearch.add(lblSearch, "aligny 100%, pushy");
 
+        pnlTitle.add(lblMinimize, "push, w 10, al right, gapright 10");
+        pnlTitle.add(lblExit, "w 10, al right, gapright 10");
+
+        add(pnlTitle, "growx, pushx, h 20, wrap");
         add(header, "wrap, gapy 15, align center");
 //        add(lblSearch, "");
 //        add(lblDisplay, "al left, wrap");
@@ -181,6 +204,18 @@ public class View extends JFrame{
         MouseListener deselectListener = new DeselectListener();
         addMouseListener(deselectListener);
         pnlDisplay.addMouseListener(deselectListener);
+        MoveListener moveListener = new MoveListener(this);
+        pnlTitle.addMouseListener(moveListener);
+        pnlTitle.addMouseMotionListener(moveListener);
+
+        ComponentResizer componentResizer = new ComponentResizer();
+        componentResizer.registerComponent(pnlTitle);
+        componentResizer.registerComponent(pnlSettings.getComponents());
+        componentResizer.registerComponent(scrDisplay);
+        componentResizer.registerComponent(this);
+        componentResizer.setSource(this);
+        componentResizer.setMinimumSize(new Dimension(400, 300));
+        componentResizer.setSnapSize(new Dimension(1, 1));
     }
 
     /**
@@ -204,6 +239,10 @@ public class View extends JFrame{
     public void lblAddListener(MouseListener listener){
         lblAdd.addMouseListener(listener);
     }
+
+    public void lblExitListener(MouseListener listener){ lblExit.addMouseListener(listener); }
+
+    public void lblMinListener(MouseListener listener){ lblMinimize.addMouseListener(listener); }
 
     public void lblSettingsListener(MouseListener listener){ lblSetting.addMouseListener(listener); }
 
@@ -292,7 +331,7 @@ public class View extends JFrame{
 
         if(temp.getStatus().equals("Online")){
             if(temp.getVodcast()){
-                statusIndicator.setBackground(new Color(0x72C6FF));
+                statusIndicator.setBackground(new Color(0xFFFE66));
                 statusIndicator.setToolTipText("Vodcast");
             }else{
                 statusIndicator.setBackground(new Color(102, 255, 102));
@@ -317,13 +356,14 @@ public class View extends JFrame{
         }
 
         if(temp.getStatus().equals("Online")){
+            DecimalFormat formatter = new DecimalFormat("#, ###, ###");
             ImageIcon imgIcon = new ImageIcon(new ImageIcon(this.getClass().getClassLoader().getResource("resources/views.png")).getImage().getScaledInstance(8, 11,  java.awt.Image.SCALE_SMOOTH));
-            JLabel lblViews = new JLabel(Integer.toString(temp.getViews()));
+            JLabel lblViews = new JLabel(formatter.format(temp.getViews()));
             lblViews.setName("views");
             lblViews.setIcon(imgIcon);
             lblViews.setForeground(SELECT_FOREGROUND_COLOR);
 
-            panel.add(lblViews, "gapright 5, gaptop 20, width 45");
+            panel.add(lblViews, "gapright 5, gaptop 20, width 50");
             pnlDisplay.add(panel, "growx, sg, pushx, height 44", 0);
         }else{
             pnlDisplay.add(panel, "growx, sg, pushx, height 44");
@@ -416,6 +456,7 @@ public class View extends JFrame{
     public void changeColorScheme(){
         BACKGROUND_COLOR = ColorFactory.getBackground();
         getContentPane().setBackground(BACKGROUND_COLOR);
+        pnlTitle.setBackground(BACKGROUND_COLOR);
         pnlDisplay.setBackground(BACKGROUND_COLOR);
         pnlSearch.setBackground(BACKGROUND_COLOR);
         scrDisplay.setBackground(BACKGROUND_COLOR);
@@ -434,6 +475,8 @@ public class View extends JFrame{
 
         header.setIcon(ColorFactory.getHeaderImage());
 
+        repaint();
+        revalidate();
     }
 
 
@@ -544,9 +587,30 @@ public class View extends JFrame{
 
         }
 
-        @Override
         public void mouseExited(MouseEvent e) {
 
+        }
+    }
+
+    private static class MoveListener extends MouseAdapter{
+        private int tx, ty;
+        private JFrame frame;
+
+        public MoveListener(JFrame frame){
+            this.frame = frame;
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e){
+            if(frame.getCursor().getType() == Cursor.DEFAULT_CURSOR){
+                frame.setLocation(e.getXOnScreen() - tx, e.getYOnScreen() - ty);
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e){
+            tx = e.getX();
+            ty = e.getY();
         }
     }
 

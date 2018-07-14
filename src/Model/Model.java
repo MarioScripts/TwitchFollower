@@ -8,6 +8,7 @@ import StreamList.StreamNode;
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils;
 import javafx.beans.binding.When;
+import oracle.jrockit.jfr.openmbean.EventSettingType;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -192,7 +193,7 @@ public class Model {
 
     }
 
-    public static void editSettings(boolean gameNotify, boolean statusNotify, boolean showOffline, boolean showVodcast, boolean darkMode, int sleepTime){
+    public static void updateSettings(){
         File settingsFile = new File(SAVE_DIR + "\\settings.cfg");
         File streamDir = new File(SAVE_DIR);
 
@@ -200,12 +201,13 @@ public class Model {
             if(streamDir.exists() && settingsFile.exists()){
                 BufferedWriter writer = new BufferedWriter(new FileWriter(settingsFile));
                 String settings = "";
-                settings += "gameNotify=" + gameNotify + "\r\n";
-                settings += "statusNotify=" + statusNotify + "\r\n";
-                settings += "showOffline=" + showOffline + "\r\n";
-                settings += "showVodcast=" + showVodcast + "\r\n";
-                settings += "sleepTime=" + sleepTime + "\r\n";
-                settings += "darkMode=" + darkMode + "\r\n";
+                settings += "gameNotify=" + Settings.getGameNotify() + "\r\n";
+                settings += "statusNotify=" + Settings.getStatusNotify() + "\r\n";
+                settings += "showOffline=" + Settings.getShowOffline() + "\r\n";
+                settings += "showVodcast=" + Settings.getShowVodcast() + "\r\n";
+                settings += "sleepTime=" + Settings.getSleepTime() + "\r\n";
+                settings += "darkMode=" + Settings.getDarkMode() + "\r\n";
+                settings += "gameFilter=" + Settings.getGameFilter() + "\r\n";
 
                 writer.write(settings);
                 writer.close();
@@ -252,6 +254,8 @@ public class Model {
                             Settings.setSleepTime(Integer.parseInt(setting));
                         }else if(line.contains("darkMode")){
                             Settings.setDarkMode(state);
+                        }else if(line.contains("gameFilter")){
+                            Settings.setGameFilter(setting);
                         }
 
                     }

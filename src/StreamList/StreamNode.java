@@ -30,6 +30,10 @@ public class StreamNode {
         views = 0;
     }
 
+    public StreamNode(StreamNode node){
+        setNode(node);
+    }
+
     // Getters
 
     public String getDisplayName(){
@@ -141,6 +145,17 @@ public class StreamNode {
 
     public void setTitle(String title){
         this.title = title;
+    }
+
+    public void setNode(StreamNode node){
+        this.setViews(node.getViews());
+        this.setTitle(node.getTitle());
+        this.setGame(node.getGame());
+        this.setLogo(node.getLogo());
+        this.setDisplayName(node.getDisplayName());
+        this.setName(node.getName());
+        this.setStatus(node.getStatus());
+        this.setVodcast(node.getVodcast());
     }
 
 }
