@@ -8,8 +8,11 @@
 - Updated splashscreen so that it runs at a much better framerate, and looks simpler/cleaner
 - Added viewer tracking to streams. Streams will now show the number of viewers the stream has in the bottom right
 - Fixed follower import so that it works correctly
+- Changed Vodcast strip color from blue to yellow
+- Streams will now be sorted by view count
+- Remove titlebar and create custom titlebar to match with colorscheme
 - Fixed game search so that it works more intuitively (still WIP)
-- Planned: Remove titlebar and create custom titlebar to match with colorscheme (WIP, not implemented yet)
+- Planned: Sorting opotions (WIP, not yet implemented)
 
 ###### V2.0 Changelog:
 - Updated UI elements to make overall look better:
