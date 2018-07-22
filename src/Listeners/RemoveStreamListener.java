@@ -11,7 +11,7 @@ public class RemoveStreamListener implements ActionListener {
     private View view;
     private Model model;
 
-    public RemoveStreamListener(View view, Model mode) {
+    public RemoveStreamListener(View view, Model model) {
         this.view = view;
         this.model = model;
     }
