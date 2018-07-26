@@ -6,7 +6,7 @@ package Other;
 public class Settings {
     private static boolean gameNotify = true, statusNotify = true, showOffline = true, showVodast = true, darkMode = false;
     private static int sleepTime = 30000;
-    private static String gameFilter = "None";
+    private static String gameFilter = "";
 
     //Getters
     public static boolean getGameNotify() {
