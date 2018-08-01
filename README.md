@@ -19,6 +19,5 @@ This application allows you to:
 For more information about features and development visit the changelog listed below, or download the latest release and try it for yourself! 
 
 ---
-[Click here](https://github.com/MarioScripts/TwitchFollower/releases/download/v2.5/TwitchFollower.exe) for the latest EXE release.
-
+[Click here](https://github.com/MarioScripts/TwitchFollower/releases/download/v2.5/TwitchFollower.exe) for the latest EXE release.<br/>
 [Full changelog](https://raw.githubusercontent.com/MarioScripts/TwitchFollower/develop/CHANGELOG.md) is available here.
