@@ -1,4 +1,4 @@
-#TwitchFollower
+# TwitchFollower
 
 TwitchFollower is a light-weight application that allows real-time notifications for your favourite streams.
 
