@@ -27,20 +27,20 @@
 - Added settings to set how frequently you want the program to refresh for streams
 - Added search feature, allows you to filter for specific games and only be notified if someone has started playing the specified game(s)
 
-###### Basic TODO:
+###### V1.0 Changelog:
 
-- [x] Add channel image fetch
-- [x] Add duplicate entry control
-- [x] Add highilght color / fix inconsistent looking selection/deselection of labels
-- [x] Java doc comment all methods
-- [x] Look into manipulating GUI components without freezing GUI
-- [x] Tidy up code, fix indenting, spacing, naming, etc
-- [x] Incorporate a settings gui and cfg file to store the settings. Settings could include:
-	- [x] Enable/disable noitification
-	- [x] Show only online channels
-	- [x] Import followers from specified twitch user **(Only supports last 100 followers)**
-	- [x] Show channels playing specific game(s)
-	- [ ] Show channels playing any game except a specific game
-- [x] Fix game name spacing for stream tiles in list
-- [x] Look into redrawing entire GUI on resize to enable dynamic column wrapping
+- Added channel image fetch
+- Added duplicate entry control
+- Added highlight color
+- Fixed incosistent looking selection/deselection of labels
+- Implemented a threading system that allows for the GUI to not freeze while manipulating GUI components
+- Incorporated a settings GUI and configuration file to store the following settings:
+	- Enable/disable status notifications
+	- Enable/disable game change notifications
+	- Show only online channels
+	- Import followers from specified twitcher user **(Only supports last 100 followers)**
+- Fixed game name spacing for stream tiles in list
+- Implemented dynamic column wrapping when resizing the GUI
+- Added javadoc comments to most methods
+- Tidied up/refactored code
 
