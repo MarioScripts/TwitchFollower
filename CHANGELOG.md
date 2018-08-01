@@ -1,13 +1,10 @@
-# TwitchFollower Changelog
-
-###### Current urrent Development Changelog:
+# Full Changelog
+## Current Development Changelog:
 - Fixed horizontal scrolling issue (Experimental)
 - Changed offline channel color from red to gray
 - Added to main display when there are either no streams online or when there are no streams being followed (empty follower list)
 
----
-
-###### V2.5 Changelog:
+## v2.5 Changes
 - Added "Dark Mode" setting that changes colorscheme to a more eye-friendly dark shade
 - Added right-click remove stream functionality. Removed remove stream button
 - Updated splashscreen so that it runs at a much better framerate, and looks simpler/cleaner
@@ -19,9 +16,7 @@
 - Fixed game search so that it works more intuitively (still WIP)
 - Planned: Sorting options (WIP, not yet implemented)
 
----
-
-###### V2.0 Changelog:
+## v2.0 Changes
 - Updated UI elements to make overall look better:
 	- Settings pane now updated, buttons are removed for better looking labels
 	- Title of stream is now available if you hover over a channel's label
@@ -34,9 +29,7 @@
 - Added settings to set how frequently you want the program to refresh for streams
 - Added search feature, allows you to filter for specific games and only be notified if someone has started playing the specified game(s)
 
----
-
-###### V1.0 Changelog:
+## v1.0 Changes
 
 - Added channel image fetch
 - Added duplicate entry control
