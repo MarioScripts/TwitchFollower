@@ -68,6 +68,7 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
                 if (!temp.getStatus().equals(tempInfo.getStatus())) {
                     // Only alerts if stream goes online
                     if (tempInfo.getStatus().equals("Online") && temp.getStatus().equals("Offline") && (tempInfo.getGame().equals(gameFilter) || gameFilter.equals(""))) {
+                        System.out.println("\nSENDING ONLINE STATUS CHANGE NOTIFICATION");
                         icon.displayMessage(
                                 "Status Change",
                                 temp.getDisplayName() + " is now online\nPlaying " + tempInfo.getGame(),
@@ -84,6 +85,7 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
                 if (!temp.getGame().equals(tempInfo.getGame())) {
                     // Only alerts if the user is already online
                     if (tempInfo.getStatus().equals("Online") && temp.getStatus().equals("Online") && (tempInfo.getGame().equals(gameFilter) || gameFilter.equals(""))) {
+                        System.out.println("\nSENDING GAME CHANGE NOTIFICATION");
                         icon.displayMessage(
                                 "Game Change",
                                 temp.getDisplayName() + " has started playing " + tempInfo.getGame(),

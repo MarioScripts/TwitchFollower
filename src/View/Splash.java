@@ -1,5 +1,6 @@
 package View;
 
+import Other.Settings;
 import net.miginfocom.swing.MigLayout;
 
 import javax.imageio.ImageIO;
@@ -27,7 +28,7 @@ public class Splash extends JFrame {
         JLabel label = new JLabel();
         label.setIcon(icon);
 
-        JLabel infoPanel = new JLabel("<html><b>v2.5</html>", SwingConstants.CENTER);
+        JLabel infoPanel = new JLabel("<html><b>" + Settings.getVersion() + "</html>", SwingConstants.CENTER);
         infoPanel.setForeground(Color.white);
         infoPanel.setOpaque(true);
         infoPanel.setBackground(new Color(100, 65, 164));

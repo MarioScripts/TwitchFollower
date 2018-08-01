@@ -128,6 +128,8 @@ public class Model {
                 settings += "sleepTime=" + Settings.getSleepTime() + "\r\n";
                 settings += "darkMode=" + Settings.getDarkMode() + "\r\n";
                 settings += "gameFilter=" + Settings.getGameFilter() + "\r\n";
+                settings += "size=" + (int)Settings.getSize().getWidth() + "x" + (int)Settings.getSize().getHeight() + "\r\n";
+                settings += "loc=" + (int)Settings.getLoc().getX() + "x" + (int)Settings.getLoc().getY() + "\r\n";
 
                 writer.write(settings);
                 writer.close();
@@ -176,6 +178,20 @@ public class Model {
                             Settings.setDarkMode(state);
                         } else if (line.contains("gameFilter")) {
                             Settings.setGameFilter(setting);
+                        }else if (line.contains("size")){
+                            String[] sizeString = setting.split("x");
+                            int width = Integer.valueOf(sizeString[0]);
+                            int height = Integer.valueOf(sizeString[1]);
+                            Dimension size = new Dimension(width, height);
+
+                            Settings.setSize(size);
+                        }else if (line.contains("loc")){
+                            String[] locString = setting.split("x");
+                            int x = Integer.valueOf(locString[0]);
+                            int y = Integer.valueOf(locString[1]);
+                            Point loc = new Point(x,y);
+
+                            Settings.setLoc(loc);
                         }
 
                     }

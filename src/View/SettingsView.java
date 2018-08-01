@@ -13,6 +13,7 @@ import java.awt.event.*;
  * Created by Matt on 2017-05-04.
  */
 public class SettingsView extends JFrame {
+    //TODO: Update settings view to match main view aesthetic
 
     private Updater updateThread;
     private Model model;

@@ -8,6 +8,8 @@ import StreamList.StreamList;
 import StreamList.StreamNode;
 import View.Splash;
 import View.View;
+
+import javax.swing.*;
 import java.io.InvalidObjectException;
 
 /**
@@ -46,6 +48,9 @@ public class Controller {
         streamUpdateThread = new Updater(this, model, view, model.getStreams(), Settings.getSleepTime(), Settings.getGameFilter());
 
         view.pack();
+        view.setSize(Settings.getSize());
+        view.setLocation(Settings.getLoc());
+        view.changeColorScheme();
         view.setVisible(true);
         view.repaint();
 
@@ -65,6 +70,7 @@ public class Controller {
         view.lstSearchGamesListener(new GameSelectListener(model, view, this));
         view.lblExitListener(new ExitListener(view));
         view.lblMinListener(new MinListener(view));
+        view.frmExitListener(new WindowExitListener(model));
     }
 
     public void refreshGUIStreams() {
@@ -75,6 +81,13 @@ public class Controller {
         while (iter.hasNext()) {
             StreamNode temp = iter.next();
             addStream(temp);
+        }
+
+        if(streams.size() == 0){
+            view.addNoStreamLabel("You are not following any streams.");
+
+        }else if(view.getDisplayPanel().getComponents().length == 0){
+            view.addNoStreamLabel("No streams are currently online.");
         }
 
         view.changeColorScheme();

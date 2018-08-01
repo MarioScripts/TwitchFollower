@@ -1,10 +1,7 @@
 package View;
 
 import ColorFactory.ColorFactory;
-import Listeners.DeselectListener;
-import Listeners.HeaderListener;
-import Listeners.MoveListener;
-import Listeners.SelectListener;
+import Listeners.*;
 import Other.Settings;
 import StreamList.StreamNode;
 import net.miginfocom.swing.MigLayout;
@@ -16,6 +13,7 @@ import java.awt.*;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -374,6 +372,13 @@ public class View extends JFrame {
         lblDisplay.setVisible(true);
     }
 
+    public void addNoStreamLabel(String message){
+        JLabel lblNoStream = new JLabel(message, SwingConstants.CENTER);
+        lblNoStream.setFont(lblNoStream.getFont().deriveFont(Font.BOLD, 20f));
+        lblNoStream.setForeground(Colors.TWITCH_PURPLE);
+        pnlDisplay.add(lblNoStream, "pushx, growx, gaptop 20");
+    }
+
     public void showSearch() {
         pnlSearch.add(txtSearch, "pushx 100, growx, gaptop 10");
         //  pnlSearch.setBackground(TWITCH_PURPLE);
@@ -469,6 +474,10 @@ public class View extends JFrame {
 
     public void txtSearchListener(DocumentListener listener) {
         txtSearch.getDocument().addDocumentListener(listener);
+    }
+
+    public void frmExitListener(WindowListener listener){
+        this.addWindowListener(listener);
     }
 
 }

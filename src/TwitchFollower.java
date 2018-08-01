@@ -11,8 +11,6 @@ import java.util.Calendar;
  */
 public class TwitchFollower {
     public static void main(String[] args) {
-        //TODO: Look into saving settings in enum
-        //TODO: Look into only showing certain games
         // States start time for debugging purposes
         System.out.println("Started on: " + new SimpleDateFormat("MM/dd/YYYY hh:mm a").format(Calendar.getInstance().getTime()));
 
