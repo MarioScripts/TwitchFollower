@@ -53,8 +53,6 @@ public class View extends JFrame {
 
         initComponents();
         setUndecorated(true);
-
-        // setVisible(true);
     }
 
     /**
