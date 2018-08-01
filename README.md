@@ -1,6 +1,6 @@
 # TwitchFollower
 
-TwitchFollower is a light-weight application that allows real-time notifications for your favourite streams.
+TwitchFollower is a lightweight application that allows real-time notifications for your favourite streams.
 
 This application allows you to:
 - Import your list of channels you are following and keep track of when they come online and change games
