@@ -1,6 +1,8 @@
 package ColorFactory;
 
+import Other.Colors;
 import Other.Settings;
+import StreamList.StreamNode;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,6 +30,18 @@ public class ColorFactory {
         } else {
             return new ImageIcon(ColorFactory.class.getClassLoader().getResource("resources/Header.png"));
         }
+    }
+
+    public static Color getStatusColor(StreamNode node){
+        if (node.getStatus().equals("Online")) {
+            if (node.getVodcast()) {
+                return Colors.VODCAST_COLOR;
+            } else {
+                return Colors.ONLINE_COLOR;
+            }
+        }
+
+        return Colors.OFFLINE_COLOR;
     }
 
 }

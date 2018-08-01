@@ -79,8 +79,8 @@ public class View extends JFrame {
         pnlSearch.setOpaque(false);
 
         scrDisplay = new JScrollPane(pnlDisplay);
-        scrDisplay.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrDisplay.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrDisplay.getVerticalScrollBar().setPreferredSize(new Dimension(0, 0));
         scrDisplay.setBorder(BorderFactory.createEmptyBorder());
         scrDisplay.getVerticalScrollBar().setUnitIncrement(5);
         scrDisplay.setOpaque(false);
@@ -290,19 +290,8 @@ public class View extends JFrame {
         //Status indicator
         JLabel statusIndicator = new JLabel();
         statusIndicator.setOpaque(true);
-        statusIndicator.setBackground(new Color(230, 46, 0));
-        statusIndicator.setToolTipText("Offline");
+        statusIndicator.setBackground(ColorFactory.getStatusColor(temp));
 
-        if (temp.getStatus().equals("Online")) {
-            if (temp.getVodcast()) {
-                statusIndicator.setBackground(new Color(0xFFFE66));
-                statusIndicator.setToolTipText("Vodcast");
-            } else {
-                statusIndicator.setBackground(new Color(102, 255, 102));
-                statusIndicator.setToolTipText("Online");
-            }
-
-        }
         panel.add(statusIndicator, "growy, pushy, w 5, spany 2");
 
         //Panel image

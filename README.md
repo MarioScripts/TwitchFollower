@@ -2,6 +2,11 @@
 
 [Latest EXE release](https://github.com/MarioScripts/TwitchFollower/releases/download/v2.5/TwitchFollower.exe)
 
+###### Current Development Changelog:
+- Fixed horizontal scrolling issue (Experimental)
+- Changed offline channel color from red to gray
+- Added to main display when there are either no streams online or when there are no streams being followed (empty follower list)
+
 ###### V2.5 Changelog:
 - Added "Dark Mode" setting that changes colorscheme to a more eye-friendly dark shade
 - Added right-click remove stream functionality. Removed remove stream button
