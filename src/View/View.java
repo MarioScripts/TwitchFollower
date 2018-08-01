@@ -198,8 +198,16 @@ public class View extends JFrame {
         ComponentResizer componentResizer = new ComponentResizer();
         componentResizer.registerComponent(pnlTitle);
         componentResizer.registerComponent(pnlSettings.getComponents());
-        componentResizer.registerComponent(scrDisplay);
         componentResizer.registerComponent(this);
+
+
+        ComponentResizer componentResizerHorizontal = new ComponentResizer(ComponentResizer.HORIZONTAL);
+        componentResizerHorizontal.registerComponent(pnlDisplay);
+
+        componentResizerHorizontal.setSource(this);
+        componentResizerHorizontal.setMinimumSize(new Dimension(400, 300));
+        componentResizerHorizontal.setSnapSize(new Dimension(1, 1));
+
         componentResizer.setSource(this);
         componentResizer.setMinimumSize(new Dimension(400, 300));
         componentResizer.setSnapSize(new Dimension(1, 1));
