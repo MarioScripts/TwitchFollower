@@ -1,6 +1,7 @@
 package Model;
 
 import Exceptions.DuplicateStreamException;
+import Exceptions.UserNotFoundException;
 import Other.Settings;
 import Other.Sorter;
 import StreamList.StreamIterator;
@@ -351,27 +352,38 @@ public class Model {
 
     }
 
-    public void importUserFollowers(String user) {
+    public JSONArray getImportedFollowers(String user) throws UserNotFoundException {
         try {
             JSONArray follows = new JSONObject(getJSONString(USER_URL, user + "/follows/channels?limit=100")).getJSONArray("follows");
-            for (Object follow : follows) {
-
-                JSONObject jsonObj = (JSONObject) follow;
-                jsonObj = jsonObj.getJSONObject("channel");
-                String name = jsonObj.getString("name");
-                StreamNode node = new StreamNode(name);
-                try {
-                    addStream(node);
-                } catch (DuplicateStreamException ex) {
-                    System.out.println("Stream already in list, skipping..");
-                }
-
-            }
+            return follows;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Incorrect specified user");
         }
 
+        throw new UserNotFoundException("Specified user is not found");
     }
+
+//    public void importUserFollowers(String user) {
+//        try {
+//            JSONArray follows = new JSONObject(getJSONString(USER_URL, user + "/follows/channels?limit=100")).getJSONArray("follows");
+//            for (Object follow : follows) {
+//
+//                JSONObject jsonObj = (JSONObject) follow;
+//                jsonObj = jsonObj.getJSONObject("channel");
+//                String name = jsonObj.getString("name");
+//                StreamNode node = new StreamNode(name);
+//                try {
+//                    addStream(node);
+//                } catch (DuplicateStreamException ex) {
+//                    System.out.println("Stream already in list, skipping..");
+//                }
+//
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+
+//    }
 
     /**
      * Removes stream from locally saved stream list

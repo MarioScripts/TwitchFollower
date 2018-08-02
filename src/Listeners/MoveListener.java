@@ -7,7 +7,7 @@ import java.awt.event.MouseEvent;
 
 public class MoveListener extends MouseAdapter {
     private static int tx, ty;
-    private static JFrame frame;
+    private JFrame frame;
 
     public MoveListener(JFrame frame) {
         this.frame = frame;

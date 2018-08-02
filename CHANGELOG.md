@@ -1,8 +1,11 @@
 # Full Changelog
 ## Current Development Changelog:
-- Fixed horizontal scrolling issue (Experimental)
+- Fixed horizontal resizing issue (Experimental)
 - Changed offline channel color from red to gray
-- Added to main display when there are either no streams online or when there are no streams being followed (empty follower list)
+- Added text to main display to show when there are either no streams online or when there are no streams being followed (empty follower list)
+- Completely overhauled the settings menu to match with the main display and have dark mode functionality
+- Importing followers from a twitch channel now shows a progress bar, and no longer stalls the Settings GUI until finished
+- Opening the settings GUI now properly haults main GUI stream updates to fix rare occurrences where both threads are doing similar things simultaneously     
 
 ## v2.5 Changes
 - Added "Dark Mode" setting that changes colorscheme to a more eye-friendly dark shade

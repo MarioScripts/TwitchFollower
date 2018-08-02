@@ -83,12 +83,7 @@ public class Controller {
             addStream(temp);
         }
 
-        if(streams.size() == 0){
-            view.addNoStreamLabel("You are not following any streams.");
-
-        }else if(view.getDisplayPanel().getComponents().length == 0){
-            view.addNoStreamLabel("No streams are currently online.");
-        }
+        showNoStreamText(model.getStreams().size());
 
         view.changeColorScheme();
         view.validate();
@@ -107,23 +102,35 @@ public class Controller {
         while (iter.hasNext()) {
             StreamNode temp = iter.next();
 
-            try {
-                StreamNode tempInfo = model.getStreamInfo(temp);
-                temp.setNode(tempInfo);
-
-                addStream(temp);
-
-            } catch (InvalidObjectException e) {
-                System.out.println("Invalid stream: " + e.getMessage() + " removing stream from list.");
-                model.removeStream(e.getMessage());
-            } catch (NullPointerException e) {
-                System.out.println("Image issue");
-            }
+            initGUIStream(temp);
         }
 
+        showNoStreamText(model.getStreams().size());
         view.hideLoading();
         view.validate();
         view.repaint();
+    }
+
+    public void initGUIStream(StreamNode temp){
+        try {
+            StreamNode tempInfo = model.getStreamInfo(temp);
+            temp.setNode(tempInfo);
+
+            addStream(temp);
+        } catch (InvalidObjectException e) {
+            System.out.println("Invalid stream: " + e.getMessage() + " removing stream from list.");
+            model.removeStream(e.getMessage());
+        } catch (NullPointerException e) {
+            System.out.println("Image issue");
+        }
+    }
+
+    public void pauseBackgroundWork(){
+        streamUpdateThread.hibernate();
+    }
+
+    public void resumeBackgroundWork(){
+        streamUpdateThread.wake();
     }
 
     private void addStream(StreamNode node) {
@@ -133,6 +140,15 @@ public class Controller {
                     view.addStreamLabel(node).addMouseListener(new ContextMenuListener(view, model));
                 }
             }
+        }
+    }
+
+    private void showNoStreamText(int numOfStreams){
+        if(numOfStreams == 0){
+            view.addNoStreamLabel("You are not following any streams.");
+
+        }else if(view.getDisplayPanel().getComponents().length == 0){
+            view.addNoStreamLabel("No streams are currently online.");
         }
     }
 }

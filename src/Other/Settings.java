@@ -11,7 +11,7 @@ public class Settings {
     private static String gameFilter = "";
     private static Dimension size = new Dimension(400, 500);
     private static Point loc = new Point(0, 0);
-    private static final double version = 2.65;
+    private static final double version = 2.8;
 
     //Getters
     public static boolean getGameNotify() {

@@ -3,18 +3,24 @@ package View;
 import ColorFactory.ColorFactory;
 import Controller.Controller;
 import Controller.Updater;
-import Listeners.SelectListener;
+import Exceptions.DuplicateStreamException;
+import Exceptions.UserNotFoundException;
+import Listeners.ExitListener;
+import Listeners.MoveListener;
 import Model.Model;
 import Other.Colors;
 import Other.Settings;
+import StreamList.StreamNode;
 import net.miginfocom.swing.MigLayout;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
+import Controller.ImportProgressThread;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 
-import static jdk.nashorn.internal.runtime.regexp.joni.Syntax.Java;
+import static Other.Colors.TWITCH_PURPLE;
 
 /**
  * Created by Matt on 2017-05-04.
@@ -29,36 +35,27 @@ public class SettingsView extends JFrame {
     private JSlider slrSleep;
     private JTextField txtUser;
     private JButton btnOk, btnCancel, btnImport;
-    private JPanel pnlNotify, pnlFollows, pnlSleep, pnlRight;
-    private JLabel lblNotifications, lblImportFollowers, lblSleepTime, lblImportButton;
+    private JPanel pnlNotify, pnlFollows, pnlSleep, pnlTitle, pnlProgress, pnlImport;
+    private JLabel lblNotifications, lblImportFollowers, lblSleepTime, lblImportButton, lblExit, lblSave;
+    private JSeparator separatorNotify, separatorFollows, separatorSleep;
+    private JProgressBar prgImport;
 
     public SettingsView(Updater updateThread, Model model, Controller controller) {
         this.updateThread = updateThread;
         this.model = model;
         this.controller = controller;
+        controller.pauseBackgroundWork();
 //        addWindowListener(new OnCloseListener());
-        setLookAndFeel();
-        setName("SettingsView");
-        setTitle("Settings");
-        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setSize(new Dimension(417, 250));
-        setResizable(true);
-        setVisible(true);
-        setLayout(new MigLayout("insets 0, gap 0 0, wrap 2, grow, push, flowx"));
-
-        initComponents();
-    }
-
-    public SettingsView(){
         setLookAndFeel();
         setName("SettingsView");
         setTitle("Settings");
         this.getContentPane().setBackground(ColorFactory.getBackground());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setSize(new Dimension(417, 250));
-        setResizable(true);
+        setSize(new Dimension(417, 448));
+        setResizable(false);
+        setUndecorated(true);
         setVisible(true);
-        setLayout(new MigLayout("insets 0, gap 0 0, wrap 2"));
+        setLayout(new MigLayout("insets 0, gap 0 0, flowy"));
 
         repaint();
         revalidate();
@@ -66,76 +63,80 @@ public class SettingsView extends JFrame {
     }
 
     private void initComponents() {
-        lblNotifications = new JLabel("Notifications");
+        lblNotifications = new JLabel("Notifications", SwingUtilities.CENTER);
         lblNotifications.setForeground(Colors.TWITCH_PURPLE);
-        lblNotifications.setFont(lblNotifications.getFont().deriveFont(Font.BOLD, 13));
+        lblNotifications.setFont(lblNotifications.getFont().deriveFont(Font.BOLD, 15));
 
-        lblImportFollowers = new JLabel("Import followers");
+        lblImportFollowers = new JLabel("Import followers", SwingUtilities.CENTER);
         lblImportFollowers.setForeground(Colors.TWITCH_PURPLE);
-        lblImportFollowers.setFont(lblImportFollowers.getFont().deriveFont(Font.BOLD, 13));
+        lblImportFollowers.setFont(lblImportFollowers.getFont().deriveFont(Font.BOLD, 15));
 
         lblImportButton = new JLabel();
         ImageIcon imageIcon = new ImageIcon(new ImageIcon(this.getClass().getClassLoader().getResource("resources/import.png")).getImage().getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH));
         lblImportButton.setIcon(imageIcon);
 
-        lblSleepTime = new JLabel("Sleep time");
+        lblSleepTime = new JLabel("Sleep time", SwingUtilities.CENTER);
         lblSleepTime.setForeground(Colors.TWITCH_PURPLE);
-        lblSleepTime.setFont(lblSleepTime.getFont().deriveFont(Font.BOLD, 13));
+        lblSleepTime.setFont(lblSleepTime.getFont().deriveFont(Font.BOLD, 15));
+
+        lblExit = new JLabel("x");
+        lblExit.setForeground(TWITCH_PURPLE);
+        lblExit.setFont(lblExit.getFont().deriveFont(Font.BOLD, 17f));
+        lblExit.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+
+        lblSave = new JLabel("Save", SwingUtilities.CENTER);
+        lblSave.setFont(lblSave.getFont().deriveFont(Font.BOLD, 15));
+        lblSave.setForeground(ColorFactory.getBackground());
+        lblSave.setOpaque(true);
+        lblSave.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        lblSave.addMouseListener(new SaveSettingsListener());
+        lblSave.setBackground(Colors.TWITCH_PURPLE);
+
+        separatorNotify = new JSeparator(SwingConstants.HORIZONTAL);
+        separatorNotify.setForeground(Colors.TWITCH_PURPLE);
+
+        separatorFollows = new JSeparator(SwingConstants.HORIZONTAL);
+        separatorFollows.setForeground(Colors.TWITCH_PURPLE);
+
+        separatorSleep = new JSeparator(SwingConstants.HORIZONTAL);
+        separatorSleep.setForeground(Colors.TWITCH_PURPLE);
+
+        prgImport = new JProgressBar();
+        prgImport.setForeground(Colors.TWITCH_PURPLE);
+        prgImport.setBackground(ColorFactory.getBackground());
 
         chkGameNotify = new JCheckBox("Game Updates");
         chkGameNotify.setSelected(Settings.getGameNotify());
         chkGameNotify.setOpaque(false);
         chkGameNotify.setFocusable(false);
         chkGameNotify.setForeground(ColorFactory.getForeground());
-//        chkGameNotify.setBounds(10, 30, 100, 20);
 
         chkStatusNotify = new JCheckBox("Status Updates");
         chkStatusNotify.setSelected(Settings.getStatusNotify());
         chkStatusNotify.setOpaque(false);
         chkStatusNotify.setFocusable(false);
         chkStatusNotify.setForeground(ColorFactory.getForeground());
-//        chkStatusNotify.setBounds(10, 50, 100, 20);
 
         chkShowOffline = new JCheckBox("Show Offline Channels");
         chkShowOffline.setSelected(Settings.getShowOffline());
         chkShowOffline.setOpaque(false);
         chkShowOffline.setFocusable(false);
         chkShowOffline.setForeground(ColorFactory.getForeground());
-//        chkShowOffline.setBounds(10, 70, 150, 20);
 
         chkShowVodcast = new JCheckBox("Show Vodcasting Channels");
         chkShowVodcast.setSelected(Settings.getShowVodcast());
         chkShowVodcast.setOpaque(false);
         chkShowVodcast.setFocusable(false);
         chkShowVodcast.setForeground(ColorFactory.getForeground());
-//        chkShowVodcast.setBounds(10, 90, 150, 20);
 
         chkDarkMode = new JCheckBox("Dark Mode");
         chkDarkMode.setSelected(Settings.getDarkMode());
         chkDarkMode.setOpaque(false);
         chkDarkMode.setFocusable(false);
         chkDarkMode.setForeground(ColorFactory.getForeground());
-//        chkDarkMode.setBounds(10, 110, 150, 20);
-
-        btnOk = new JButton("Ok");
-        btnOk.setFocusable(false);
-//        btnOk.setBounds(100, 190, 100, 25);
-//        btnOk.addActionListener(new SaveSettingsListener());
-
-        btnCancel = new JButton("Cancel");
-        btnCancel.setFocusable(false);
-//        btnCancel.setBounds(210, 190, 100, 25);
-//        btnCancel.addActionListener(new CancelSettingsListener());
-
-        btnImport = new JButton("Import");
-//        btnImport.setBounds(50, 60, 100, 25);
-        btnImport.setEnabled(false);
-//        btnImport.addActionListener(new ImportFollowersListener());
 
         txtUser = new JTextField("Twitch name");
-//        txtUser.setBounds(10, 30, 180, 20);
-//        txtUser.addKeyListener(new FollowersTextListener());
-//        txtUser.addMouseListener(new FollowersMouseListener());
+        txtUser.addMouseListener(new FollowersMouseListener());
 
         //TODO: Implement custom UI for custom jslider knob color
         slrSleep = new JSlider();
@@ -153,46 +154,58 @@ public class SettingsView extends JFrame {
         slrSleep.setForeground(ColorFactory.getForeground());
 //        slrSleep.setBounds(210, 115, 200, 40);
 
+        pnlProgress = new JPanel();
+        pnlProgress.setLayout(new MigLayout("flowx, insets 0 0"));
+        pnlProgress.add(prgImport, "growx, pushx, gapleft 25, gapright 25, h 25");
+        pnlProgress.setOpaque(false);
+
+        pnlImport = new JPanel();
+        pnlImport.setLayout(new MigLayout("insets 0, gap 0 0, flowx, wrap 2"));
+        pnlImport.setOpaque(false);
+        pnlImport.add(txtUser, "align center, gapright 5, gapleft 25, growx, pushx");
+        pnlImport.add(lblImportButton, "gapright 20");
+
+        pnlTitle = new JPanel();
+        pnlTitle.setLayout((new MigLayout("flowx, insets 0 0")));
+        pnlTitle.setOpaque(false);
+        pnlTitle.add(lblExit, "pushx, w 10, align right, gapright 10");
 
         pnlNotify = new JPanel();
         pnlNotify.setLayout(new MigLayout("insets 0, gap 0 0, flowx, wrap 1"));
-//        pnlNotify.setBorder(BorderFactory.createTitledBorder("Notifications"));
-//        pnlNotify.setBackground(Color.red);
         pnlNotify.setOpaque(false);
-        pnlNotify.add(lblNotifications, "gapleft 5, grow, push");
-        pnlNotify.add(chkGameNotify, "gapleft 20, grow, push");
-        pnlNotify.add(chkStatusNotify, "gapleft 20, grow, push");
-        pnlNotify.add(chkShowOffline, "gapleft 20, grow, push");
-        pnlNotify.add(chkShowVodcast, "gapleft 20, grow, push");
-        pnlNotify.add(chkDarkMode, "gapleft 20, grow, push");
-
-//        pnlNotify.setBounds(0, 5, 200, 180);
+        pnlNotify.add(lblNotifications, "gaptop 15, growx, pushx");
+        pnlNotify.add(separatorNotify, "h 1, growx, pushx, gaptop 5, gapbottom 10, gapright 25, gapleft 25, wrap");
+        pnlNotify.add(chkGameNotify, "gapleft 25, growx, pushx");
+        pnlNotify.add(chkStatusNotify, "gapleft 25, growx, pushx");
+        pnlNotify.add(chkShowOffline, "gapleft 25, growx, pushx");
+        pnlNotify.add(chkShowVodcast, "gapleft 25, growx, pushx");
+        pnlNotify.add(chkDarkMode, "gapleft 25, growx, pushx");
 
         pnlFollows = new JPanel();
-        pnlFollows.setLayout(new MigLayout("insets 0, gap 0 0, flowx, wrap 2"));
-//        pnlFollows.setBackground(Color.red);
+        pnlFollows.setLayout(new MigLayout("insets 0, gap 0 0, flowy"));
         pnlFollows.setOpaque(false);
-        pnlFollows.add(lblImportFollowers, "growx, pushx, wrap");
-        pnlFollows.add(txtUser, "align center, gaptop 10, gapright 5, gapleft 20, growx, pushx");
-        pnlFollows.add(lblImportButton, "gaptop 9, gapright 20");
+        pnlFollows.add(lblImportFollowers, "gaptop 15, growx, pushx");
+        pnlFollows.add(separatorFollows, "h 1, growx, pushx, gaptop 5, gapbottom 10, gapright 25, gapleft 25");
+        pnlFollows.add(pnlImport, "grow, push");
 
         pnlSleep = new JPanel();
         pnlSleep.setLayout(new MigLayout("insets 0, gap 0 0, flowx"));
         pnlSleep.setOpaque(false);
-        pnlSleep.add(lblSleepTime, "growx, pushx, wrap");
-        pnlSleep.add(slrSleep, "gapleft 20, gapright 5, growx, pushx, gaptop 10");
+        pnlSleep.add(lblSleepTime, "gaptop 15, growx, pushx, wrap");
+        pnlSleep.add(separatorSleep, "h 1, growx, pushx, gaptop 5, gapbottom 10, gapright 25, gapleft 25, wrap");
+        pnlSleep.add(slrSleep, "gapleft 25, gapright 25, growx, pushx");
 
-        pnlRight = new JPanel();
-        pnlRight.setLayout(new MigLayout("insets 0, gap 0 0, flowy"));
-        pnlRight.setOpaque(false);
-        pnlRight.add(pnlFollows, "growx, pushx");
-        pnlRight.add(pnlSleep, "growx, pushx, gaptop 20");
+        add(pnlTitle, "growx, pushx, h 20");
+        add(pnlNotify, "growx, pushx");
+        add(pnlFollows, "growx, pushx");
+        add(pnlSleep, "growx, pushx");
+        add(lblSave, "growx, pushx, dock south, h 25, gaptop 40");
 
-        add(pnlNotify, "grow 40, push 40");
-        add(pnlRight, "gapleft 10, grow 60, push 60");
-//        add(slrSleep);
-        add(btnOk);
-        add(btnCancel);
+        MoveListener moveListener = new MoveListener(this);
+        pnlTitle.addMouseListener(moveListener);
+        pnlTitle.addMouseMotionListener(moveListener);
+        lblExit.addMouseListener(new SettingsExitListener(this));
+        lblImportButton.addMouseListener(new ImportFollowersListener(this, pnlFollows, pnlImport, pnlProgress, prgImport));
     }
 
     private void setLookAndFeel() {
@@ -203,126 +216,159 @@ public class SettingsView extends JFrame {
         }
     }
 
-//    private class SaveSettingsListener implements ActionListener {
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-////            model.updateSettings(chkGameNotify.isSelected(), chkStatusNotify.isSelected(), chkShowOffline.isSelected(), chkShowVodcast.isSelected(), chkDarkMode.isSelected(), slrSleep.getValue()*1000);
-//            Settings.setGameNotify(chkGameNotify.isSelected());
-//            Settings.setStatusNotify(chkStatusNotify.isSelected());
-//            Settings.setShowOffline(chkShowOffline.isSelected());
-//            Settings.setShowVodast(chkShowVodcast.isSelected());
-//            Settings.setSleepTime(slrSleep.getValue() * 1000);
-//            Settings.setDarkMode(chkDarkMode.isSelected());
-//            model.updateSettings();
-//            controller.refreshGUIStreams();
-//            SettingsView.super.dispose();
-//        }
-//    }
+    private class SettingsExitListener implements MouseListener {
+        JFrame frame;
 
-//    private class CancelSettingsListener implements ActionListener {
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            SettingsView.super.dispose();
-//        }
-//    }
-//
-//    private class OnCloseListener implements WindowListener {
-//        @Override
-//        public void windowOpened(WindowEvent e) {
-//            updateThread.hibernate();
-//        }
-//
-//        @Override
-//        public void windowClosing(WindowEvent e) {
-//
-//        }
-//
-//        @Override
-//        public void windowClosed(WindowEvent e) {
-//        }
-//
-//        @Override
-//        public void windowIconified(WindowEvent e) {
-//
-//        }
-//
-//        @Override
-//        public void windowDeiconified(WindowEvent e) {
-//
-//        }
-//
-//        @Override
-//        public void windowActivated(WindowEvent e) {
-//
-//        }
-//
-//        @Override
-//        public void windowDeactivated(WindowEvent e) {
-//            updateThread.wake();
-//        }
-//    }
-//
-//    private class ImportFollowersListener implements ActionListener {
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            String name = txtUser.getText().trim();
-//            model.importUserFollowers(name);
-//            controller.initGUIStreams();
+        public SettingsExitListener(JFrame frame){
+            this.frame = frame;
+        }
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
+    }
+
+    private class SaveSettingsListener implements MouseListener {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+//            model.updateSettings(chkGameNotify.isSelected(), chkStatusNotify.isSelected(), chkShowOffline.isSelected(), chkShowVodcast.isSelected(), chkDarkMode.isSelected(), slrSleep.getValue()*1000);
+            Settings.setGameNotify(chkGameNotify.isSelected());
+            Settings.setStatusNotify(chkStatusNotify.isSelected());
+            Settings.setShowOffline(chkShowOffline.isSelected());
+            Settings.setShowVodast(chkShowVodcast.isSelected());
+            Settings.setSleepTime(slrSleep.getValue() * 1000);
+            Settings.setDarkMode(chkDarkMode.isSelected());
+            model.updateSettings();
+            controller.refreshGUIStreams();
+            controller.resumeBackgroundWork();
+            dispose();
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
+    }
+
+
+    private class ImportFollowersListener implements MouseListener {
+        private JPanel outerPanel, mainPanel, otherPanel;
+        private JFrame frame;
+        private JProgressBar progressBar;
+        public ImportFollowersListener(JFrame frame, JPanel outerPanel, JPanel mainPanel, JPanel otherPanel, JProgressBar progressBar){
+            this.outerPanel = outerPanel;
+            this.mainPanel = mainPanel;
+            this.otherPanel = otherPanel;
+            this.frame = frame;
+            this.progressBar = progressBar;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            String username = txtUser.getText().trim();
+            outerPanel.remove(mainPanel);
+            outerPanel.add(otherPanel, "growx, pushx, gapleft 25, gapright 25, gaptop 15, h 25");
+            try{
+                JSONArray importArray = model.getImportedFollowers(username);
+                progressBar.setMaximum(importArray.length());
+                ImportProgressThread ok = new ImportProgressThread(model, controller, frame, progressBar, importArray, outerPanel, mainPanel, otherPanel, txtUser);
+                try{
+                    ok.execute();
+                }catch(Exception ex1){
+                    System.out.println(ex1.getMessage());
+                }
+
+            }catch(UserNotFoundException ex){
+                txtUser.setText("");
+                outerPanel.remove(otherPanel);
+                outerPanel.add(mainPanel, "growx, pushx");
+                frame.repaint();
+                frame.revalidate();
+            }
+
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
+    }
+
+    private class FollowersMouseListener implements MouseListener {
+        @Override
+        public void mouseClicked(MouseEvent e) {
 //            txtUser.setText("");
-//            btnImport.setEnabled(false);
-//        }
-//    }
-//
-//    private class FollowersMouseListener implements MouseListener {
-//        @Override
-//        public void mouseClicked(MouseEvent e) {
-////            txtUser.setText("");
-//            txtUser.selectAll();
-//        }
-//
-//        @Override
-//        public void mousePressed(MouseEvent e) {
-//
-//        }
-//
-//        @Override
-//        public void mouseReleased(MouseEvent e) {
-//
-//        }
-//
-//        @Override
-//        public void mouseEntered(MouseEvent e) {
-//
-//        }
-//
-//        @Override
-//        public void mouseExited(MouseEvent e) {
-//
-//        }
-//    }
-//
-//    private class FollowersTextListener implements KeyListener {
-//        @Override
-//        public void keyTyped(KeyEvent e) {
-//        }
-//
-//        @Override
-//        public void keyPressed(KeyEvent e) {
-//
-//        }
-//
-//        @Override
-//        public void keyReleased(KeyEvent e) {
-//            if (txtUser.getText().length() > 0) {
-//                btnImport.setEnabled(true);
-//            } else {
-//                btnImport.setEnabled(false);
-//            }
-//        }
-//    }
+            txtUser.selectAll();
+        }
 
-    public static void main(String[] args) {
-        SettingsView view = new SettingsView();
-        view.setVisible(true);
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
+        }
     }
 }
