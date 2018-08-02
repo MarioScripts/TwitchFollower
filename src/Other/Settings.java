@@ -6,7 +6,7 @@ import java.awt.*;
  * Created by Matt on 2017-05-05.
  */
 public class Settings {
-    private static boolean gameNotify = true, statusNotify = true, showOffline = true, showVodast = true, darkMode = false;
+    private static boolean gameNotify = true, statusNotify = true, showOffline = true, showVodast = true, darkMode = true;
     private static int sleepTime = 30000;
     private static String gameFilter = "";
     private static Dimension size = new Dimension(400, 500);

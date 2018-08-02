@@ -16,6 +16,14 @@ public class ColorFactory {
         }
     }
 
+    public static Color getForeground(){
+        if(Settings.getDarkMode()){
+            return Colors.SELECT_FOREGROUND_COLOR;
+        }else{
+            return Colors.TWITCH_PURPLE;
+        }
+    }
+
     public static ImageIcon getLoadingImage() {
         if (Settings.getDarkMode()) {
             return new ImageIcon(ColorFactory.class.getClassLoader().getResource("resources/loading_dark.gif"));
