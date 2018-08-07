@@ -3,6 +3,7 @@ package Controller;
 import Listeners.*;
 import Model.Model;
 import Other.Settings;
+import Other.Sorter;
 import StreamList.StreamIterator;
 import StreamList.StreamList;
 import StreamList.StreamNode;
@@ -96,6 +97,7 @@ public class Controller {
     public void initGUIStreams() {
         view.showLoading();
         StreamList streams = model.getStreams();
+        Sorter.viewSort(streams);
         StreamIterator iter = streams.iterator();
         view.getDisplayPanel().removeAll();
 
