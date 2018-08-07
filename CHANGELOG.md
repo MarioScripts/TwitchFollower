@@ -6,6 +6,7 @@
 - Completely overhauled the settings menu to match with the main display and have dark mode functionality
 - Importing followers from a twitch channel now shows a progress bar, and no longer stalls the Settings GUI until finished
 - Opening the settings GUI now properly haults main GUI stream updates to fix rare occurrences where both threads are doing similar things simultaneously     
+- Fixed issue where channels would update sequentially rather than all at the same time, which lead to inconsistent GUI interactions
 
 ## v2.5 Changes
 - Added "Dark Mode" setting that changes colorscheme to a more eye-friendly dark shade

@@ -98,11 +98,11 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
 
             if (!temp.getStatus().equals(tempInfo.getStatus()) || !temp.getGame().equals(tempInfo.getGame())) {
                 temp.setNode(tempInfo);
-                controller.refreshGUIStreams();
+//                controller.refreshGUIStreams();
 
             } else if (temp.getViews() != tempInfo.getViews()) {
                 temp.setViews(tempInfo.getViews());
-                controller.refreshGUIStreams();
+//                controller.refreshGUIStreams();
             }
 
         }
@@ -111,6 +111,7 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
     }
 
     protected void done() {
+        controller.refreshGUIStreams();
         view.validate();
         view.repaint();
         view.hideLoading();
