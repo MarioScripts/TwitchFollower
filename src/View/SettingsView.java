@@ -51,7 +51,7 @@ public class SettingsView extends JFrame {
         setTitle("Settings");
         this.getContentPane().setBackground(ColorFactory.getBackground());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setSize(new Dimension(417, 448));
+        setSize(new Dimension(417, 435));
         setResizable(false);
         setUndecorated(true);
         setVisible(true);
@@ -199,7 +199,7 @@ public class SettingsView extends JFrame {
         add(pnlNotify, "growx, pushx");
         add(pnlFollows, "growx, pushx");
         add(pnlSleep, "growx, pushx");
-        add(lblSave, "growx, pushx, dock south, h 25, gaptop 40");
+        add(lblSave, "grow, push, dock south, h 25, gaptop 40");
 
         MoveListener moveListener = new MoveListener(this);
         pnlTitle.addMouseListener(moveListener);

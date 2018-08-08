@@ -299,7 +299,7 @@ public class View extends JFrame {
         //Panel channel name
         JLabel lblName = new JLabel("<html><b>" + name + "</b><br><i>" + game + "</i></html>");
         lblName.setForeground(SELECT_FOREGROUND_COLOR);
-        panel.add(lblName, "gapx 4, push, gapy 0, spany 2");
+        panel.add(lblName, "gapx 4, push, gapy 0, spany 2, pad 0 0 0 5");
 
         if (selected != null && panel.getName().equals(selected.getName())) {
             setSelectProperties(panel);

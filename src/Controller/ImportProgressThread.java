@@ -65,15 +65,15 @@ public class ImportProgressThread extends SwingWorker<Boolean, Integer> {
             StreamNode node = new StreamNode(name);
             try {
                 model.addStream(node);
+                controller.initGUIStream(node);
             } catch (DuplicateStreamException ex) {
                 System.out.println("Stream already in list, skipping..");
             }
+
             i++;
-            System.out.println(i);
             progressBar.setValue(i);
             frame.repaint();
             frame.revalidate();
-            controller.initGUIStream(node);
         }
         done();
         return true;
