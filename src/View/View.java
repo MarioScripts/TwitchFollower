@@ -4,10 +4,12 @@ import ColorFactory.ColorFactory;
 import Listeners.*;
 import Other.Settings;
 import StreamList.StreamNode;
+import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion;
 import net.miginfocom.swing.MigLayout;
 import Other.Colors;
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ComponentListener;
@@ -127,11 +129,13 @@ public class View extends JFrame {
 
         txtSearch = new JTextField();
         txtSearch.setText(Settings.getGameFilter());
-        txtSearch.setBorder(BorderFactory.createMatteBorder(0, 3, 1, 0, TWITCH_PURPLE));
-        txtSearch.setMargin(new Insets(0, 100, 0, 0));
-        txtSearch.setOpaque(false);
+        txtSearch.setBorder(BorderFactory.createEmptyBorder(4, 0, 2, 0));
+//        txtSearch.setMargin(new Insets(0, 0, 0, 0));
+        txtSearch.setOpaque(true);
+        txtSearch.setBackground(Colors.TWITCH_PURPLE);
 
         lstGames = new JList();
+        lstGames.setBorder(new EmptyBorder(4,4,4,0));
         lstGames.setSelectionBackground(TWITCH_PURPLE);
         lstGames.setSelectionForeground(BACKGROUND_COLOR);
         lstGames.setBackground(BACKGROUND_COLOR);
@@ -173,14 +177,14 @@ public class View extends JFrame {
         pnlSettings.add(lblSetting, "gapright 15, gapbottom 5");
         pnlSettings.setBackground(TWITCH_PURPLE);
 
-        pnlSearch.add(lblSearch, "aligny 100%, pushy");
+        pnlSearch.add(lblSearch, "pushx, growx, h 10, gapleft 2");
 
         pnlTitle.add(lblMinimize, "push, w 10, al right, gapright 10");
         pnlTitle.add(lblExit, "w 10, al right, gapright 10");
 
         add(pnlTitle, "growx, pushx, h 20, wrap");
         add(header, "wrap, gapy 15, align center");
-        add(pnlSearch, "wrap, gapbottom 2, gapleft 10, gapright 10, gaptop 5, growx, pushx");
+        add(pnlSearch, "wrap, gapbottom 0, gapleft 10, gapright 10, gaptop 20, growx, pushx");
         add(sepDisplay, "gapy 0, pushx, growx, wrap, gapright 10, gapleft 10");
         add(scrDisplay, "pushx, pushy, grow, wrap");
         add(sepSettings, "h 1, growx, pushx, wrap");
@@ -375,16 +379,22 @@ public class View extends JFrame {
     }
 
     public void showSearch() {
-        pnlSearch.add(txtSearch, "pushx 100, growx, gaptop 10");
+        lblSearch.setIcon(ColorFactory.getSearchEmbedImage());
+        pnlSearch.setOpaque(true);
+        pnlSearch.setBackground(Colors.TWITCH_PURPLE);
+        pnlSearch.add(txtSearch, "pushx, growx, h 15");
         //  pnlSearch.setBackground(TWITCH_PURPLE);
         txtSearch.requestFocus();
+        txtSearch.setText(Settings.getGameFilter());
         repaint();
         revalidate();
     }
 
     public void hideSearch() {
         pnlSearch.remove(txtSearch);
-        //  pnlSearch.setBackground(BACKGROUND_COLOR);
+        pnlSearch.setOpaque(false);
+        ImageIcon imgicon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/search.png"));
+        lblSearch.setIcon(imgicon);
         hideGames();
         repaint();
         revalidate();
@@ -397,7 +407,7 @@ public class View extends JFrame {
     public void showGames(String[] games) {
         lstGames.setListData(games);
         scrlGames.setViewportView(lstGames);
-        pnlSearch.add(scrlGames, "gapleft 17, pushx, growx, span 2, hmin " + (games.length > 2 ? 100 : games.length * 18) + ", hmax " + games.length * 18);
+        pnlSearch.add(scrlGames, "gapleft 3, gapbottom 1, pushx, growx, span 2, hmin " + (games.length > 2 ? 100 : games.length * 18) + ", hmax " + games.length * 18);
         pnlSearch.repaint();
         pnlSearch.revalidate();
         repaint();
@@ -425,8 +435,12 @@ public class View extends JFrame {
         lblDisplay.setIcon(imgicon);
         imgicon.setImageObserver(lblDisplay);
 
+        if(txtSearch.isShowing()){
+            lblSearch.setIcon(ColorFactory.getSearchEmbedImage());
+        }
+        txtSearch.setForeground(BACKGROUND_COLOR);
+        txtSearch.setCaretColor(BACKGROUND_COLOR);
         header.setIcon(ColorFactory.getHeaderImage());
-
         repaint();
         revalidate();
     }
@@ -463,8 +477,8 @@ public class View extends JFrame {
         lblSearch.addMouseListener(listener);
     }
 
-    public void lstSearchGamesListener(KeyListener listener) {
-        lstGames.addKeyListener(listener);
+    public void lstSearchGamesListener(MouseListener listener) {
+        lstGames.addMouseListener(listener);
     }
 
     public void txtSearchListener(DocumentListener listener) {

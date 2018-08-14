@@ -42,6 +42,7 @@ public class GameListener implements DocumentListener {
     private void update(Document doc) {
         try {
             String input = doc.getText(0, doc.getLength()).toLowerCase();
+
             List matchedGames = new List();
             if (input.length() > 0) {
                 for (String game : topGames) {

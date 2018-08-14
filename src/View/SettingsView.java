@@ -3,22 +3,17 @@ package View;
 import ColorFactory.ColorFactory;
 import Controller.Controller;
 import Controller.Updater;
-import Exceptions.DuplicateStreamException;
 import Exceptions.UserNotFoundException;
-import Listeners.ExitListener;
 import Listeners.MoveListener;
 import Model.Model;
 import Other.Colors;
 import Other.Settings;
-import StreamList.StreamNode;
 import net.miginfocom.swing.MigLayout;
 import org.json.JSONArray;
-import org.json.JSONObject;
 import Controller.ImportProgressThread;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.FileNotFoundException;
 
 import static Other.Colors.TWITCH_PURPLE;
 
@@ -34,7 +29,6 @@ public class SettingsView extends JFrame {
     private JCheckBox chkGameNotify, chkStatusNotify, chkShowOffline, chkShowVodcast, chkDarkMode;
     private JSlider slrSleep;
     private JTextField txtUser;
-    private JButton btnOk, btnCancel, btnImport;
     private JPanel pnlNotify, pnlFollows, pnlSleep, pnlTitle, pnlProgress, pnlImport;
     private JLabel lblNotifications, lblImportFollowers, lblSleepTime, lblImportButton, lblExit, lblSave;
     private JSeparator separatorNotify, separatorFollows, separatorSleep;
@@ -45,7 +39,6 @@ public class SettingsView extends JFrame {
         this.model = model;
         this.controller = controller;
         controller.pauseBackgroundWork();
-//        addWindowListener(new OnCloseListener());
         setLookAndFeel();
         setName("SettingsView");
         setTitle("Settings");
@@ -74,6 +67,7 @@ public class SettingsView extends JFrame {
         lblImportButton = new JLabel();
         ImageIcon imageIcon = new ImageIcon(new ImageIcon(this.getClass().getClassLoader().getResource("resources/import.png")).getImage().getScaledInstance(35, 35, java.awt.Image.SCALE_SMOOTH));
         lblImportButton.setIcon(imageIcon);
+        lblImportButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         lblSleepTime = new JLabel("Sleep time", SwingUtilities.CENTER);
         lblSleepTime.setForeground(Colors.TWITCH_PURPLE);
@@ -102,6 +96,7 @@ public class SettingsView extends JFrame {
         separatorSleep.setForeground(Colors.TWITCH_PURPLE);
 
         prgImport = new JProgressBar();
+        prgImport.setStringPainted(true);
         prgImport.setForeground(Colors.TWITCH_PURPLE);
         prgImport.setBackground(ColorFactory.getBackground());
 
@@ -152,7 +147,6 @@ public class SettingsView extends JFrame {
         slrSleep.setOpaque(false);
         slrSleep.setFocusable(false);
         slrSleep.setForeground(ColorFactory.getForeground());
-//        slrSleep.setBounds(210, 115, 200, 40);
 
         pnlProgress = new JPanel();
         pnlProgress.setLayout(new MigLayout("flowx, insets 0 0"));
@@ -196,9 +190,9 @@ public class SettingsView extends JFrame {
         pnlSleep.add(slrSleep, "gapleft 25, gapright 25, growx, pushx");
 
         add(pnlTitle, "growx, pushx, h 20");
-        add(pnlNotify, "growx, pushx");
-        add(pnlFollows, "growx, pushx");
-        add(pnlSleep, "growx, pushx");
+        add(pnlNotify, "grow, push");
+        add(pnlFollows, "grow, push");
+        add(pnlSleep, "grow, push");
         add(lblSave, "grow, push, dock south, h 25, gaptop 40");
 
         MoveListener moveListener = new MoveListener(this);
@@ -251,7 +245,6 @@ public class SettingsView extends JFrame {
     private class SaveSettingsListener implements MouseListener {
         @Override
         public void mouseClicked(MouseEvent e) {
-//            model.updateSettings(chkGameNotify.isSelected(), chkStatusNotify.isSelected(), chkShowOffline.isSelected(), chkShowVodcast.isSelected(), chkDarkMode.isSelected(), slrSleep.getValue()*1000);
             Settings.setGameNotify(chkGameNotify.isSelected());
             Settings.setStatusNotify(chkStatusNotify.isSelected());
             Settings.setShowOffline(chkShowOffline.isSelected());
@@ -302,13 +295,13 @@ public class SettingsView extends JFrame {
         public void mouseClicked(MouseEvent e) {
             String username = txtUser.getText().trim();
             outerPanel.remove(mainPanel);
-            outerPanel.add(otherPanel, "growx, pushx, gapleft 25, gapright 25, gaptop 15, h 25");
+            outerPanel.add(otherPanel, "growx, pushx, h 20");
             try{
                 JSONArray importArray = model.getImportedFollowers(username);
                 progressBar.setMaximum(importArray.length());
-                ImportProgressThread ok = new ImportProgressThread(model, controller, frame, progressBar, importArray, outerPanel, mainPanel, otherPanel, txtUser);
+                ImportProgressThread progressThread = new ImportProgressThread(model, controller, frame, progressBar, importArray, outerPanel, mainPanel, otherPanel, txtUser);
                 try{
-                    ok.execute();
+                    progressThread.execute();
                 }catch(Exception ex1){
                     System.out.println(ex1.getMessage());
                 }

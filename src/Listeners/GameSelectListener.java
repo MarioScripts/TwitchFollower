@@ -8,7 +8,7 @@ import View.View;
 import javax.swing.*;
 import java.awt.event.*;
 
-public class GameSelectListener implements KeyListener {
+public class GameSelectListener implements MouseListener {
     private Model model;
     private View view;
     private Controller controller;
@@ -20,7 +20,7 @@ public class GameSelectListener implements KeyListener {
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void mouseClicked(MouseEvent e) {
         String game = view.getGameSelected();
         Settings.setGameFilter(game);
         model.updateSettings();
@@ -30,12 +30,22 @@ public class GameSelectListener implements KeyListener {
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void mousePressed(MouseEvent e) {
 
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 }

@@ -8,6 +8,12 @@
 - Opening the settings GUI now properly haults main GUI stream updates to fix rare occurrences where both threads are doing similar things simultaneously     
 - Fixed issue where channels would update sequentially rather than all at the same time, which lead to inconsistent GUI interactions
 - Fixed issue where the game name did not have enough padding to show properly
+- Fixed search bar:
+    - Improved visuals to match theme better
+    - Fixed a multitude of glitches that made the search bar not act correctly
+    - Should no longer be a WIP
+- Added a loading text on the splash screen that indicates the program's load progress
+
 
 ## v2.5 Changes
 - Added "Dark Mode" setting that changes colorscheme to a more eye-friendly dark shade

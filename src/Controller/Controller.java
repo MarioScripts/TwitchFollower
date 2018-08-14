@@ -29,6 +29,8 @@ public class Controller {
 
     private Updater streamUpdateThread;
 
+    private Splash splash;
+
     /**
      * Constructor
      *
@@ -38,7 +40,7 @@ public class Controller {
     public Controller(Model m, View v) {
         model = m;
         view = v;
-        Splash splash = new Splash();
+        splash = new Splash();
         model.readSettings();
         model.getTopGames();
         initGUIStreams();
@@ -100,11 +102,15 @@ public class Controller {
         Sorter.viewSort(streams);
         StreamIterator iter = streams.iterator();
         view.getDisplayPanel().removeAll();
+        int streamMax = streams.size();
+        int i = 1;
 
         while (iter.hasNext()) {
+            splash.setStatusText("Loading... (" + i + "/" + streamMax + ")");
             StreamNode temp = iter.next();
 
             initGUIStream(temp);
+            i++;
         }
 
         showNoStreamText(model.getStreams().size());

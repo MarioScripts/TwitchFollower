@@ -80,7 +80,7 @@ public class ImportProgressThread extends SwingWorker<Boolean, Integer> {
     }
 
     protected void done() {
-        txtUser.setText("");
+        txtUser.setText("Twitch name");
         outerPanel.remove(otherPanel);
         outerPanel.add(mainPanel, "growx, pushx");
         frame.validate();

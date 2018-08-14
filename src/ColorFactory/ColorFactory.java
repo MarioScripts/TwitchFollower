@@ -40,6 +40,14 @@ public class ColorFactory {
         }
     }
 
+    public static ImageIcon getSearchEmbedImage(){
+        if(Settings.getDarkMode()){
+            return new ImageIcon(ColorFactory.class.getClassLoader().getResource("resources/search_embed_dark.png"));
+        }else{
+            return new ImageIcon(ColorFactory.class.getClassLoader().getResource("resources/search_embed_light.png"));
+        }
+    }
+
     public static Color getStatusColor(StreamNode node){
         if (node.getStatus().equals("Online")) {
             if (node.getVodcast()) {
