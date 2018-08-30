@@ -11,10 +11,17 @@
 - Fixed search bar:
     - Improved visuals to match theme better
     - Fixed a multitude of glitches that made the search bar not act correctly
+    - Increased text size and style to allow better visibility, especially in dark mode
     - Should no longer be a WIP
 - Added a loading text on the splash screen that indicates the program's load progress
+- Added multiple sort options, you can now sort by:
+    - Views
+    - Stream name
+    - Game name
+- Fixed some weird inconsistent GUI resizing issues
+- Fixed an issue where it was possible to open multiple instances of the settings menu
 
-
+    
 ## v2.5 Changes
 - Added "Dark Mode" setting that changes colorscheme to a more eye-friendly dark shade
 - Added right-click remove stream functionality. Removed remove stream button
