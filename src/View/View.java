@@ -133,6 +133,7 @@ public class View extends JFrame {
 //        txtSearch.setMargin(new Insets(0, 0, 0, 0));
         txtSearch.setOpaque(true);
         txtSearch.setBackground(Colors.TWITCH_PURPLE);
+        txtSearch.setFont(txtSearch.getFont().deriveFont(Font.BOLD, 13f));
 
         lstGames = new JList();
         lstGames.setBorder(new EmptyBorder(4,4,4,0));
@@ -141,6 +142,7 @@ public class View extends JFrame {
         lstGames.setBackground(BACKGROUND_COLOR);
         lstGames.setForeground(TWITCH_PURPLE);
         lstGames.setFocusable(false);
+        lstGames.setFont(lstGames.getFont().deriveFont(Font.BOLD, 13f));
 
         scrlGames = new JScrollPane();
         scrlGames.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 3, TWITCH_PURPLE));
@@ -199,7 +201,7 @@ public class View extends JFrame {
 
         ComponentResizer componentResizer = new ComponentResizer();
         componentResizer.registerComponent(pnlTitle);
-        componentResizer.registerComponent(pnlSettings.getComponents());
+        componentResizer.registerComponent(lblDisplay);
         componentResizer.registerComponent(this);
 
 
@@ -407,7 +409,7 @@ public class View extends JFrame {
     public void showGames(String[] games) {
         lstGames.setListData(games);
         scrlGames.setViewportView(lstGames);
-        pnlSearch.add(scrlGames, "gapleft 3, gapbottom 1, pushx, growx, span 2, hmin " + (games.length > 2 ? 100 : games.length * 18) + ", hmax " + games.length * 18);
+        pnlSearch.add(scrlGames, "gapleft 3, gapbottom 1, pushx, growx, span 2, hmin " + (games.length > 2 ? 100 : games.length * 20) + ", hmax " + games.length * 20);
         pnlSearch.repaint();
         pnlSearch.revalidate();
         repaint();

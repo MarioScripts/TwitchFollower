@@ -21,18 +21,28 @@ import static Other.Colors.TWITCH_PURPLE;
  * Created by Matt on 2017-05-04.
  */
 public class SettingsView extends JFrame {
-    //TODO: Update settings view to match main view aesthetic
 
     private Updater updateThread;
     private Model model;
     private Controller controller;
     private JCheckBox chkGameNotify, chkStatusNotify, chkShowOffline, chkShowVodcast, chkDarkMode;
+    private JRadioButton rdView, rdName, rdGame;
     private JSlider slrSleep;
     private JTextField txtUser;
-    private JPanel pnlNotify, pnlFollows, pnlSleep, pnlTitle, pnlProgress, pnlImport;
-    private JLabel lblNotifications, lblImportFollowers, lblSleepTime, lblImportButton, lblExit, lblSave;
-    private JSeparator separatorNotify, separatorFollows, separatorSleep;
+    private JPanel pnlGeneral, pnlFollows, pnlSleep, pnlTitle, pnlProgress, pnlImport, pnlSort;
+    private JLabel lblGeneral, lblImportFollowers, lblSleepTime, lblImportButton, lblSort, lblExit, lblSave;
+    private JSeparator separatorGeneral, separatorFollows, separatorSleep, separatorSort;
     private JProgressBar prgImport;
+    private ButtonGroup buttonGroup;
+    private static SettingsView instance = null;
+
+    public static SettingsView getInstance(Updater updateThread, Model model, Controller controller){
+        if(instance == null){
+            instance = new SettingsView(updateThread, model, controller);
+        }
+
+        return instance;
+    }
 
     public SettingsView(Updater updateThread, Model model, Controller controller) {
         this.updateThread = updateThread;
@@ -45,10 +55,10 @@ public class SettingsView extends JFrame {
         this.getContentPane().setBackground(ColorFactory.getBackground());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setSize(new Dimension(417, 435));
-        setResizable(false);
+//        setResizable(false);
         setUndecorated(true);
         setVisible(true);
-        setLayout(new MigLayout("insets 0, gap 0 0, flowy"));
+        setLayout(new MigLayout("insets 0, gap 0 0, fill, flowx, wrap 2", "[grow 30][grow 70]"));
 
         repaint();
         revalidate();
@@ -56,9 +66,9 @@ public class SettingsView extends JFrame {
     }
 
     private void initComponents() {
-        lblNotifications = new JLabel("Notifications", SwingUtilities.CENTER);
-        lblNotifications.setForeground(Colors.TWITCH_PURPLE);
-        lblNotifications.setFont(lblNotifications.getFont().deriveFont(Font.BOLD, 15));
+        lblGeneral = new JLabel("General", SwingUtilities.CENTER);
+        lblGeneral.setForeground(Colors.TWITCH_PURPLE);
+        lblGeneral.setFont(lblGeneral.getFont().deriveFont(Font.BOLD, 15));
 
         lblImportFollowers = new JLabel("Import followers", SwingUtilities.CENTER);
         lblImportFollowers.setForeground(Colors.TWITCH_PURPLE);
@@ -73,6 +83,10 @@ public class SettingsView extends JFrame {
         lblSleepTime.setForeground(Colors.TWITCH_PURPLE);
         lblSleepTime.setFont(lblSleepTime.getFont().deriveFont(Font.BOLD, 15));
 
+        lblSort = new JLabel("Sort type", SwingUtilities.CENTER);
+        lblSort.setForeground(Colors.TWITCH_PURPLE);
+        lblSort.setFont(lblSleepTime.getFont().deriveFont(Font.BOLD, 15));
+
         lblExit = new JLabel("x");
         lblExit.setForeground(TWITCH_PURPLE);
         lblExit.setFont(lblExit.getFont().deriveFont(Font.BOLD, 17f));
@@ -86,14 +100,17 @@ public class SettingsView extends JFrame {
         lblSave.addMouseListener(new SaveSettingsListener());
         lblSave.setBackground(Colors.TWITCH_PURPLE);
 
-        separatorNotify = new JSeparator(SwingConstants.HORIZONTAL);
-        separatorNotify.setForeground(Colors.TWITCH_PURPLE);
+        separatorGeneral = new JSeparator(SwingConstants.HORIZONTAL);
+        separatorGeneral.setForeground(Colors.TWITCH_PURPLE);
 
         separatorFollows = new JSeparator(SwingConstants.HORIZONTAL);
         separatorFollows.setForeground(Colors.TWITCH_PURPLE);
 
         separatorSleep = new JSeparator(SwingConstants.HORIZONTAL);
         separatorSleep.setForeground(Colors.TWITCH_PURPLE);
+
+        separatorSort = new JSeparator(SwingConstants.HORIZONTAL);
+        separatorSort.setForeground(Colors.TWITCH_PURPLE);
 
         prgImport = new JProgressBar();
         prgImport.setStringPainted(true);
@@ -130,6 +147,30 @@ public class SettingsView extends JFrame {
         chkDarkMode.setFocusable(false);
         chkDarkMode.setForeground(ColorFactory.getForeground());
 
+        rdView = new JRadioButton("View Sort");
+        rdView.setSelected(Settings.getSort() == 0);
+        rdView.setOpaque(false);
+        rdView.setFocusable(false);
+        rdView.setForeground(ColorFactory.getForeground());
+
+        rdName = new JRadioButton("Name Sort");
+        rdName.setSelected(Settings.getSort() == 1);
+        rdName.setOpaque(false);
+        rdName.setFocusable(false);
+        rdName.setForeground(ColorFactory.getForeground());
+
+        rdGame = new JRadioButton("Game Sort");
+        rdGame.setSelected(Settings.getSort() == 2);
+        rdGame.setOpaque(false);
+        rdGame.setFocusable(false);
+        rdGame.setForeground(ColorFactory.getForeground());
+
+        buttonGroup = new ButtonGroup();
+        buttonGroup.add(rdView);
+        buttonGroup.add(rdName);
+        buttonGroup.add(rdGame);
+
+
         txtUser = new JTextField("Twitch name");
         txtUser.addMouseListener(new FollowersMouseListener());
 
@@ -164,16 +205,25 @@ public class SettingsView extends JFrame {
         pnlTitle.setOpaque(false);
         pnlTitle.add(lblExit, "pushx, w 10, align right, gapright 10");
 
-        pnlNotify = new JPanel();
-        pnlNotify.setLayout(new MigLayout("insets 0, gap 0 0, flowx, wrap 1"));
-        pnlNotify.setOpaque(false);
-        pnlNotify.add(lblNotifications, "gaptop 15, growx, pushx");
-        pnlNotify.add(separatorNotify, "h 1, growx, pushx, gaptop 5, gapbottom 10, gapright 25, gapleft 25, wrap");
-        pnlNotify.add(chkGameNotify, "gapleft 25, growx, pushx");
-        pnlNotify.add(chkStatusNotify, "gapleft 25, growx, pushx");
-        pnlNotify.add(chkShowOffline, "gapleft 25, growx, pushx");
-        pnlNotify.add(chkShowVodcast, "gapleft 25, growx, pushx");
-        pnlNotify.add(chkDarkMode, "gapleft 25, growx, pushx");
+        pnlGeneral = new JPanel();
+        pnlGeneral.setLayout(new MigLayout("insets 0, gap 0 0, flowx, wrap 1"));
+        pnlGeneral.setOpaque(false);
+        pnlGeneral.add(lblGeneral, "gaptop 15, pushx, growx");
+        pnlGeneral.add(separatorGeneral, "h 1, pushx, growx, gaptop 5, gapbottom 10, gapright 25, gapleft 25, wrap");
+        pnlGeneral.add(chkGameNotify, "gapleft 25, pushx, growx");
+        pnlGeneral.add(chkStatusNotify, "gapleft 25, pushx, growx");
+        pnlGeneral.add(chkShowOffline, "gapleft 25, pushx, growx");
+        pnlGeneral.add(chkShowVodcast, "gapleft 25, pushx, growx");
+        pnlGeneral.add(chkDarkMode, "gapleft 25, pushx, growx");
+
+        pnlSort = new JPanel();
+        pnlSort.setLayout(new MigLayout("insets 0, gap 0 0, flowx, wrap 1"));
+        pnlSort.setOpaque(false);
+        pnlSort.add(lblSort, "gaptop 15, pushx, growx");
+        pnlSort.add(separatorSort, "h 1, pushx, growx, gaptop 5, gapbottom 10, gapright 25, gapleft 25, wrap");
+        pnlSort.add(rdView, "gapleft 25, pushx, growx");
+        pnlSort.add(rdName, "gapleft 25, pushx, growx");
+        pnlSort.add(rdGame, "gapleft 25, pushx, growx");
 
         pnlFollows = new JPanel();
         pnlFollows.setLayout(new MigLayout("insets 0, gap 0 0, flowy"));
@@ -189,11 +239,12 @@ public class SettingsView extends JFrame {
         pnlSleep.add(separatorSleep, "h 1, growx, pushx, gaptop 5, gapbottom 10, gapright 25, gapleft 25, wrap");
         pnlSleep.add(slrSleep, "gapleft 25, gapright 25, growx, pushx");
 
-        add(pnlTitle, "growx, pushx, h 20");
-        add(pnlNotify, "grow, push");
-        add(pnlFollows, "grow, push");
-        add(pnlSleep, "grow, push");
-        add(lblSave, "grow, push, dock south, h 25, gaptop 40");
+        add(pnlTitle, "growx, pushx, h 20, span 2");
+        add(pnlGeneral, "grow, push");
+        add(pnlSort, "grow, push");
+        add(pnlFollows, "grow, push, span 2");
+        add(pnlSleep, "grow, push, span 2");
+        add(lblSave, "grow, push, dock south, h 25, gaptop 40, span 2");
 
         MoveListener moveListener = new MoveListener(this);
         pnlTitle.addMouseListener(moveListener);
@@ -218,6 +269,7 @@ public class SettingsView extends JFrame {
         }
         @Override
         public void mouseClicked(MouseEvent e) {
+            instance = null;
             frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
         }
 
@@ -251,9 +303,19 @@ public class SettingsView extends JFrame {
             Settings.setShowVodast(chkShowVodcast.isSelected());
             Settings.setSleepTime(slrSleep.getValue() * 1000);
             Settings.setDarkMode(chkDarkMode.isSelected());
+
+            if(rdView.isSelected()){
+                Settings.setSort(0);
+            }else if(rdName.isSelected()){
+                Settings.setSort(1);
+            }else if(rdGame.isSelected()){
+                Settings.setSort(2);
+            }
+
             model.updateSettings();
             controller.refreshGUIStreams();
             controller.resumeBackgroundWork();
+            instance = null;
             dispose();
         }
 

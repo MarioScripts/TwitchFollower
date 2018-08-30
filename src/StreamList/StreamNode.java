@@ -131,7 +131,7 @@ public class StreamNode {
     /**
      * Gives the next node following current node
      *
-     * @return next stream as StreamNode
+     * @return next stream as StreamNodeCompilation completed successfully in 1s 94ms (2 minutes ago)
      */
     public StreamNode getNext() {
         return next;

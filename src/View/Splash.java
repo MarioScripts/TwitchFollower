@@ -27,7 +27,7 @@ public class Splash extends JFrame {
         }
 
 
-        ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/okk.gif"));
+        ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource("resources/splash.gif"));
         lblHeader = new JLabel("", SwingConstants.CENTER);
         lblHeader.setIcon(icon);
 

@@ -25,7 +25,7 @@ public class SettingsListener implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        new SettingsView(streamUpdateThread, model, controller);
+        SettingsView.getInstance(streamUpdateThread, model, controller);
     }
 
     @Override

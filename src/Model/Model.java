@@ -63,6 +63,7 @@ public class Model {
                 channel = new JSONObject(info);
                 logoURL = new URL(channel.getString("logo"));
                 displayName = channel.getString("display_name");
+                streamInfo.setDisplayName(displayName);
                 streamInfo.setLogo(ImageIO.read(logoURL).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
             } else {
                 streamInfo.setLogo(node.getLogo());
@@ -131,6 +132,7 @@ public class Model {
                 settings += "gameFilter=" + Settings.getGameFilter() + "\r\n";
                 settings += "size=" + (int)Settings.getSize().getWidth() + "x" + (int)Settings.getSize().getHeight() + "\r\n";
                 settings += "loc=" + (int)Settings.getLoc().getX() + "x" + (int)Settings.getLoc().getY() + "\r\n";
+                settings += "sort=" + Settings.getSort() + "\r\n";
 
                 writer.write(settings);
                 writer.close();
@@ -193,6 +195,8 @@ public class Model {
                             Point loc = new Point(x,y);
 
                             Settings.setLoc(loc);
+                        }else if(line.contains("sort")){
+                            Settings.setSort(Integer.valueOf(setting));
                         }
 
                     }
@@ -321,7 +325,7 @@ public class Model {
      * @return StreamList object
      */
     public StreamList getStreams() {
-        Sorter.viewSort(streams);
+        Sorter.sort(streams);
         return streams;
     }
 
@@ -362,28 +366,6 @@ public class Model {
 
         throw new UserNotFoundException("Specified user is not found");
     }
-
-//    public void importUserFollowers(String user) {
-//        try {
-//            JSONArray follows = new JSONObject(getJSONString(USER_URL, user + "/follows/channels?limit=100")).getJSONArray("follows");
-//            for (Object follow : follows) {
-//
-//                JSONObject jsonObj = (JSONObject) follow;
-//                jsonObj = jsonObj.getJSONObject("channel");
-//                String name = jsonObj.getString("name");
-//                StreamNode node = new StreamNode(name);
-//                try {
-//                    addStream(node);
-//                } catch (DuplicateStreamException ex) {
-//                    System.out.println("Stream already in list, skipping..");
-//                }
-//
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-//    }
 
     /**
      * Removes stream from locally saved stream list

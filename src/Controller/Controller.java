@@ -99,7 +99,7 @@ public class Controller {
     public void initGUIStreams() {
         view.showLoading();
         StreamList streams = model.getStreams();
-        Sorter.viewSort(streams);
+        Sorter.sort(streams);
         StreamIterator iter = streams.iterator();
         view.getDisplayPanel().removeAll();
         int streamMax = streams.size();

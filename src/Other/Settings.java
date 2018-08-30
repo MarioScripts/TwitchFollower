@@ -11,7 +11,9 @@ public class Settings {
     private static String gameFilter = "";
     private static Dimension size = new Dimension(400, 500);
     private static Point loc = new Point(0, 0);
-    private static final double version = 2.8;
+    // Temp: 0 = viewsort, 1 = descending name sort, 2 = descending game sort
+    private static int sort = 0;
+    private static final double version = 2.95;
 
     //Getters
     public static boolean getGameNotify() {
@@ -52,6 +54,10 @@ public class Settings {
 
     public static double getVersion(){ return version; }
 
+    public static int getSort(){
+        return sort;
+    }
+
     //Setters
     public static void setGameNotify(boolean notify) {
         gameNotify = notify;
@@ -87,6 +93,10 @@ public class Settings {
 
     public static void setShowVodast(boolean show) {
         showVodast = show;
+    }
+
+    public static void setSort(int s){
+        sort = s;
     }
 
 
