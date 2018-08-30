@@ -130,7 +130,6 @@ public class View extends JFrame {
         txtSearch = new JTextField();
         txtSearch.setText(Settings.getGameFilter());
         txtSearch.setBorder(BorderFactory.createEmptyBorder(4, 0, 2, 0));
-//        txtSearch.setMargin(new Insets(0, 0, 0, 0));
         txtSearch.setOpaque(true);
         txtSearch.setBackground(Colors.TWITCH_PURPLE);
         txtSearch.setFont(txtSearch.getFont().deriveFont(Font.BOLD, 13f));

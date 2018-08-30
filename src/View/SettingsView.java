@@ -54,8 +54,8 @@ public class SettingsView extends JFrame {
         setTitle("Settings");
         this.getContentPane().setBackground(ColorFactory.getBackground());
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setSize(new Dimension(417, 435));
-//        setResizable(false);
+        setMinimumSize(new Dimension(417, 485));
+        setResizable(true);
         setUndecorated(true);
         setVisible(true);
         setLayout(new MigLayout("insets 0, gap 0 0, fill, flowx, wrap 2", "[grow 30][grow 70]"));
@@ -239,12 +239,12 @@ public class SettingsView extends JFrame {
         pnlSleep.add(separatorSleep, "h 1, growx, pushx, gaptop 5, gapbottom 10, gapright 25, gapleft 25, wrap");
         pnlSleep.add(slrSleep, "gapleft 25, gapright 25, growx, pushx");
 
-        add(pnlTitle, "growx, pushx, h 20, span 2");
+        add(pnlTitle, "grow, push, h 20, span 2");
         add(pnlGeneral, "grow, push");
         add(pnlSort, "grow, push");
         add(pnlFollows, "grow, push, span 2");
         add(pnlSleep, "grow, push, span 2");
-        add(lblSave, "grow, push, dock south, h 25, gaptop 40, span 2");
+        add(lblSave, "grow, push, h 4, gaptop 40, span 2");
 
         MoveListener moveListener = new MoveListener(this);
         pnlTitle.addMouseListener(moveListener);
