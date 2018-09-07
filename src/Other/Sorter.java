@@ -36,17 +36,17 @@ public class Sorter {
     }
 
     private static boolean nameCompare(String nameOne, String nameTwo){
-        System.out.println("name");
+//        System.out.println("name");
         return nameOne.compareToIgnoreCase(nameTwo) < 0;
     }
 
     private static boolean gameCompare(String gameOne, String gameTwo){
-        System.out.println("game");
+//        System.out.println("game");
         return gameOne.compareToIgnoreCase(gameTwo) < 0;
     }
 
     private static boolean viewCompare(int viewOne, int viewTwo){
-        System.out.println("view");
+//        System.out.println("view");
         return viewOne > viewTwo;
     }
 

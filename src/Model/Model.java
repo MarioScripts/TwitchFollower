@@ -52,6 +52,7 @@ public class Model {
         //TODO: Clean this up
         String name = node.getName();
         StreamNode streamInfo = new StreamNode(name);
+        streamInfo.setDisplayName(node.getDisplayName());
         String info = "", displayName = name;
         JSONObject channel = null, stream = null;
         URL logoURL = null;

@@ -129,7 +129,7 @@ public class View extends JFrame {
 
         txtSearch = new JTextField();
         txtSearch.setText(Settings.getGameFilter());
-        txtSearch.setBorder(BorderFactory.createEmptyBorder(4, 0, 2, 0));
+        txtSearch.setBorder(BorderFactory.createEmptyBorder(4, 2, 2, 0));
         txtSearch.setOpaque(true);
         txtSearch.setBackground(Colors.TWITCH_PURPLE);
         txtSearch.setFont(txtSearch.getFont().deriveFont(Font.BOLD, 13f));
@@ -178,7 +178,7 @@ public class View extends JFrame {
         pnlSettings.add(lblSetting, "gapright 15, gapbottom 5");
         pnlSettings.setBackground(TWITCH_PURPLE);
 
-        pnlSearch.add(lblSearch, "pushx, growx, h 10, gapleft 2");
+        pnlSearch.add(lblSearch, "pushx, growx, h 10, gapleft 4, gaptop 2, gapbottom 1");
 
         pnlTitle.add(lblMinimize, "push, w 10, al right, gapright 10");
         pnlTitle.add(lblExit, "w 10, al right, gapright 10");

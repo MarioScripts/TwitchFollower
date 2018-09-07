@@ -244,7 +244,7 @@ public class SettingsView extends JFrame {
         add(pnlSort, "grow, push");
         add(pnlFollows, "grow, push, span 2");
         add(pnlSleep, "grow, push, span 2");
-        add(lblSave, "grow, push, h 4, gaptop 40, span 2");
+        add(lblSave, "growx, pushx, h 25, gaptop 40, span 2");
 
         MoveListener moveListener = new MoveListener(this);
         pnlTitle.addMouseListener(moveListener);
