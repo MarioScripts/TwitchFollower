@@ -1,5 +1,7 @@
 # Full Changelog
 ## Current Development Changelog:
+
+## v3.0 Changes
 - Fixed horizontal resizing issue (Experimental)
 - Changed offline channel color from red to gray
 - Added text to main display to show when there are either no streams online or when there are no streams being followed (empty follower list)

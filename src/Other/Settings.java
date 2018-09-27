@@ -13,7 +13,7 @@ public class Settings {
     private static Point loc = new Point(0, 0);
     // Temp: 0 = viewsort, 1 = descending name sort, 2 = descending game sort
     private static int sort = 0;
-    private static final double version = 2.96;
+    private static final double version = 3.0;
 
     //Getters
     public static boolean getGameNotify() {
