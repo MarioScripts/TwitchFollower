@@ -1,5 +1,7 @@
-# TwitchFollower
 
+# TwitchFollower
+ ![Light Mode](https://i.imgur.com/ayLn4Xi.png)     		      ![Dark mode](https://i.imgur.com/uSoBdcR.png)
+ 
 TwitchFollower is a lightweight application that allows real-time notifications for your favourite streams.
 
 This application allows you to:
