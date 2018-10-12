@@ -26,7 +26,6 @@ public class PopupMenu extends JPopupMenu {
     /**
      * Constructor
      * Adds actionlisteners to PopupMenu
-     *
      * @param view View object
      */
     public PopupMenu(View view) {
@@ -46,6 +45,10 @@ public class PopupMenu extends JPopupMenu {
         add(removeStream);
     }
 
+    /**
+     * Adds specified action listener to remove stream context menu option
+     * @param listener Remove stream listener as ActionListener
+     */
     public void removeStreamListener(ActionListener listener) {
         removeStream.addActionListener(listener);
     }

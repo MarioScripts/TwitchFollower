@@ -1,6 +1,5 @@
 package Controller;
 
-import Model.Model;
 import Other.Settings;
 import StreamList.StreamList;
 import View.View;
@@ -8,11 +7,12 @@ import View.View;
 import javax.imageio.ImageIO;
 import java.awt.*;
 
+import static Model.Model.getStreams;
+
 /**
  * Created by Matt on 2017-05-05.
  */
 public class Updater implements Runnable {
-    private Model model;
     private View view;
     private Controller controller;
     private StreamList streams;
@@ -21,12 +21,17 @@ public class Updater implements Runnable {
     private String gameFilter;
     private boolean pauseWorking;
 
-    public Updater(Controller controller, Model model, View view, StreamList streams, int sleepTime, String gameFilter) {
-        this.model = model;
+    /**
+     * Constructor that initializes the StreamUpdate thread and gets information pertinent to running the thread
+     * such as sleep time, game filters, etc. Also creates and starts a new thread that is then ran indefinitely
+     * @param controller Controller object
+     * @param view Main GUI View
+     */
+    public Updater(Controller controller, View view) {
         this.view = view;
-        this.streams = streams;
-        this.sleepTime = sleepTime;
-        this.gameFilter = gameFilter;
+        this.streams = getStreams();
+        this.sleepTime = Settings.getSleepTime();
+        this.gameFilter = Settings.getGameFilter();
         this.controller = controller;
         pauseWorking = false;
         update = new Thread(this);
@@ -34,6 +39,10 @@ public class Updater implements Runnable {
     }
 
     @Override
+    /**
+     * Begins the thread and executes the StreamUpdate thread indefinitely, only sleeping between each
+     * update for a specified amount of time.
+     */
     public void run() {
 
         try {
@@ -56,7 +65,7 @@ public class Updater implements Runnable {
                     sleepTime = Settings.getSleepTime();
                     try {
 
-                        StreamUpdate streamUpdate = new StreamUpdate(controller, model, view, streams, icon, gameFilter);
+                        StreamUpdate streamUpdate = new StreamUpdate(controller, view, icon);
                         streamUpdate.execute();
 
                         while (!streamUpdate.isDone()) {
@@ -76,10 +85,16 @@ public class Updater implements Runnable {
 
     }
 
+    /**
+     * Pauses the thread
+     */
     public void hibernate() {
         pauseWorking = true;
     }
 
+    /**
+     * Resumes the thread
+     */
     public void wake() {
         pauseWorking = false;
         synchronized (this) {
@@ -88,10 +103,6 @@ public class Updater implements Runnable {
         }
     }
 
-
-    /**
-     * Sleeps for sleepTime duration
-     */
     private synchronized void sleep() {
         try {
             System.out.println("Sleeping for: " + sleepTime);

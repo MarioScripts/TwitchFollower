@@ -2,7 +2,6 @@ package Listeners;
 
 import Controller.Controller;
 import Controller.Updater;
-import Model.Model;
 import View.SettingsView;
 import View.View;
 
@@ -10,14 +9,15 @@ import javax.swing.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * Opens Settings GUI when settings button is pressed on main GUI
+ */
 public class SettingsListener implements MouseListener {
     private Controller controller;
     private Updater streamUpdateThread;
-    private Model model;
     private View view;
 
-    public SettingsListener(Model model, View view, Updater streamUpdateThread, Controller controller) {
-        this.model = model;
+    public SettingsListener(View view, Updater streamUpdateThread, Controller controller) {
         this.view = view;
         this.streamUpdateThread = streamUpdateThread;
         this.controller = controller;
@@ -25,7 +25,7 @@ public class SettingsListener implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        SettingsView.getInstance(streamUpdateThread, model, controller);
+        SettingsView.getInstance(streamUpdateThread, controller);
     }
 
     @Override

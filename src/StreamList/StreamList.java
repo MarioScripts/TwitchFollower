@@ -6,13 +6,11 @@ import java.util.NoSuchElementException;
 
 
 public class StreamList {
-    /**
-     * First and last element in list
-     */
+
+    // First and last element in list
     private StreamNode front, rear;
-    /**
-     * Number of elements in list
-     */
+
+    // Number of elements in list
     private int count;
 
     /**
@@ -25,7 +23,6 @@ public class StreamList {
 
     /**
      * Adds StreamNode object to list
-     *
      * @param node Node that you wish to add
      * @throws DuplicateStreamException thrown when node with same name is already available
      */
@@ -46,7 +43,6 @@ public class StreamList {
 
     /**
      * Removes StreamNode object from list
-     *
      * @param name Name of StreamNode to remove
      */
     public void remove(String name) {
@@ -86,7 +82,6 @@ public class StreamList {
 
     /**
      * Checks to see if there exists a StreamNode in the list with the given name
-     *
      * @param name Name you wish to look for
      * @return Boolean, returns false if no duplicates are found
      */
@@ -105,7 +100,6 @@ public class StreamList {
 
     /**
      * Checks if list is empty
-     *
      * @return Boolean, true if empty
      */
     public boolean isEmpty() {
@@ -114,7 +108,6 @@ public class StreamList {
 
     /**
      * Returns size of list
-     *
      * @return size as int
      */
     public int size() {
@@ -123,7 +116,6 @@ public class StreamList {
 
     /**
      * Returns iterator for the list
-     *
      * @return List iterator as StreamIterator
      */
     public StreamIterator iterator() {

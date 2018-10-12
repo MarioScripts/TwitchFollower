@@ -10,7 +10,6 @@ public class StreamIterator implements Iterator {
 
     /**
      * Sets up this iterator using the specified items.
-     *
      * @param collection the collection the iterator will move over
      * @param size       the integer size of the collection
      */
@@ -22,7 +21,6 @@ public class StreamIterator implements Iterator {
     /**
      * Returns true if this iterator has at least one more element
      * to deliver in the iteration.
-     *
      * @return true if this iterator has a least one more element to deliver
      * in the iteration
      */
@@ -34,7 +32,6 @@ public class StreamIterator implements Iterator {
      * Returns the next element in the iteration. If there are no
      * more elements in this iteration, a NoSuchElementException is
      * thrown.
-     *
      * @return the next element in the iteration
      * @throws NoSuchElementException if a no such element exception occurs
      */
@@ -48,7 +45,6 @@ public class StreamIterator implements Iterator {
 
     /**
      * The remove operation is not supported.
-     *
      * @throws UnsupportedOperationException if an unsupported operation
      *                                       exception occurs
      */

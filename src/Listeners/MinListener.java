@@ -9,6 +9,9 @@ import java.awt.event.MouseListener;
 
 import static Other.Colors.TWITCH_PURPLE;
 
+/**
+ * Minimizes the main GUI View when the minimize button is pressed
+ */
 public class MinListener implements MouseListener {
     private View view;
 

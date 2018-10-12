@@ -10,8 +10,15 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * Initial splash screen that shows while loading the programs
+ */
 public class Splash extends JFrame {
     private JLabel lblHeader, lblInfo, lblStatus;
+
+    /**
+     * Initializes, builds, and shows splash screen
+     */
     public Splash() {
         this.setLayout(new MigLayout("insets 0 0, gap 0, w 200, h 200, flowy"));
         this.setMaximumSize(new Dimension(200, 200));
@@ -50,6 +57,10 @@ public class Splash extends JFrame {
         this.setSize(200, 220);
     }
 
+    /**
+     * Sets the status text on the splash screen in real time
+     * @param status
+     */
     public void setStatusText(String status){
         lblStatus.setText(status);
     }

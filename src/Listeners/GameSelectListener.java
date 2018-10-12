@@ -1,20 +1,22 @@
 package Listeners;
 
 import Controller.Controller;
-import Model.Model;
 import Other.Settings;
 import View.View;
 
-import javax.swing.*;
-import java.awt.event.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
+import static Model.Model.updateSettings;
+
+/**
+ * Sets the specified game that is searched for and clicked as the game filter
+ */
 public class GameSelectListener implements MouseListener {
-    private Model model;
     private View view;
     private Controller controller;
 
-    public GameSelectListener(Model model, View view, Controller controller) {
-        this.model = model;
+    public GameSelectListener(View view, Controller controller) {
         this.view = view;
         this.controller = controller;
     }
@@ -23,10 +25,10 @@ public class GameSelectListener implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         String game = view.getGameSelected();
         Settings.setGameFilter(game);
-        model.updateSettings();
+        updateSettings();
         view.setSearchText(game);
         view.hideGames();
-        controller.refreshGUIStreams();
+        controller.refreshGUI();
     }
 
     @Override

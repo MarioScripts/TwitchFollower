@@ -18,6 +18,6 @@ public class TwitchFollower {
         Model model = new Model();
 
 
-        Controller controller = new Controller(model, view);
+        Controller controller = new Controller(view);
     }
 }

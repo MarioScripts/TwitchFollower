@@ -5,6 +5,9 @@ import View.View;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+/**
+ * Opens and shows search text bar when search icon is clicked
+ */
 public class SearchListener implements MouseListener {
     private View view;
 

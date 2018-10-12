@@ -9,6 +9,9 @@ import java.awt.event.WindowEvent;
 
 import static Other.Colors.TWITCH_PURPLE;
 
+/**
+ * Closes the program when the close button on the main GUI View is pressed
+ */
 public class ExitListener implements MouseListener {
     private View view;
 

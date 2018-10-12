@@ -1,7 +1,7 @@
 package Exceptions;
 
 /**
- * Created by Mario on 11/13/2016.
+ * Used when a stream is already in the streaam list
  */
 public class DuplicateStreamException extends Exception {
     public DuplicateStreamException() {

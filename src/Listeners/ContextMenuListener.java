@@ -1,6 +1,5 @@
 package Listeners;
 
-import Model.Model;
 import View.PopupMenu;
 import View.View;
 
@@ -10,11 +9,9 @@ import java.awt.event.MouseListener;
 
 public class ContextMenuListener implements MouseListener {
     private View view;
-    private Model model;
 
-    public ContextMenuListener(View view, Model model) {
+    public ContextMenuListener(View view) {
         this.view = view;
-        this.model = model;
     }
 
     @Override
@@ -22,7 +19,7 @@ public class ContextMenuListener implements MouseListener {
         if (SwingUtilities.isRightMouseButton(e)) {
 
             PopupMenu popup = new PopupMenu(view);
-            popup.removeStreamListener(new RemoveStreamListener(view, model));
+            popup.removeStreamListener(new RemoveStreamListener(view));
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
 

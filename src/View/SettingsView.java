@@ -2,28 +2,31 @@ package View;
 
 import ColorFactory.ColorFactory;
 import Controller.Controller;
+import Controller.ImportProgressThread;
 import Controller.Updater;
 import Exceptions.UserNotFoundException;
 import Listeners.MoveListener;
-import Model.Model;
 import Other.Colors;
 import Other.Settings;
 import net.miginfocom.swing.MigLayout;
 import org.json.JSONArray;
-import Controller.ImportProgressThread;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
 
+import static Model.Model.getImportedFollowers;
+import static Model.Model.updateSettings;
 import static Other.Colors.TWITCH_PURPLE;
 
 /**
- * Created by Matt on 2017-05-04.
+ * Singleton Settings GUI
  */
 public class SettingsView extends JFrame {
 
     private Updater updateThread;
-    private Model model;
     private Controller controller;
     private JCheckBox chkGameNotify, chkStatusNotify, chkShowOffline, chkShowVodcast, chkDarkMode;
     private JRadioButton rdView, rdName, rdGame;
@@ -36,17 +39,27 @@ public class SettingsView extends JFrame {
     private ButtonGroup buttonGroup;
     private static SettingsView instance = null;
 
-    public static SettingsView getInstance(Updater updateThread, Model model, Controller controller){
+    /**
+     * Singleton initializer. Ensures there is only every 1 instance of a settings GUI
+     * @param updateThread Update thread to call main constructor with
+     * @param controller Controller object to call main constructor with
+     * @return Returns instance of SettingsView
+     */
+    public static SettingsView getInstance(Updater updateThread, Controller controller){
         if(instance == null){
-            instance = new SettingsView(updateThread, model, controller);
+            instance = new SettingsView(updateThread, controller);
         }
 
         return instance;
     }
 
-    public SettingsView(Updater updateThread, Model model, Controller controller) {
+    /**
+     * Initializes, builds, and displays the settings settings GUI
+     * @param updateThread Update thread that is updating streams
+     * @param controller Controller object
+     */
+    public SettingsView(Updater updateThread, Controller controller) {
         this.updateThread = updateThread;
-        this.model = model;
         this.controller = controller;
         controller.pauseBackgroundWork();
         setLookAndFeel();
@@ -312,8 +325,8 @@ public class SettingsView extends JFrame {
                 Settings.setSort(2);
             }
 
-            model.updateSettings();
-            controller.refreshGUIStreams();
+            updateSettings();
+            controller.refreshGUI();
             controller.resumeBackgroundWork();
             instance = null;
             dispose();
@@ -359,9 +372,9 @@ public class SettingsView extends JFrame {
             outerPanel.remove(mainPanel);
             outerPanel.add(otherPanel, "growx, pushx, h 20");
             try{
-                JSONArray importArray = model.getImportedFollowers(username);
+                JSONArray importArray = getImportedFollowers(username);
                 progressBar.setMaximum(importArray.length());
-                ImportProgressThread progressThread = new ImportProgressThread(model, controller, frame, progressBar, importArray, outerPanel, mainPanel, otherPanel, txtUser);
+                ImportProgressThread progressThread = new ImportProgressThread(controller, frame, progressBar, importArray, outerPanel, mainPanel, otherPanel, txtUser);
                 try{
                     progressThread.execute();
                 }catch(Exception ex1){
@@ -402,7 +415,6 @@ public class SettingsView extends JFrame {
     private class FollowersMouseListener implements MouseListener {
         @Override
         public void mouseClicked(MouseEvent e) {
-//            txtUser.setText("");
             txtUser.selectAll();
         }
 
