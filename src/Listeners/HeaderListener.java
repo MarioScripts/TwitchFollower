@@ -38,10 +38,12 @@ public class HeaderListener implements MouseListener {
     @Override
     public void mouseEntered(MouseEvent e) {
         view.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        view.refresh();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         view.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+        view.refresh();
     }
 }

@@ -3,6 +3,8 @@ package View;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 /**
  * Handles context menu of GUI elements
@@ -37,8 +39,8 @@ public class PopupMenu extends JPopupMenu {
         removeStream = new JMenuItem("Remove");
         popoutChat = new JMenuItem("Open popout chat");
 
-        openTwitch.addActionListener(new OpenTwitchListener(name));
-        popoutChat.addActionListener(new OpenPopoutChatListener(name));
+        openTwitch.addMouseListener(new OpenTwitchListener(name));
+        popoutChat.addMouseListener(new OpenPopoutChatListener(name));
 
         add(openTwitch);
         add(popoutChat);
@@ -56,7 +58,7 @@ public class PopupMenu extends JPopupMenu {
     /**
      * Opens Twitch with the currently selected stream
      */
-    private class OpenTwitchListener implements ActionListener {
+    private class OpenTwitchListener implements MouseListener {
         String name;
 
         public OpenTwitchListener(String name) {
@@ -64,17 +66,38 @@ public class PopupMenu extends JPopupMenu {
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void mouseClicked(MouseEvent e) {
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
             Model.Model.openToTwitch(name);
             view.setDeselectProperties(selected);
             view.setSelected(null);
+            view.refresh();
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            view.refresh();
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            view.refresh();
         }
     }
 
     /**
      * Opens popout chat with the currently selected stream
      */
-    private class OpenPopoutChatListener implements ActionListener {
+    private class OpenPopoutChatListener implements MouseListener {
         String name;
 
         public OpenPopoutChatListener(String name) {
@@ -82,10 +105,30 @@ public class PopupMenu extends JPopupMenu {
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void mouseClicked(MouseEvent e) {
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
             Model.Model.openPopoutChat(name);
             view.setDeselectProperties(selected);
             view.setSelected(null);
+            view.refresh();
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+            view.refresh();
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+            view.refresh();
         }
     }
 }

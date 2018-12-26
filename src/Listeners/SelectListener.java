@@ -33,8 +33,7 @@ public class SelectListener implements MouseListener {
             view.setSelected(null);
         }
 
-        view.validate();
-        view.repaint();
+        view.refresh();
 
     }
 
@@ -49,6 +48,7 @@ public class SelectListener implements MouseListener {
     @Override
     public void mouseEntered(MouseEvent e) {
         view.setSelectProperties((JPanel) e.getComponent());
+        view.refresh();
     }
 
     @Override
@@ -56,6 +56,7 @@ public class SelectListener implements MouseListener {
         if (e.getComponent() != view.getSelected()) {
             view.setDeselectProperties((JPanel) e.getComponent());
         }
+        view.refresh();
 
     }
 }

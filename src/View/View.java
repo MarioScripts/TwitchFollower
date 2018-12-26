@@ -124,6 +124,7 @@ public class View extends JFrame {
 
         lblDisplay = new JLabel("");
         lblDisplay.setForeground(BACKGROUND_LABEL_COLOR);
+        lblDisplay.setOpaque(true);
 
         lblSearch = new JLabel("");
         lblSearch.setBackground(BACKGROUND_COLOR);
@@ -340,6 +341,11 @@ public class View extends JFrame {
         }
     }
 
+    public void refresh(){
+        this.repaint();
+        this.validate();
+    }
+
     /**
      * Sets the selected attributes for the given JLabel
      *
@@ -368,10 +374,16 @@ public class View extends JFrame {
 
     public void hideLoading() {
         lblDisplay.setVisible(false);
+        lblDisplay.validate();
+        lblDisplay.repaint();
+        refresh();
     }
 
     public void showLoading() {
         lblDisplay.setVisible(true);
+        lblDisplay.validate();
+        lblDisplay.repaint();
+        refresh();
     }
 
     public void addNoStreamLabel(String message){

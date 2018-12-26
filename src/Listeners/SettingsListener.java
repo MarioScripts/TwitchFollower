@@ -21,6 +21,7 @@ public class SettingsListener implements MouseListener {
         this.view = view;
         this.streamUpdateThread = streamUpdateThread;
         this.controller = controller;
+        view.refresh();
     }
 
     @Override
@@ -41,10 +42,12 @@ public class SettingsListener implements MouseListener {
     @Override
     public void mouseEntered(MouseEvent e) {
         view.setHoverProperties((JLabel) e.getComponent());
+        view.refresh();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         view.setUnhoverProperties((JLabel) e.getComponent());
+        view.refresh();
     }
 }

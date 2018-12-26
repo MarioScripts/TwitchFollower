@@ -34,5 +34,6 @@ public class RemoveStreamListener implements ActionListener {
         }
 
         view.setSelected(null);
+        view.refresh();
     }
 }

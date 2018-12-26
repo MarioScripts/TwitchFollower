@@ -49,6 +49,7 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
     protected Boolean doInBackground() throws Exception {
         System.out.print("Updating...");
         view.showLoading();
+        view.refresh();
 
         StreamIterator iter = streams.iterator();
         while (iter.hasNext()) {
@@ -103,9 +104,8 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
 
     protected void done() {
         controller.refreshGUI();
-        view.validate();
-        view.repaint();
         view.hideLoading();
+        view.refresh();
         System.out.println(" Updated.");
     }
 

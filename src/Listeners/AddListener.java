@@ -50,6 +50,7 @@ public class AddListener implements MouseListener {
                 JOptionPane.showMessageDialog(null, "The stream \"" + name + "\" does not exist.", "Invalid Stream", JOptionPane.ERROR_MESSAGE);
             }
         }
+        view.refresh();
     }
 
     @Override
@@ -64,11 +65,14 @@ public class AddListener implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
+
         view.setHoverProperties((JLabel) e.getComponent());
+        view.refresh();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         view.setUnhoverProperties((JLabel) e.getComponent());
+        view.refresh();
     }
 }

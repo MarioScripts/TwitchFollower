@@ -23,6 +23,7 @@ public class DeselectListener implements MouseListener {
             view.setDeselectProperties(selected);
             view.setSelected(null);
         }
+        view.refresh();
     }
 
     @Override
@@ -37,10 +38,10 @@ public class DeselectListener implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        view.refresh();
     }
 
     public void mouseExited(MouseEvent e) {
-
+        view.refresh();
     }
 }

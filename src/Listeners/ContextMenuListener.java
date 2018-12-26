@@ -23,8 +23,7 @@ public class ContextMenuListener implements MouseListener {
             popup.show(e.getComponent(), e.getX(), e.getY());
         }
 
-        view.validate();
-        view.repaint();
+        view.refresh();
     }
 
     @Override
@@ -39,11 +38,11 @@ public class ContextMenuListener implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        view.refresh();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-
+        view.refresh();
     }
 }

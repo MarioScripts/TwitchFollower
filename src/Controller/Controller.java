@@ -37,11 +37,12 @@ public class Controller {
         //streamUpdateThread = new StreamUpdate(3000, model.getStreams(), view, model);
         streamUpdateThread = new Updater(this, view);
 
-        view.pack();
+
         view.setSize(Settings.getSize());
         view.setLocation(Settings.getLoc());
         view.changeColorScheme();
         view.setVisible(true);
+        view.pack();
         view.repaint();
 
         addActionListeners();
@@ -64,8 +65,7 @@ public class Controller {
         showNoStreamText(getStreams().size());
 
         view.changeColorScheme();
-        view.validate();
-        view.repaint();
+        view.refresh();
     }
 
     /**

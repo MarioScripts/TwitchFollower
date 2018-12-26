@@ -37,10 +37,12 @@ public class ExitListener implements MouseListener {
     @Override
     public void mouseEntered(MouseEvent e) {
         view.setHoverProperties((JLabel) e.getComponent());
+        view.refresh();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         e.getComponent().setForeground(TWITCH_PURPLE);
+        view.refresh();
     }
 }
