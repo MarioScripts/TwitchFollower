@@ -51,6 +51,7 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
         view.showLoading();
         view.refresh();
 
+        // TODO: Make batch update rather than 1 by 1 (https://dev.twitch.tv/docs/api/reference#get-streams)
         StreamIterator iter = streams.iterator();
         while (iter.hasNext()) {
             temp = iter.next();

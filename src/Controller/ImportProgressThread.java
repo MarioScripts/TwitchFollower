@@ -59,9 +59,10 @@ public class ImportProgressThread extends SwingWorker<Boolean, Integer> {
         for (Object follow : userFollows) {
 
             JSONObject jsonObj = (JSONObject) follow;
-            jsonObj = jsonObj.getJSONObject("channel");
-            String name = jsonObj.getString("name");
+            String name = jsonObj.getString("to_name");
+            String id = jsonObj.getString("to_id");
             StreamNode node = new StreamNode(name);
+            node.setId(id);
             try {
                 addStream(node);
                 controller.updateStream(node);

@@ -8,7 +8,7 @@ import java.awt.*;
  */
 public class StreamNode {
 
-    private String name, game, status, displayName, title;
+    private String name, id, game, status, displayName, title;
     private int views;
     private boolean vodcast;
     private Image logo;
@@ -112,6 +112,10 @@ public class StreamNode {
         return title;
     }
 
+    public String getId() {
+        return id;
+    }
+
     // Setters
 
     /**
@@ -180,6 +184,10 @@ public class StreamNode {
      */
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
