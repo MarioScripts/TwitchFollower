@@ -25,12 +25,13 @@ public class Model {
     private static final String GAME_URL = "https://api.twitch.tv/helix/games/top?limit=100";
     private static final String CHANNEL_URL = "https://api.twitch.tv/helix/users?login=";
     private static final String USER_URL = "https://api.twitch.tv/helix/users/";
-    private static final String CLIENT_ID = "0cadrdbr1gdaxrjmeqj9er4gdpqfnp";
-    private static final String CLIENT_SECRET = "5bo4xd9voi5sl655wn44bs40gh187p";
+
     private static StreamList streams;
     private static List games;
 
     private static String access_token = "";
+    private static String CLIENT_ID = "";
+    private static String CLIENT_SECRET = "";
 
     /**
      * Constructor
@@ -39,6 +40,11 @@ public class Model {
         streams = new StreamList();
         games = new List();
         readStreams();
+    }
+
+    public static void setupEnv() {
+        CLIENT_ID = System.getenv("CLIENT_ID");
+        CLIENT_SECRET = System.getenv("CLIENT_SECRET");
     }
 
     /**
