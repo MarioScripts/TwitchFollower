@@ -28,6 +28,7 @@ public class Controller {
     public Controller(View v) {
         view = v;
         splash = new Splash();
+        setupEnv();
         generateAccessToken();
         readSettings();
         getTopGames();
