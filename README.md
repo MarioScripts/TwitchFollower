@@ -1,5 +1,7 @@
-# TwitchFollower
 
+# TwitchFollower
+ ![Program preview](https://i.imgur.com/FCMRbzp.gif)
+ 
 TwitchFollower is a lightweight application that allows real-time notifications for your favourite streams.
 
 This application allows you to:
@@ -19,5 +21,5 @@ This application allows you to:
 For more information about features and development visit the changelog listed below, or download the latest release and try it for yourself! 
 
 ---
-[Click here](https://github.com/MarioScripts/TwitchFollower/releases/download/v2.5/TwitchFollower.exe) for the latest EXE release.<br/>
-[Full changelog](https://github.com/MarioScripts/TwitchFollower/blob/develop/CHANGELOG.md) is available here.
+[Click here](https://github.com/MarioScripts/TwitchFollower/releases/download/3.0/TwitchFollower.exe) for the latest EXE release.<br/>
+[Full changelog](https://github.com/MarioScripts/TwitchFollower/blob/master/CHANGELOG.md) is available here.

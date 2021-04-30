@@ -33,7 +33,7 @@ public class ResizeListener implements ComponentListener {
             cols = currCol;
             pnlDisplay.setLayout(null);
             pnlDisplay.setLayout(new MigLayout("wrap " + currCol + ", flowx, insets 10 10"));
-            controller.refreshGUIStreams();
+            controller.refreshGUI();
         }
 
         view.validate();

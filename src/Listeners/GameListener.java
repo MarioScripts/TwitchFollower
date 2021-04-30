@@ -1,7 +1,6 @@
 package Listeners;
 
 import Controller.Controller;
-import Model.Model;
 import Other.Settings;
 import View.View;
 
@@ -11,17 +10,21 @@ import javax.swing.text.Document;
 import java.awt.*;
 import java.util.ArrayList;
 
+import static Model.Model.getTopGames;
+import static Model.Model.updateSettings;
+
+/**
+ * Updates the game list document actively while the user types into the search text field
+ */
 public class GameListener implements DocumentListener {
     private ArrayList<String> topGames;
-    private Model model;
     private View view;
     private Controller controller;
 
-    public GameListener(Model model, View view, Controller controller) {
-        this.model = model;
+    public GameListener(View view, Controller controller) {
         this.view = view;
         this.controller = controller;
-        topGames = model.getTopGames();
+        topGames = getTopGames();
     }
 
     @Override
@@ -68,8 +71,8 @@ public class GameListener implements DocumentListener {
         }
 
         Settings.setGameFilter(view.getSearchText());
-        model.updateSettings();
-        controller.refreshGUIStreams();
+        updateSettings();
+        controller.refreshGUI();
 
     }
 }

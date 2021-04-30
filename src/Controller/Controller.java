@@ -1,7 +1,6 @@
 package Controller;
 
 import Listeners.*;
-import Model.Model;
 import Other.Settings;
 import Other.Sorter;
 import StreamList.StreamIterator;
@@ -9,96 +8,73 @@ import StreamList.StreamList;
 import StreamList.StreamNode;
 import View.Splash;
 import View.View;
-
-import javax.swing.*;
 import java.io.InvalidObjectException;
+import static Model.Model.*;
 
 /**
  * Control interaction between View and Model objects
  */
 public class Controller {
-    /**
-     * Model object
-     */
-    private Model model;
-
-    /**
-     * View object
-     */
     private View view;
-
     private Updater streamUpdateThread;
-
     private Splash splash;
 
     /**
-     * Constructor
-     *
-     * @param m Model object
+     * Constructor. Initializes any required background threads and updates.
+     * Handles initializing the GUI stream list as well as displaying the startup splash screen
+     * Also does basic bookkeeping for the model and view objects
      * @param v View object
      */
-    public Controller(Model m, View v) {
-        model = m;
+    public Controller(View v) {
         view = v;
         splash = new Splash();
-        model.readSettings();
-        model.getTopGames();
-        initGUIStreams();
+        generateAccessToken();
+        readSettings();
+        getTopGames();
+        updateStreams();
         splash.dispose();
 
         //Start stream info update thread
         //streamUpdateThread = new StreamUpdate(3000, model.getStreams(), view, model);
-        streamUpdateThread = new Updater(this, model, view, model.getStreams(), Settings.getSleepTime(), Settings.getGameFilter());
+        streamUpdateThread = new Updater(this, view);
 
-        view.pack();
+
         view.setSize(Settings.getSize());
         view.setLocation(Settings.getLoc());
         view.changeColorScheme();
         view.setVisible(true);
+        view.pack();
         view.repaint();
 
         addActionListeners();
     }
 
-
     /**
-     * Adds actionlisteners from View object
+     * Refreshes the GUI streams if they are already initialized
+     * Note that this method does not update the stream's information. It merely updates the GUI
      */
-    private void addActionListeners() {
-        view.lblAddListener(new AddListener(model, view, this));
-        view.lblSettingsListener(new SettingsListener(model, view, streamUpdateThread, this));
-        view.pnlResizeListener(new ResizeListener(view, this));
-        view.lblSearchListener(new SearchListener(view));
-        view.txtSearchListener(new GameListener(model, view, this));
-        view.lstSearchGamesListener(new GameSelectListener(model, view, this));
-        view.lblExitListener(new ExitListener(view));
-        view.lblMinListener(new MinListener(view));
-        view.frmExitListener(new WindowExitListener(model));
-    }
-
-    public void refreshGUIStreams() {
-        StreamList streams = model.getStreams();
+    public void refreshGUI() {
+        StreamList streams = getStreams();
         StreamIterator iter = streams.iterator();
         view.getDisplayPanel().removeAll();
 
         while (iter.hasNext()) {
             StreamNode temp = iter.next();
-            addStream(temp);
+            addStreamToView(temp);
         }
 
-        showNoStreamText(model.getStreams().size());
+        showNoStreamText(getStreams().size());
 
         view.changeColorScheme();
-        view.validate();
-        view.repaint();
+        view.refresh();
     }
 
     /**
-     * Initializes all streams once on load
+     * Updates all stream information AND refreshes the GUI
      */
-    public void initGUIStreams() {
+    public void updateStreams() {
         view.showLoading();
-        StreamList streams = model.getStreams();
+        StreamList streams = getStreams();
         Sorter.sort(streams);
         StreamIterator iter = streams.iterator();
         view.getDisplayPanel().removeAll();
@@ -109,43 +85,67 @@ public class Controller {
             splash.setStatusText("Loading... (" + i + "/" + streamMax + ")");
             StreamNode temp = iter.next();
 
-            initGUIStream(temp);
+            updateStream(temp);
             i++;
         }
 
-        showNoStreamText(model.getStreams().size());
+        showNoStreamText(getStreams().size());
         view.hideLoading();
         view.validate();
         view.repaint();
     }
 
-    public void initGUIStream(StreamNode temp){
+    /**
+     * Gets information for specified stream, updates the information, and adds it to GUI
+     * @param temp Stream to update information of
+     */
+    public void updateStream(StreamNode temp){
         try {
-            StreamNode tempInfo = model.getStreamInfo(temp);
+            StreamNode tempInfo = getStreamInfo(temp);
             temp.setNode(tempInfo);
 
-            addStream(temp);
+            addStreamToView(temp);
         } catch (InvalidObjectException e) {
             System.out.println("Invalid stream: " + e.getMessage() + " removing stream from list.");
-            model.removeStream(e.getMessage());
+            removeStream(e.getMessage());
         } catch (NullPointerException e) {
             System.out.println("Image issue");
         }
     }
 
+    /**
+     * Pauses background threads/stream updates.
+     * Mainly used when other GUIs are in the forefront. i.e. settings GUI or add stream GUI
+     */
     public void pauseBackgroundWork(){
         streamUpdateThread.hibernate();
     }
 
+    /**
+     * Resumes background threads/stream updates.
+     * Mainly used when other GUIs are in the forefront. i.e. settings GUI or add stream GUI
+     */
     public void resumeBackgroundWork(){
         streamUpdateThread.wake();
     }
 
-    private void addStream(StreamNode node) {
+    private void addActionListeners() {
+        view.lblAddListener(new AddListener(view, this));
+        view.lblSettingsListener(new SettingsListener(view, streamUpdateThread, this));
+        view.pnlResizeListener(new ResizeListener(view, this));
+        view.lblSearchListener(new SearchListener(view));
+        view.txtSearchListener(new GameListener(view, this));
+        view.lstSearchGamesListener(new GameSelectListener(view, this));
+        view.lblExitListener(new ExitListener(view));
+        view.lblMinListener(new MinListener(view));
+        view.frmExitListener(new WindowExitListener());
+    }
+
+    private void addStreamToView(StreamNode node) {
         if ((Settings.getShowOffline() && node.getStatus().equals("Offline")) || node.getStatus().equals("Online")) {
             if (Settings.getGameFilter().equals("") || node.getGame().toLowerCase().startsWith(Settings.getGameFilter().toLowerCase())) {
                 if ((Settings.getShowVodcast() && node.getVodcast()) || !node.getVodcast()) {
-                    view.addStreamLabel(node).addMouseListener(new ContextMenuListener(view, model));
+                    view.addStreamLabel(node).addMouseListener(new ContextMenuListener(view));
                 }
             }
         }

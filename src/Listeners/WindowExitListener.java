@@ -1,18 +1,16 @@
 package Listeners;
 
 import Other.Settings;
-import Model.*;
-import java.awt.*;
+
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import static Model.Model.updateSettings;
+
+/**
+ * On program termination, records the window size and screen location to be saved and loaded on next start up
+ */
 public class WindowExitListener implements WindowListener{
-    private Model model;
-
-    public WindowExitListener(Model model){
-        this.model = model;
-    }
-
     @Override
     public void windowOpened(WindowEvent e) {
 
@@ -22,7 +20,7 @@ public class WindowExitListener implements WindowListener{
     public void windowClosing(WindowEvent e) {
         Settings.setSize(e.getWindow().getSize());
         Settings.setLoc(e.getWindow().getLocation());
-        model.updateSettings();
+        updateSettings();
     }
 
     @Override

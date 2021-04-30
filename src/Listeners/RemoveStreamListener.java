@@ -1,19 +1,21 @@
 package Listeners;
 
-import Model.Model;
 import View.View;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static Model.Model.removeStream;
+
+/**
+ * Removes selected stream when 'remove stream' context menu option is clicked
+ */
 public class RemoveStreamListener implements ActionListener {
     private View view;
-    private Model model;
 
-    public RemoveStreamListener(View view, Model model) {
+    public RemoveStreamListener(View view) {
         this.view = view;
-        this.model = model;
     }
 
     @Override
@@ -25,12 +27,13 @@ public class RemoveStreamListener implements ActionListener {
             pnlDisplay.remove(selected);
             view.setSelected(null);
 
-            model.removeStream(selected.getName());
+            removeStream(selected.getName());
 
             pnlDisplay.validate();
             pnlDisplay.repaint();
         }
 
         view.setSelected(null);
+        view.refresh();
     }
 }

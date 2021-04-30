@@ -9,6 +9,9 @@ import java.awt.event.WindowEvent;
 
 import static Other.Colors.TWITCH_PURPLE;
 
+/**
+ * Closes the program when the close button on the main GUI View is pressed
+ */
 public class ExitListener implements MouseListener {
     private View view;
 
@@ -34,10 +37,12 @@ public class ExitListener implements MouseListener {
     @Override
     public void mouseEntered(MouseEvent e) {
         view.setHoverProperties((JLabel) e.getComponent());
+        view.refresh();
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
         e.getComponent().setForeground(TWITCH_PURPLE);
+        view.refresh();
     }
 }

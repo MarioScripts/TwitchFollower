@@ -1,19 +1,21 @@
 package View;
 
 import ColorFactory.ColorFactory;
-import Listeners.*;
+import Listeners.DeselectListener;
+import Listeners.HeaderListener;
+import Listeners.MoveListener;
+import Listeners.SelectListener;
+import Other.Colors;
 import Other.Settings;
 import StreamList.StreamNode;
-import com.sun.xml.internal.ws.api.config.management.policy.ManagementAssertion;
 import net.miginfocom.swing.MigLayout;
-import Other.Colors;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ComponentListener;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -122,6 +124,7 @@ public class View extends JFrame {
 
         lblDisplay = new JLabel("");
         lblDisplay.setForeground(BACKGROUND_LABEL_COLOR);
+        lblDisplay.setOpaque(true);
 
         lblSearch = new JLabel("");
         lblSearch.setBackground(BACKGROUND_COLOR);
@@ -338,6 +341,11 @@ public class View extends JFrame {
         }
     }
 
+    public void refresh(){
+        this.repaint();
+        this.validate();
+    }
+
     /**
      * Sets the selected attributes for the given JLabel
      *
@@ -366,10 +374,16 @@ public class View extends JFrame {
 
     public void hideLoading() {
         lblDisplay.setVisible(false);
+        lblDisplay.validate();
+        lblDisplay.repaint();
+        refresh();
     }
 
     public void showLoading() {
         lblDisplay.setVisible(true);
+        lblDisplay.validate();
+        lblDisplay.repaint();
+        refresh();
     }
 
     public void addNoStreamLabel(String message){

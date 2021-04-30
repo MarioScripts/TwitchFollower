@@ -14,23 +14,23 @@ import org.json.JSONObject;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.nio.file.InvalidPathException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class Model {
     private static final String SAVE_DIR = System.getProperty("user.home") + "\\AppData\\Roaming\\Twitchfollower";
-    private static final String STREAM_URL = "https://api.twitch.tv/kraken/streams/";
-    private static final String GAME_URL = "https://api.twitch.tv/kraken/games/top?limit=100";
-    private static final String CHANNEL_URL = "https://api.twitch.tv/kraken/channels/";
-    private static final String USER_URL = "https://api.twitch.tv/kraken/users/";
-    private static final String CLIENT_ID = "iv92gs01m24niftpift7l6jsmvrfvpo";
-    private StreamList streams;
-    private List games;
+    private static final String STREAM_URL = "https://api.twitch.tv/helix/streams?user_id=";
+    private static final String GAME_URL = "https://api.twitch.tv/helix/games/top?limit=100";
+    private static final String CHANNEL_URL = "https://api.twitch.tv/helix/users?login=";
+    private static final String USER_URL = "https://api.twitch.tv/helix/users/";
+    private static final String CLIENT_ID = "0cadrdbr1gdaxrjmeqj9er4gdpqfnp";
+    private static final String CLIENT_SECRET = "5bo4xd9voi5sl655wn44bs40gh187p";
+    private static StreamList streams;
+    private static List games;
+
+    private static String access_token = "";
 
     /**
      * Constructor
@@ -43,7 +43,6 @@ public class Model {
 
     /**
      * Uses Twitch API to get stream info
-     *
      * @param node Stream to get stream info for
      * @return Stream info as StreamNode object
      * @throws InvalidObjectException thrown when stream does not exist in Twitch database
@@ -61,11 +60,12 @@ public class Model {
         try {
             if (node.getLogo() == null) {
                 info = getJSONString(CHANNEL_URL, name);
-                channel = new JSONObject(info);
-                logoURL = new URL(channel.getString("logo"));
+                channel = (JSONObject) new JSONObject(info).getJSONArray("data").get(0);
+                logoURL = new URL(channel.getString("profile_image_url"));
                 displayName = channel.getString("display_name");
                 streamInfo.setDisplayName(displayName);
                 streamInfo.setLogo(ImageIO.read(logoURL).getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+                streamInfo.setId(channel.getString("id"));
             } else {
                 streamInfo.setLogo(node.getLogo());
             }
@@ -86,17 +86,23 @@ public class Model {
 
         //Get status/game
         try {
-            info = getJSONString(STREAM_URL, name);
-            stream = new JSONObject(info).getJSONObject("stream");
-            streamInfo.setStatus("Online");
-            streamInfo.setTitle(stream.getJSONObject("channel").getString("status"));
+            if (streamInfo.getId() == null) {
+                info = getJSONString(CHANNEL_URL, name);
+                channel = (JSONObject) new JSONObject(info).getJSONArray("data").get(0);
+                streamInfo.setId(channel.getString("id"));
+            }
 
-            if (!stream.getString("stream_type").equals("live")) {
+            info = getJSONString(STREAM_URL, streamInfo.getId());
+            stream = (JSONObject) new JSONObject(info).getJSONArray("data").get(0);
+            streamInfo.setStatus("Online");
+            streamInfo.setTitle(stream.getString("title"));
+
+            if (!stream.getString("type").equals("live")) {
                 streamInfo.setVodcast(true);
             }
 
-            streamInfo.setViews(stream.getInt("viewers"));
-            streamInfo.setGame(stream.getString("game"));
+            streamInfo.setViews(stream.getInt("viewer_count"));
+            streamInfo.setGame(stream.getString("game_name"));
             streamInfo.setDisplayName(displayName);
         } catch (IOException e) {
             System.out.println(e.getMessage());
@@ -116,6 +122,9 @@ public class Model {
 
     }
 
+    /**
+     * Writes settings attributes to the settings file
+     */
     public static void updateSettings() {
         File settingsFile = new File(SAVE_DIR + "\\settings.cfg");
         File streamDir = new File(SAVE_DIR);
@@ -153,6 +162,9 @@ public class Model {
         }
     }
 
+    /**
+     * Reads settings file and sets Settings attributes accordingly
+     */
     public static void readSettings() {
         File settingsFile = new File(SAVE_DIR + "\\settings.cfg");
         File streamDir = new File(SAVE_DIR);
@@ -221,7 +233,6 @@ public class Model {
 
     /**
      * Opens stream in Livestreamer
-     *
      * @param name Name of stream to open
      * @throws InvalidPathException thrown if Livestreamer is not installed
      */
@@ -240,7 +251,6 @@ public class Model {
 
     /**
      * Opens stream on Twitch
-     *
      * @param name Name of stream to open
      */
     public static void openToTwitch(String name) {
@@ -255,7 +265,6 @@ public class Model {
 
     /**
      * Opens the stream's popout chat
-     *
      * @param name Name of stream to open
      */
     public static void openPopoutChat(String name) {
@@ -268,28 +277,8 @@ public class Model {
         }
     }
 
-    private static String getJSONString(String apiURL) throws IOException {
-        URL url = new URL(apiURL);
-        URLConnection connection = url.openConnection();
-        connection.setRequestProperty("Client-ID", CLIENT_ID);
-        connection.connect();
-        InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
-        BufferedReader buff = new BufferedReader(in);
-        String line = "";
-        String info = "";
-        while (line != null) {
-            line = buff.readLine();
-            info += line;
-        }
-
-        in.close();
-        buff.close();
-        return info;
-    }
-
     /**
      * Gets JSON information from Twitch's API
-     *
      * @param apiURL Type of twitch API to use
      * @param name   Name of stream to get info for
      * @return Returns JSON information as String
@@ -301,43 +290,52 @@ public class Model {
 
     /**
      * Adds stream to StreamList object and to stream list saved locally
-     *
      * @param node Stream that you wish to add
      * @throws DuplicateStreamException if duplicate stream is found
      */
-    public void addStream(StreamNode node) throws DuplicateStreamException {
+    public static void addStream(StreamNode node) throws DuplicateStreamException {
         streams.add(node);
         addStreamFile(node.getName());
     }
 
     /**
      * Removes stream from StreamList object and from stream list saved locally
-     *
      * @param name Stream name that you wish to delete
      */
-    public void removeStream(String name) {
+    public static void removeStream(String name) {
         removeStreamFile(name);
         streams.remove(name);
     }
 
     /**
-     * Gets StreamList object
-     *
+     * Sorts the stream list and then returns StreamList object
      * @return StreamList object
      */
-    public StreamList getStreams() {
+    public static StreamList getStreams() {
         Sorter.sort(streams);
         return streams;
     }
 
-    //TODO: Tidy null shit
-    public ArrayList<String> getTopGames() {
+    public static void generateAccessToken() {
+        try {
+            String info = getAuthJSONString();
+            access_token = new JSONObject(info).getString("access_token");
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * Returns a List of the current top 100 games on Twitch
+     * @return top games as ArrayList<String>
+     */
+    public static ArrayList<String> getTopGames() {
         ArrayList<String> games = new ArrayList<>();
         try {
             String info = getJSONString(GAME_URL);
-            JSONArray top = new JSONObject(info).getJSONArray("top");
+            JSONArray top = new JSONObject(info).getJSONArray("data");
             for (Object game : top) {
-                games.add(new JSONObject(game.toString()).getJSONObject("game").getString("name").toString());
+                games.add(((JSONObject) game).getString("name"));
             }
 
             Iterator<StreamNode> iter = streams.iterator();
@@ -357,9 +355,19 @@ public class Model {
 
     }
 
-    public JSONArray getImportedFollowers(String user) throws UserNotFoundException {
+    /**
+     * Returns an array of JSON objects with information for every channel that the specified user is following
+     * @param user Specified user to get followed channels from
+     * @return List of followers, up to 100, as JSONArray
+     * @throws UserNotFoundException Throws if the spedified user does not exist
+     */
+    public static JSONArray getImportedFollowers(String user) throws UserNotFoundException {
         try {
-            JSONArray follows = new JSONObject(getJSONString(USER_URL, user + "/follows/channels?limit=100")).getJSONArray("follows");
+            String info = getJSONString(CHANNEL_URL, user);
+            String id = ((JSONObject) new JSONObject(info).getJSONArray("data").get(0)).getString("id");
+
+            // TODO: Use pagination to get all followers rather than just first 100
+            JSONArray follows = new JSONObject(getJSONString(USER_URL + "follows?from_id=", id + "&first=100")).getJSONArray("data");
             return follows;
         } catch (IOException e) {
             System.out.println("Incorrect specified user");
@@ -368,12 +376,50 @@ public class Model {
         throw new UserNotFoundException("Specified user is not found");
     }
 
-    /**
-     * Removes stream from locally saved stream list
-     *
-     * @param name Name of stream to remove
-     */
-    private void removeStreamFile(String name) {
+    // Gets a string from a JSON object
+    private static String getJSONString(String apiURL) throws IOException {
+        URL url = new URL(apiURL);
+        URLConnection connection = url.openConnection();
+        connection.setRequestProperty("Client-ID", CLIENT_ID);
+        connection.setRequestProperty("Authorization", "Bearer " + access_token);
+        connection.connect();
+        InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
+        BufferedReader buff = new BufferedReader(in);
+        String line = "";
+        String info = "";
+        while (line != null) {
+            line = buff.readLine();
+            info += line;
+        }
+
+        in.close();
+        buff.close();
+        return info;
+    }
+
+    // Gets a string from a JSON object
+    private static String getAuthJSONString() throws IOException {
+        URL url = new URL("https://id.twitch.tv/oauth2/token?client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&grant_type=client_credentials");
+
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.connect();
+        InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
+        BufferedReader buff = new BufferedReader(in);
+        String line = "";
+        String info = "";
+        while (line != null) {
+            line = buff.readLine();
+            info += line;
+        }
+
+        in.close();
+        buff.close();
+        return info;
+    }
+
+    // Removes stream from locally saved stream list
+    private static void removeStreamFile(String name) {
         File streamFile = new File(SAVE_DIR + "\\names.txt");
 
         try {
@@ -398,12 +444,8 @@ public class Model {
         }
     }
 
-    /**
-     * Adds stream to locally saved stream list
-     *
-     * @param name Name of stream to add
-     */
-    private void addStreamFile(String name) {
+    // Adds stream to locally saved stream list
+    private static void addStreamFile(String name) {
         File streamFile = new File(SAVE_DIR + "\\names.txt");
 
         try {
@@ -417,10 +459,8 @@ public class Model {
         }
     }
 
-    /**
-     * Reads all streams from locally saved stream list
-     */
-    private void readStreams() {
+    // Reads all streams from locally saved stream list
+    private static void readStreams() {
         File streamDir = new File(SAVE_DIR);
         File streamFile = new File(SAVE_DIR + "\\names.txt");
 

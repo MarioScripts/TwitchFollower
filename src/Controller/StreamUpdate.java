@@ -10,59 +10,52 @@ import View.View;
 import javax.swing.*;
 import java.awt.*;
 
+import static Model.Model.getStreamInfo;
+
 /**
  * Update thread for all streams
+ * Indefinitely runs on a background thread, updating the information for all streams until the program is terminated
  */
 public class StreamUpdate extends SwingWorker<Boolean, Integer> {
 
-    /**
-     * Update thread
-     */
     public Thread update;
-    /**
-     * List of streams
-     */
     public StreamList streams;
     public boolean pauseWorking;
+
     private TrayIcon icon;
     private String gameFilter;
-    /**
-     * Thread sleep time
-     */
     private int sleepTime;
-
-    /**
-     * View object
-     */
     private View view;
-
-    /**
-     * Model object
-     */
-    private Model model;
 
     private Controller controller;
 
     private StreamNode temp, tempInfo;
 
-    public StreamUpdate(Controller controller, Model model, View view, StreamList streams, TrayIcon icon, String gameFilter) {
+    /**
+     * Constructor that initializes main GUI, tray icon, and controller attributes
+     * @param controller Controller object
+     * @param view Main GUI View
+     * @param icon TrayIcon icon
+     */
+    public StreamUpdate(Controller controller, View view, TrayIcon icon) {
         this.icon = icon;
-        this.model = model;
         this.view = view;
-        this.streams = streams;
+        this.streams = Model.getStreams();
         this.controller = controller;
-        this.gameFilter = gameFilter;
+        this.gameFilter = Settings.getGameFilter();
     }
 
     @Override
     protected Boolean doInBackground() throws Exception {
         System.out.print("Updating...");
         view.showLoading();
+        view.refresh();
 
+        // TODO: Make batch update rather than 1 by 1 (https://dev.twitch.tv/docs/api/reference#get-streams)
         StreamIterator iter = streams.iterator();
         while (iter.hasNext()) {
             temp = iter.next();
-            tempInfo = model.getStreamInfo(temp);
+            tempInfo = getStreamInfo(temp);
 
             if (Settings.getStatusNotify()) {
                 if (!temp.getStatus().equals(tempInfo.getStatus())) {
@@ -98,11 +91,11 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
 
             if (!temp.getStatus().equals(tempInfo.getStatus()) || !temp.getGame().equals(tempInfo.getGame())) {
                 temp.setNode(tempInfo);
-//                controller.refreshGUIStreams();
+//                controller.refreshGUI();
 
             } else if (temp.getViews() != tempInfo.getViews()) {
                 temp.setViews(tempInfo.getViews());
-//                controller.refreshGUIStreams();
+//                controller.refreshGUI();
             }
 
         }
@@ -111,10 +104,9 @@ public class StreamUpdate extends SwingWorker<Boolean, Integer> {
     }
 
     protected void done() {
-        controller.refreshGUIStreams();
-        view.validate();
-        view.repaint();
+        controller.refreshGUI();
         view.hideLoading();
+        view.refresh();
         System.out.println(" Updated.");
     }
 

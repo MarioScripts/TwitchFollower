@@ -1,21 +1,16 @@
 package Controller;
 
 import Exceptions.DuplicateStreamException;
-import Model.Model;
-import Other.Settings;
-import StreamList.StreamIterator;
-import StreamList.StreamList;
 import StreamList.StreamNode;
-import View.View;
-import com.sun.org.apache.xml.internal.security.utils.JDKXPathAPI;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.swing.*;
-import java.awt.*;
+
+import static Model.Model.addStream;
 
 /**
- * Update thread for all streams
+ * Update thread for importing streams
  */
 public class ImportProgressThread extends SwingWorker<Boolean, Integer> {
 
@@ -28,12 +23,6 @@ public class ImportProgressThread extends SwingWorker<Boolean, Integer> {
      */
     public boolean pauseWorking;
 
-
-    /**
-     * Model object
-     */
-    private Model model;
-
     private JFrame frame;
     private JProgressBar progressBar;
     private JSONArray userFollows;
@@ -41,9 +30,19 @@ public class ImportProgressThread extends SwingWorker<Boolean, Integer> {
     private JPanel outerPanel, mainPanel, otherPanel;
     private JTextField txtUser;
 
-    public ImportProgressThread(Model model, Controller controller, JFrame frame, JProgressBar progressBar, JSONArray userFollows,
+    /**
+     * Constructor that initializes Settings GUI panels for updating
+     * @param controller Controller object
+     * @param frame Frame of Settings GUI
+     * @param progressBar Progressbar of Settings GUI
+     * @param userFollows List of channels that the specified user follows
+     * @param outerPanel Outer panel of Settings GUI
+     * @param mainPanel Main panel of Settings GUI
+     * @param otherPanel Other panel of Settings GUI
+     * @param txtUser Specified user of Settings GUI
+     */
+    public ImportProgressThread(Controller controller, JFrame frame, JProgressBar progressBar, JSONArray userFollows,
                                 JPanel outerPanel, JPanel mainPanel, JPanel otherPanel, JTextField txtUser) {
-        this.model = model;
         this.frame = frame;
         this.progressBar = progressBar;
         this.userFollows = userFollows;
@@ -60,12 +59,13 @@ public class ImportProgressThread extends SwingWorker<Boolean, Integer> {
         for (Object follow : userFollows) {
 
             JSONObject jsonObj = (JSONObject) follow;
-            jsonObj = jsonObj.getJSONObject("channel");
-            String name = jsonObj.getString("name");
+            String name = jsonObj.getString("to_name");
+            String id = jsonObj.getString("to_id");
             StreamNode node = new StreamNode(name);
+            node.setId(id);
             try {
-                model.addStream(node);
-                controller.initGUIStream(node);
+                addStream(node);
+                controller.updateStream(node);
             } catch (DuplicateStreamException ex) {
                 System.out.println("Stream already in list, skipping..");
             }
