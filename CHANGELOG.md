@@ -1,6 +1,9 @@
 # Full Changelog
 ## Current Development Changelog:
 
+## v3.1 Changes
+- Updated deprecated Kraken API calls to Twitch's new Helix API
+
 ## v3.0 Changes
 - Fixed horizontal resizing issue (Experimental)
 - Changed offline channel color from red to gray

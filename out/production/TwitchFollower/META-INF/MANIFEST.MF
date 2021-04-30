@@ -1,0 +1,2 @@
+Manifest-Version: 3.0
+Main-Class: TwitchFollower
